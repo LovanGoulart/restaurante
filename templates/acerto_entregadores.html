@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">CONTROLE DO ADMINISTRADOR</div>
+      <h1>Acerto de entregadores</h1>
+      <p class="page-subtitle">
+        Confira as entregas e os recebimentos por entregador e dia.
+      </p>
+    </div>
+    <button id="settlement-refresh" class="secondary">↻ Atualizar</button>
+  </div>
+  <div class="orders-toolbar">
+    <label>
+      Dia da entrega
+      <input type="date" id="settlement-date" />
+    </label>
+    <label>
+      Entregador
+      <select id="settlement-driver">
+        <option value="">Todos</option>
+      </select>
+    </label>
+  </div>
+  <p id="settlement-error" class="error" hidden></p>
+  <div id="settlement-summary" class="courier-summary"></div>
+  <section class="panel">
+    <div class="section-head">
+      <div>
+        <h2>Entregas do dia selecionado</h2>
+        <p class="muted">
+          Dinheiro é o valor líquido a repassar, já descontado o troco. Pix e cartões
+          precisam de conferência e não representam dinheiro físico com o entregador.
+        </p>
+      </div>
+      <button id="settlement-open" disabled>Conferir selecionadas</button>
+    </div>
+    <label class="check">
+      <input id="settlement-all" type="checkbox" />
+      Selecionar pendentes deste filtro
+    </label>
+    <div id="settlement-items"></div>
+  </section>
+  <dialog id="settlement-dialog" class="app-dialog">
+    <div class="dialog-head">
+      <h2>Confirmar acerto</h2>
+      <button class="icon-button" data-close aria-label="Cancelar">×</button>
+    </div>
+    <p id="settlement-confirm-summary"></p>
+    <p class="muted">
+      As entregas selecionadas serão conferidas. Os recebimentos ainda não pagos serão
+      registrados no caixa aberto, sem duplicar pagamentos antecipados.
+    </p>
+    <label class="check">
+      <input id="settlement-confirm-check" type="checkbox" />
+      Recebi o dinheiro indicado e conferi os pagamentos eletrônicos.
+    </label>
+    <button id="settlement-confirm">Confirmar e registrar no caixa</button>
+  </dialog>
+{% endblock %}
+
+{% block scripts %}
+  <script defer src="/static/js/acerto_entregadores.js"></script>
+{% endblock %}

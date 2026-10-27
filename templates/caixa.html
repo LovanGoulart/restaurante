@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="eyebrow">CONTROLE FINANCEIRO</div>
+  <h1>Caixa e recebimentos</h1>
+  <div class="management">
+    <section class="panel">
+      <h2>{{ 'Caixa aberto #' ~ caixa.id if caixa else 'Caixa fechado' }}</h2>
+      {% if caixa %}
+        <p>Fundo inicial: {{ caixa.inicial|brl }}</p>
+        <p>Saldo esperado em dinheiro</p>
+        <h1>{{ saldo|brl }}</h1>
+        <p class="muted">Pix e cartões não compõem o saldo físico.</p>
+      {% endif %}
+      <form method="post">
+        <input type="hidden" name="csrf" value="{{ csrf }}" />
+        <label>
+          Operação
+          <select name="acao">
+            {% if caixa %}
+              <option value="fechar">Fechar caixa</option>
+              <option value="sangria">Sangria</option>
+              <option value="suprimento">Suprimento</option>
+            {% else %}
+              <option value="abrir">Abrir caixa</option>
+            {% endif %}
+          </select>
+        </label>
+        <label>
+          {{ 'Valor contado / valor da movimentação' if caixa else 'Fundo inicial' }}
+          <input type="number" name="valor" min="0" step="0.01" required />
+        </label>
+        <label>
+          Descrição (obrigatória em sangria e suprimento)
+          <input name="descricao" maxlength="200" />
+        </label>
+        <button>Registrar operação</button>
+      </form>
+    </section>
+    <section class="panel">
+      <h2>Movimentações do caixa atual</h2>
+      {% for m in moves %}
+        <div class="list-row">
+          <div>
+            <b>{{ m.descricao }}</b>
+            <p>{{ m.tipo }} · {{ m.forma }}</p>
+          </div>
+          <strong>{{ m.valor|brl }}</strong>
+        </div>
+      {% else %}
+        <p>Nenhuma movimentação.</p>
+      {% endfor %}
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Histórico de caixas</h2>
+    {% for c in historico %}
+      <div class="list-row">
+        <span>
+          #{{ c.id }} · {{ c.aberto.strftime('%d/%m/%Y %H:%M') }} UTC ·
+          {{ 'Fechado' if c.fechado else 'Aberto' }}
+        </span>
+        <span>
+          Inicial {{ c.inicial|brl }}
+          {% if c.contado is not none %}
+            · Contado {{ c.contado|brl }}
+          {% endif %}
+        </span>
+      </div>
+    {% endfor %}
+  </section>
+{% endblock %}

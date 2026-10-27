@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="eyebrow">ACESSO DO ADMINISTRADOR</div>
+  <h1>Clientes cadastrados</h1>
+  <section class="panel">
+    <p class="muted">
+      Até 200 cadastros recentes. CPF completo não é exibido. Contas de clientes não
+      recebem permissões da equipe.
+    </p>
+    {% for c in clientes %}
+      <div class="client-row">
+        <div>
+          <b>{{ c.usuario.nome }}</b>
+          <p>
+            {{ c.usuario.login }} · CPF ***.***.***-{{ c.cpf_final }} ·
+            {{ 'Ativo' if c.usuario.ativo else 'Desativado' }}
+          </p>
+          {% if c.endereco %}
+            <p>
+              {{ c.endereco }}, {{ c.numero }} · {{ c.bairro }}
+              <br />
+              Referência: {{ c.referencia }}
+            </p>
+          {% else %}
+            <p>Sem endereço de entrega cadastrado.</p>
+          {% endif %}
+        </div>
+        <form method="post">
+          <input type="hidden" name="csrf" value="{{ csrf }}" />
+          <input type="hidden" name="id" value="{{ c.id }}" />
+          {% if not c.usuario.ativo %}
+            <input type="hidden" name="ativo" value="on" />
+          {% endif %}
+          <button class="secondary">
+            {{ 'Desativar conta' if c.usuario.ativo else 'Reativar conta' }}
+          </button>
+        </form>
+      </div>
+    {% else %}
+      <p>Os primeiros clientes aparecerão aqui.</p>
+    {% endfor %}
+  </section>
+{% endblock %}

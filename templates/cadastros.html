@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ kind|capitalize }}</h1>
+  <div class="management">
+    <section class="panel">
+      <h2>{{ 'Editar cadastro' if edit else 'Novo cadastro' }}</h2>
+      <form method="post">
+        <input type="hidden" name="csrf" value="{{ csrf }}" />
+        {% if edit %}
+          <input type="hidden" name="id" value="{{ edit.id }}" />
+        {% endif %}
+        <label>
+          Nome
+          <input
+            name="nome"
+            required
+            maxlength="80"
+            value="{{ edit.nome if edit else '' }}"
+          />
+        </label>
+        {% if kind=='produtos' %}
+          <label>
+            Descrição
+            <textarea name="descricao" maxlength="500">
+{{ edit.descricao if edit else '' }}</textarea>
+          </label>
+          <label>
+            Preço (R$)
+            <input
+              type="number"
+              name="preco"
+              step="0.01"
+              min="0"
+              required
+              value="{{ edit.preco/100 if edit else '' }}"
+            />
+          </label>
+          <label>
+            Categoria
+            <select name="categoria_id" required>
+              {% for c in categorias %}
+                <option
+                  value="{{ c.id }}"
+                  {{ 'selected' if edit and edit.categoria_id==c.id else '' }}
+                >
+                  {{ c.nome }}
+                </option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>
+            Ícone
+            <input
+              name="emoji"
+              maxlength="10"
+              value="{{ edit.emoji if edit else '🍽️' }}"
+            />
+          </label>
+        {% endif %}
+
+        {% if kind=='usuarios' %}
+          <label>
+            Login
+            <input
+              name="login"
+              required
+              maxlength="80"
+              value="{{ edit.login if edit else '' }}"
+            />
+          </label>
+          <label>
+            {{ 'Nova senha (vazio mantém a atual)' if edit else 'Senha' }}
+            <input
+              type="password"
+              name="senha"
+              minlength="10"
+              {{ 'required' if not edit else '' }}
+              autocomplete="new-password"
+            />
+          </label>
+          <label>
+            Perfil
+            <select name="perfil">
+              {% for r in ['admin','garcom','cozinha','entregador'] %}
+                <option {{ 'selected' if edit and edit.perfil==r else '' }}>
+                  {{ r }}
+                </option>
+              {% endfor %}
+            </select>
+          </label>
+        {% endif %}
+
+        {% if kind!='categorias' %}
+          <label class="check">
+            <input
+              type="checkbox"
+              name="ativo"
+              {{ 'checked' if not edit or edit.ativo else '' }}
+            />
+            Ativo
+          </label>
+        {% endif %}
+        <button>Salvar cadastro</button>
+        {% if edit %}
+          <a href="/cadastros/{{ kind }}">Cancelar edição</a>
+        {% endif %}
+      </form>
+    </section>
+    <section class="panel">
+      <h2>Cadastros existentes</h2>
+      {% for r in rows %}
+        <div class="list-row">
+          <div>
+            <b>{{ r.nome }}</b>
+            {% if kind=='produtos' %}
+              <p>
+                {{ r.preco|brl }} · {{ r.categoria.nome }} ·
+                {{ 'Ativo' if r.ativo else 'Inativo' }}
+              </p>
+            {% elif kind=='usuarios' %}
+              <p>
+                {{ r.login }} · {{ r.perfil }} · {{ 'Ativo' if r.ativo else 'Inativo' }}
+              </p>
+            {% endif %}
+          </div>
+          <a href="?editar={{ r.id }}">Editar →</a>
+        </div>
+      {% else %}
+        <p>Nenhum cadastro.</p>
+      {% endfor %}
+    </section>
+  </div>
+{% endblock %}

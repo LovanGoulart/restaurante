@@ -1,0 +1,12 @@
+{
+  "name": "restaurante-manager-formatacao",
+  "private": true,
+  "scripts": {
+    "format:frontend": "prettier --write \"templates/**/*.html\" \"static/**/*.html\" \"static/**/*.js\" \"static/**/*.css\" \"static/*.webmanifest\"",
+    "check:format": "prettier --check \"templates/**/*.html\" \"static/**/*.html\" \"static/**/*.js\" \"static/**/*.css\" \"static/*.webmanifest\""
+  },
+  "devDependencies": {
+    "prettier": "^3.8.3",
+    "prettier-plugin-jinja-template": "^2.2.0"
+  }
+}

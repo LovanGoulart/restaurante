@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">SUAS TELE-ENTREGAS</div>
+      <h1>Próxima parada: cliente.</h1>
+      <p class="page-subtitle">Somente os pedidos de entrega atribuídos a você.</p>
+    </div>
+    <button id="delivery-refresh" class="secondary">↻ Atualizar</button>
+  </div>
+  <div class="orders-toolbar">
+    <label>
+      Entregas concluídas no dia
+      <input type="date" id="delivery-date" />
+    </label>
+    <span class="muted">As entregas em andamento sempre aparecem.</span>
+  </div>
+  <p id="delivery-error" class="error" hidden></p>
+  <div id="delivery-orders" class="orders">
+    <section class="panel">Carregando suas entregas…</section>
+  </div>
+  <dialog id="delivery-confirm-dialog" class="app-dialog">
+    <div class="dialog-head">
+      <h2>Concluir entrega</h2>
+      <button class="icon-button" data-close aria-label="Cancelar">×</button>
+    </div>
+    <p id="delivery-confirm-summary"></p>
+    <label id="delivery-form-label">
+      Como o cliente pagou?
+      <select id="delivery-method">
+        <option value="dinheiro">Dinheiro</option>
+        <option value="pix">Pix</option>
+        <option value="credito">Cartão de crédito</option>
+        <option value="debito">Cartão de débito</option>
+      </select>
+    </label>
+    <p id="delivery-prepaid" class="success" hidden>
+      Este pedido já está pago. Não cobre novamente.
+    </p>
+    <p class="muted">
+      Confirme somente após entregar o pedido e receber o valor. O administrador fará a
+      conferência do acerto.
+    </p>
+    <label class="check">
+      <input type="checkbox" id="delivery-confirm-check" />
+      Confirmo que entreguei o pedido e conferi o pagamento.
+    </label>
+    <button id="delivery-confirm-button">Confirmar entrega</button>
+  </dialog>
+{% endblock %}
+
+{% block scripts %}
+  <script defer src="/static/js/entregas.js"></script>
+{% endblock %}

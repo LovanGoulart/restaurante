@@ -1,0 +1,187 @@
+"use strict";
+(() => {
+  const root = document.querySelector("#delivery-orders"),
+    date = document.querySelector("#delivery-date"),
+    error = document.querySelector("#delivery-error"),
+    dialog = document.querySelector("#delivery-confirm-dialog");
+  let items = [],
+    selected = null,
+    busy = false,
+    loading = false,
+    pending = false;
+  const forms = {
+    dinheiro: "Dinheiro",
+    pix: "Pix",
+    credito: "Crédito",
+    debito: "Débito",
+    antecipado: "Pagamento antecipado",
+  };
+  date.value = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+  function render() {
+    root.innerHTML =
+      items
+        .map((p) => {
+          const r = p.recebimento,
+            a = p.endereco;
+          return /* HTML */ `
+            <article class="panel order ${p.status} online-order">
+              <div class="order-head">
+                <div class="table-badge">
+                  <small>TELE-ENTREGA</small>
+                  <strong class="online-title">Pedido #${p.id}</strong>
+                </div>
+                <span class="pill">${r.entregue_em ? "Entregue" : "Em entrega"}</span>
+              </div>
+              <div class="order-body">
+                <h3>${escapeHTML(p.cliente)}</h3>
+                <div class="delivery-address">
+                  <b>Endereço</b>
+                  <p>
+                    ${escapeHTML(a.endereco)}, ${escapeHTML(a.numero)}
+                    <br />
+                    ${escapeHTML(a.bairro)}
+                    <br />
+                    Referência:
+                    ${escapeHTML(a.referencia)}${a.telefone ? "<br>Contato: " + escapeHTML(a.telefone) : ""}
+                  </p>
+                </div>
+                <ul>
+                  ${p.itens
+                    .map(
+                      (i) => /* HTML */ `
+                        <li>
+                          <span class="item-qty">${i.quantidade}×</span>
+                          <div>
+                            <b>${escapeHTML(i.nome)}</b>
+                            ${i.observacao ? "<small>" + escapeHTML(i.observacao) + "</small>" : ""}
+                          </div>
+                        </li>
+                      `,
+                    )
+                    .join("")}
+                </ul>
+                <div class="total">
+                  <strong>${money(p.total)}</strong>
+                  <span class="payment-state ${p.pago ? "paid" : ""}">
+                    ${r.entregue_em ? (r.acertado ? "Conferido" : "A conferir") : p.pago ? "Já pago" : "Cobrar na entrega"}
+                  </span>
+                </div>
+                ${
+                  r.entregue_em
+                    ? /* HTML */ `
+                        <p>
+                          Pagamento:
+                          <b>${forms[r.forma_pagamento]}</b>
+                        </p>
+                        <p class="muted">
+                          ${r.pago_antecipado ? "Pago antecipadamente · não cobrado pelo entregador" : money(r.valor_recebido) + " recebido"}
+                          ·
+                          ${r.acertado ? "Acerto conferido" : "Aguardando conferência"}
+                        </p>
+                      `
+                    : /* HTML */ `
+                        <p class="muted">
+                          Escolhido pelo cliente:
+                          ${forms[p.forma_pagamento] || "A combinar"}${p.troco_para ? " · Troco para " + money(p.troco_para) : ""}
+                        </p>
+                        <button class="status-action" data-complete="${r.id}">
+                          ✓ Confirmar entrega e pagamento
+                        </button>
+                      `
+                }
+              </div>
+            </article>
+          `;
+        })
+        .join("") ||
+      '<section class="panel empty"><h3>Nenhuma entrega neste momento.</h3><p>As tele-entregas atribuídas pelo administrador aparecerão aqui.</p></section>';
+  }
+  async function refresh() {
+    if (busy || loading) {
+      pending = true;
+      return;
+    }
+    loading = true;
+    try {
+      const data = await api("/api/entregas?data=" + date.value);
+      items = data.items;
+      if (dialog.open && selected) {
+        const fresh = items.find((p) => p.recebimento.id === selected.recebimento.id);
+        if (!fresh || fresh.recebimento.entregue_em) {
+          dialog.close();
+          selected = null;
+          toast("A entrega foi atualizada. Confira a lista.");
+        } else {
+          selected = fresh;
+          document.querySelector("#delivery-form-label").hidden = selected.pago;
+          document.querySelector("#delivery-prepaid").hidden = !selected.pago;
+        }
+      }
+      render();
+      error.hidden = true;
+    } catch (e) {
+      error.textContent = e.message;
+      error.hidden = false;
+    } finally {
+      loading = false;
+      if (pending) {
+        pending = false;
+        setTimeout(refresh, 50);
+      }
+    }
+  }
+  root.onclick = (e) => {
+    const b = e.target.closest("[data-complete]");
+    if (!b) return;
+    selected = items.find((p) => p.recebimento.id === +b.dataset.complete);
+    document.querySelector("#delivery-confirm-summary").textContent =
+      "Pedido #" +
+      selected.id +
+      " · " +
+      selected.cliente +
+      " · " +
+      money(selected.total);
+    document.querySelector("#delivery-form-label").hidden = selected.pago;
+    document.querySelector("#delivery-prepaid").hidden = !selected.pago;
+    document.querySelector("#delivery-method").value =
+      selected.forma_pagamento || "dinheiro";
+    document.querySelector("#delivery-confirm-check").checked = false;
+    dialog.showModal();
+  };
+  document.querySelector("#delivery-confirm-button").onclick = async (e) => {
+    if (!selected) return;
+    if (!document.querySelector("#delivery-confirm-check").checked) {
+      toast("Confirme a entrega e a conferência do pagamento.");
+      return;
+    }
+    busy = true;
+    e.target.disabled = true;
+    try {
+      await api("/api/entregas/" + selected.recebimento.id + "/concluir", {
+        forma_pagamento: document.querySelector("#delivery-method").value,
+        confirmado: true,
+      });
+      dialog.close();
+      toast("Entrega registrada. O recebimento ficará disponível para conferência.");
+    } catch (err) {
+      toast(err.message);
+    } finally {
+      busy = false;
+      e.target.disabled = false;
+      refresh();
+    }
+  };
+  date.onchange = refresh;
+  document.querySelector("#delivery-refresh").onclick = refresh;
+  window.addEventListener("orders-updated", refresh);
+  window.addEventListener("online", refresh);
+  setInterval(() => {
+    if (document.visibilityState === "visible") refresh();
+  }, 30000);
+  refresh();
+})();

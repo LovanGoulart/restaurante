@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">SALÃO E COZINHA CONECTADOS</div>
+      <h1>
+        {{ 'Acompanhe seu pedido.' if customer else 'Vamos preparar?' if user.perfil=='cozinha' else 'Cada pedido, no seu tempo.' }}
+      </h1>
+      <p class="page-subtitle">
+        {{ 'O andamento aparece aqui automaticamente.' if customer else 'Os novos pedidos aparecem aqui automaticamente.' if user.perfil=='cozinha' else 'Pedidos do salão e online, conforme seu acesso.' }}
+      </p>
+    </div>
+    <button id="orders-refresh" class="secondary">↻ Atualizar agora</button>
+  </div>
+  <div class="status-summary" id="status-summary"></div>
+  <div class="orders-toolbar">
+    <label>
+      Filtrar pedidos
+      <select id="status-filter">
+        <option value="">Todos os pedidos</option>
+        <option value="aberto">Aguardando preparo</option>
+        <option value="em_preparo">Em preparo</option>
+        <option value="pronto">Prontos para retirar</option>
+        <option value="saiu_entrega">Saiu para entrega</option>
+        <option value="entregue">Entregues</option>
+        <option value="nao_pago">Não pagos</option>
+      </select>
+    </label>
+    {% if user.perfil in ['admin','cozinha'] %}
+      <label>
+        Origem
+        <select id="channel-filter">
+          <option value="">Todos</option>
+          <option value="salao">Salão</option>
+          <option value="retirada">Retirada</option>
+          <option value="entrega">Tele-entrega</option>
+        </select>
+      </label>
+    {% endif %}
+    <span id="last-updated" class="muted"></span>
+  </div>
+  <p id="poll-error" class="error" role="alert" hidden></p>
+  <div
+    id="orders"
+    class="orders"
+    data-role="{{ user.perfil }}"
+    data-api="{{ '/api/cliente/pedidos' if customer else '/api/pedidos' }}"
+  >
+    <div class="panel">Carregando pedidos…</div>
+  </div>
+  <dialog id="payment-dialog" class="app-dialog">
+    <div class="dialog-head">
+      <h2>Confirmar recebimento</h2>
+      <button class="icon-button" data-close aria-label="Cancelar recebimento">
+        ×
+      </button>
+    </div>
+    <p id="payment-summary"></p>
+    <label>
+      Forma de pagamento
+      <select id="payment-method">
+        <option value="pix">Pix</option>
+        <option value="dinheiro">Dinheiro</option>
+        <option value="credito">Cartão de crédito</option>
+        <option value="debito">Cartão de débito</option>
+      </select>
+    </label>
+    <p class="muted">
+      Confirme que o valor foi recebido. Esta operação não cobra o cliente
+      automaticamente.
+    </p>
+    <button id="payment-confirm">Confirmar pagamento</button>
+  </dialog>
+{% endblock %}

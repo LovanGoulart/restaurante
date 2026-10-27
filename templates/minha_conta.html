@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="eyebrow">SEUS DADOS</div>
+  <h1>Minha conta</h1>
+  <section class="panel customer-register">
+    {% if error %}
+      <p class="error" role="alert">{{ error }}</p>
+    {% endif %}
+
+    {% if saved %}
+      <p class="success" role="status">Dados salvos com sucesso.</p>
+    {% endif %}
+    <p>
+      Login:
+      <b>{{ user.login }}</b>
+      · CPF:
+      <b>***.***.***-{{ cliente.cpf_final }}</b>
+    </p>
+    <p class="muted">Nascimento: {{ cliente.nascimento.strftime('%d/%m/%Y') }}</p>
+    <form method="post">
+      <input type="hidden" name="csrf" value="{{ csrf }}" />
+      <label>
+        Seu nome
+        <input
+          name="nome"
+          maxlength="100"
+          autocomplete="name"
+          required
+          value="{{ user.nome }}"
+        />
+      </label>
+      <label>
+        Dados de entrega
+        <select name="modalidade" id="registration-mode">
+          <option value="retirada">Não alterar endereço agora</option>
+          <option value="entrega">Cadastrar / atualizar endereço de entrega</option>
+        </select>
+      </label>
+      <fieldset id="registration-address" class="address-fieldset" hidden>
+        <legend>Endereço de entrega</legend>
+        {% set addr=cliente %}
+        {% include '_endereco.html' %}
+      </fieldset>
+      <details>
+        <summary>Alterar minha senha</summary>
+        <p class="muted">Deixe os campos vazios para manter a senha atual.</p>
+        <label>
+          Senha atual
+          <input name="senha_atual" type="password" autocomplete="current-password" />
+        </label>
+        <label>
+          Nova senha
+          <input
+            name="senha"
+            type="password"
+            minlength="10"
+            maxlength="128"
+            autocomplete="new-password"
+          />
+        </label>
+        <label>
+          Confirmar nova senha
+          <input
+            name="confirmar_senha"
+            type="password"
+            minlength="10"
+            maxlength="128"
+            autocomplete="new-password"
+          />
+        </label>
+      </details>
+      <button>Salvar meus dados</button>
+    </form>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script defer src="/static/js/customer_forms.js"></script>
+{% endblock %}

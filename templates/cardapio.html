@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="hero">
+    <div>
+      <div class="eyebrow">{{ loja.nome }}</div>
+      <h1>
+        Seu favorito.
+        <br />
+        Do seu jeito.
+      </h1>
+      <p>Retire no caixa ou receba em casa.</p>
+      <span class="badge">
+        {{ '● Pedidos online disponíveis' if loja.pedidos_ativos else '◷ Pedidos online pausados' }}
+      </span>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <span class="hero-food">🍕</span>
+      <span class="hero-sticker">
+        Mais sabor
+        <br />
+        <b>menos complicação.</b>
+      </span>
+    </div>
+  </section>
+  <div class="pdv">
+    <section>
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">ESCOLHA O QUE COMBINA COM VOCÊ</div>
+          <h2>Cardápio da casa</h2>
+        </div>
+        <input
+          id="search"
+          type="search"
+          placeholder="O que você quer pedir?"
+          aria-label="Buscar produtos"
+        />
+      </div>
+      <div class="chips">
+        <button class="chip active" data-category="all" aria-pressed="true">
+          Todos
+        </button>
+        {% for c in categorias %}
+          <button class="chip" data-category="{{ c.id }}" aria-pressed="false">
+            {{ c.nome }}
+          </button>
+        {% endfor %}
+      </div>
+      <div class="products">
+        {% for p in produtos %}
+          <article
+            class="product"
+            data-category="{{ p.categoria_id }}"
+            data-name="{{ p.nome|lower }}"
+          >
+            <div class="food">{{ p.emoji }}</div>
+            <div class="product-content">
+              <small>{{ p.categoria.nome }}</small>
+              <h3>{{ p.nome }}</h3>
+              <p>{{ p.descricao }}</p>
+              <div class="price">
+                <b>{{ p.preco|brl }}</b>
+                <button
+                  class="add"
+                  data-id="{{ p.id }}"
+                  data-name="{{ p.nome }}"
+                  data-price="{{ p.preco }}"
+                  aria-label="Adicionar {{ p.nome }}"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+      <p id="empty-search" hidden>Nenhum produto encontrado.</p>
+    </section>
+    <aside
+      class="panel bag online-bag"
+      id="bag"
+      data-customer="{{ 'yes' if cliente else 'no' }}"
+      data-staff="{{ 'yes' if user and user.perfil!='cliente' else 'no' }}"
+      data-fee="{{ loja.taxa_entrega }}"
+      data-active="{{ 'yes' if loja.pedidos_ativos else 'no' }}"
+    >
+      <div class="bag-heading">
+        <div>
+          <div class="eyebrow">BORA PEDIR?</div>
+          <h2>
+            Sua sacola
+            <span id="cart-count">0</span>
+          </h2>
+        </div>
+        <button class="bag-close icon-button" aria-label="Fechar sacola">×</button>
+      </div>
+      <div id="cart"><p class="empty">Escolha os produtos para começar.</p></div>
+      <div class="checkout-details">
+        <label>
+          Como deseja receber?
+          <select id="online-mode">
+            <option value="retirada">Retirar no caixa</option>
+            {% if loja.entrega_ativa %}
+              <option value="entrega">Tele-entrega</option>
+            {% endif %}
+          </select>
+        </label>
+        <fieldset id="checkout-address" class="address-fieldset" hidden>
+          <legend>Onde vamos entregar?</legend>
+          {% set addr=cliente %}
+          {% include '_endereco.html' %}
+        </fieldset>
+        <label>
+          Forma de pagamento
+          <select id="online-payment">
+            <option value="pix">Pix</option>
+            <option value="dinheiro">Dinheiro</option>
+            <option value="credito">Cartão de crédito</option>
+            <option value="debito">Cartão de débito</option>
+          </select>
+        </label>
+        <label id="change-label" hidden>
+          Precisa de troco para quanto? (R$)
+          <input
+            id="change-for"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="Vazio = sem troco"
+          />
+        </label>
+        <p class="muted">
+          Pagamento na retirada ou entrega. O Pix precisa ser combinado e conferido pelo
+          restaurante.
+        </p>
+      </div>
+      <div class="bag-footer">
+        <div class="fee-line">
+          <span>Produtos</span>
+          <span id="subtotal">R$ 0,00</span>
+        </div>
+        <div class="fee-line">
+          <span>Taxa de entrega</span>
+          <span id="delivery-fee">R$ 0,00</span>
+        </div>
+        <div class="total">
+          <span>Total</span>
+          <strong id="total">R$ 0,00</strong>
+        </div>
+        {% if user and user.perfil!='cliente' %}
+          <a class="button-link" href="/pdv">Usar PDV do salão</a>
+        {% else %}
+          <button id="send" disabled>
+            {{ 'Confirmar meu pedido →' if cliente else 'Entrar para fazer o pedido →' }}
+          </button>
+          {% if not cliente %}
+            <small>
+              Primeira vez?
+              <a href="/cadastro">Crie sua conta</a>
+              . Sua sacola será mantida neste navegador.
+            </small>
+          {% endif %}
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+  <button
+    id="mobile-cart"
+    class="mobile-cart"
+    aria-expanded="false"
+    aria-controls="bag"
+  >
+    <span>
+      🛍️
+      <b id="mobile-count">0</b>
+      itens · Ver sacola
+    </span>
+    <strong id="mobile-total">R$ 0,00</strong>
+  </button>
+  <div id="bag-backdrop" hidden></div>
+{% endblock %}
+
+{% block scripts %}
+  <script defer src="/static/js/cardapio.js"></script>
+{% endblock %}

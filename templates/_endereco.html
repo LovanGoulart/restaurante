@@ -1,0 +1,44 @@
+<div class="address-grid">
+  <label>
+    Rua / endereço
+    <input
+      name="endereco"
+      maxlength="160"
+      autocomplete="address-line1"
+      value="{{ addr.endereco if addr else '' }}"
+    />
+  </label>
+  <label>
+    Número
+    <input
+      name="numero"
+      maxlength="20"
+      autocomplete="address-line2"
+      placeholder="Ex.: 123 ou s/n"
+      value="{{ addr.numero if addr else '' }}"
+    />
+  </label>
+  <label>
+    Bairro
+    <input name="bairro" maxlength="100" value="{{ addr.bairro if addr else '' }}" />
+  </label>
+  <label>
+    Ponto de referência
+    <input
+      name="referencia"
+      maxlength="200"
+      placeholder="Se não houver, informe: sem referência"
+      value="{{ addr.referencia if addr else '' }}"
+    />
+  </label>
+  <label>
+    Telefone para contato (opcional)
+    <input
+      name="telefone"
+      maxlength="25"
+      type="tel"
+      autocomplete="tel"
+      value="{{ addr.telefone if addr else '' }}"
+    />
+  </label>
+</div>

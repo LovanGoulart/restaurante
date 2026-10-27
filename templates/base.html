@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="csrf-token" content="{{ csrf }}" />
+    <meta name="theme-color" content="#101c32" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Manager" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="/static/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
+    <title>Restaurante Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" />
+    <script defer src="{{url_for('static',filename='js/sound.js')}}"></script>
+    <script defer src="{{url_for('static',filename='js/app.js')}}"></script>
+    <script defer src="{{url_for('static',filename='js/pwa.js')}}"></script>
+  </head>
+  <body data-user="{{ user.id if user else '' }}" data-cursor="{{ event_cursor }}">
+    <a class="skip-link" href="#main">Ir ao conteúdo</a>
+    <header class="app-header">
+      <div class="header-inner">
+        <a class="brand" href="/">
+          <img src="/static/icons/icon-192.png" alt="" width="40" height="40" />
+          <span>
+            Restaurante
+            <b>MANAGER</b>
+          </span>
+        </a>
+
+        {% if user %}
+          <nav class="desktop-nav" aria-label="Navegação principal">
+            {% if user.perfil=='entregador' %}
+              <a href="/entregas" class="selected">Minhas entregas</a>
+            {% elif user.perfil=='cliente' %}
+              <a
+                href="/cardapio"
+                class="{{ 'selected' if request.endpoint=='customers.menu' else '' }}"
+              >
+                Cardápio
+              </a>
+              <a
+                href="/meus-pedidos"
+                class="{{ 'selected' if request.endpoint=='customers.my_orders' else '' }}"
+              >
+                Meus pedidos
+              </a>
+              <a href="/minha-conta">Minha conta</a>
+            {% else %}
+
+              {% if user.perfil in ['admin','garcom'] %}
+                <a
+                  class="{{ 'selected' if request.endpoint=='pdv' else '' }}"
+                  href="/pdv"
+                >
+                  PDV do salão
+                </a>
+              {% endif %}
+              <a
+                class="{{ 'selected' if request.endpoint=='pedidos' else '' }}"
+                href="/pedidos"
+              >
+                {{ 'Cozinha' if user.perfil=='cozinha' else 'Pedidos' }}
+              </a>
+              {% if user.perfil=='admin' %}
+                <a href="/dashboard">Dashboard</a>
+                <a href="/caixa">Caixa</a>
+                <button class="nav-more" data-open="more-dialog">Gerenciar ▾</button>
+              {% endif %}
+            {% endif %}
+          </nav>
+          <div class="header-tools">
+            <span id="live-status" class="live-status" title="Conexão com o servidor">
+              ● Conectando
+            </span>
+            <button
+              class="icon-button"
+              id="notifications-open"
+              aria-label="Abrir notificações"
+            >
+              <svg
+                class="ui-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                aria-hidden="true"
+              >
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z" />
+                <path d="M10 21h4M12 2V1" />
+              </svg>
+              <span id="notification-count" class="count" hidden>0</span>
+            </button>
+            <button
+              class="icon-button user-button"
+              data-open="more-dialog"
+              aria-label="Abrir menu e opções"
+            >
+              ☰
+            </button>
+          </div>
+        {% else %}
+          <nav class="guest-nav" aria-label="Menu do cliente">
+            <a href="/cardapio">Cardápio</a>
+            <a href="/login">Entrar</a>
+            <a href="/cadastro" class="guest-signup">Criar conta</a>
+          </nav>
+        {% endif %}
+      </div>
+    </header>
+    <main id="main">
+      {% if user %}
+        <div class="workspace-line">
+          <span>
+            {{ {'admin':'Administração','garcom':'Atendimento no salão','cozinha':'Operação da cozinha','cliente':'Sua conta','entregador':'Tele-entregas'}[user.perfil] }}
+          </span>
+          <span>
+            Olá,
+            <b>{{ user.nome }}</b>
+          </span>
+        </div>
+      {% endif %}
+
+      {% if user %}
+        <section id="sound-panel" class="sound-panel" hidden>
+          <div>
+            <b>Ative os alertas sonoros</b>
+            <p id="sound-panel-message">
+              Receba um aviso quando houver novidades nos seus pedidos.
+            </p>
+          </div>
+          <button id="sound-enable" type="button">Ativar som ♪</button>
+        </section>
+      {% endif %}
+      <section id="pwa-prompt" class="pwa-prompt" hidden>
+        <div>
+          <b>Seu restaurante, sempre à mão.</b>
+          <span>Instale o Manager no celular ou computador.</span>
+        </div>
+        <button class="install-trigger" hidden>Instalar app ↗</button>
+      </section>
+      <div id="offline-banner" class="connection-banner" role="status" hidden>
+        Sem conexão. Aguarde reconectar para enviar pedidos e registrar operações.
+      </div>
+      {% block content %}
+      {% endblock %}
+    </main>
+
+    {% if user %}
+      <nav class="mobile-nav" aria-label="Navegação no celular">
+        {% if user.perfil=='entregador' %}
+          <a href="/entregas" class="selected">
+            <span>▤</span>
+            Entregas
+          </a>
+        {% elif user.perfil=='cliente' %}
+          <a
+            href="/cardapio"
+            class="{{ 'selected' if request.endpoint=='customers.menu' else '' }}"
+          >
+            <span>▦</span>
+            Cardápio
+          </a>
+          <a
+            href="/meus-pedidos"
+            class="{{ 'selected' if request.endpoint=='customers.my_orders' else '' }}"
+          >
+            <span>▤</span>
+            Meus pedidos
+          </a>
+        {% else %}
+
+          {% if user.perfil in ['admin','garcom'] %}
+            <a href="/pdv" class="{{ 'selected' if request.endpoint=='pdv' else '' }}">
+              <span>▦</span>
+              PDV
+            </a>
+          {% endif %}
+          <a
+            href="/pedidos"
+            class="{{ 'selected' if request.endpoint=='pedidos' else '' }}"
+          >
+            <span>▤</span>
+            {{ 'Cozinha' if user.perfil=='cozinha' else 'Pedidos' }}
+          </a>
+          {% if user.perfil=='admin' %}
+            <a href="/caixa">
+              <span>▣</span>
+              Caixa
+            </a>
+          {% endif %}
+        {% endif %}
+        <button data-open="more-dialog">
+          <span>☰</span>
+          Mais
+        </button>
+      </nav>
+      <dialog id="more-dialog" class="app-dialog">
+        <div class="dialog-head">
+          <div>
+            <small>SUA CONTA</small>
+            <h2>{{ user.nome }}</h2>
+          </div>
+          <button class="icon-button" data-close aria-label="Fechar menu">×</button>
+        </div>
+        <div class="menu-links">
+          {% if user.perfil=='admin' %}
+            <a href="/dashboard">
+              📊 Dashboard
+              <span>→</span>
+            </a>
+            <a href="/cadastros/produtos">
+              🍔 Produtos
+              <span>→</span>
+            </a>
+            <a href="/cadastros/categorias">
+              ▦ Categorias
+              <span>→</span>
+            </a>
+            <a href="/cadastros/usuarios">
+              👥 Equipe
+              <span>→</span>
+            </a>
+            <a href="/acerto-entregadores">
+              ▣ Acerto de entregadores
+              <span>→</span>
+            </a>
+            <a href="/clientes">
+              👤 Clientes
+              <span>→</span>
+            </a>
+            <a href="/loja">
+              ⚙ Loja e entregas
+              <span>→</span>
+            </a>
+            <a href="/cardapio">
+              ↗ Ver cardápio público
+              <span>→</span>
+            </a>
+          {% endif %}
+
+          {% if user.perfil=='cliente' %}
+            <a href="/minha-conta">
+              👤 Minha conta e endereço
+              <span>→</span>
+            </a>
+          {% endif %}
+          <button class="install-trigger" hidden>↗ Instalar aplicativo</button>
+          <button id="sound-toggle" aria-pressed="false" type="button">
+            ♪ Ativar som dos avisos
+          </button>
+          <button id="sound-test" class="secondary" type="button">
+            ▷ Testar alerta sonoro
+          </button>
+          <p id="sound-status" role="status" aria-live="polite">Som desativado.</p>
+          <button id="push-toggle">🔔 Ativar avisos no dispositivo</button>
+          <p id="push-help" class="muted">
+            Avisos visuais funcionam com o sistema aberto.
+          </p>
+          <form method="post" action="/logout" id="logout-form">
+            <input type="hidden" name="csrf" value="{{ csrf }}" />
+            <button class="danger secondary">Sair da conta</button>
+          </form>
+        </div>
+      </dialog>
+      <dialog id="notifications-dialog" class="app-dialog">
+        <div class="dialog-head">
+          <h2>Notificações</h2>
+          <button class="icon-button" data-close aria-label="Fechar notificações">
+            ×
+          </button>
+        </div>
+        <button id="notifications-read" class="secondary">Marcar como lidas</button>
+        <div id="notifications-list" class="notification-list">
+          <p>Carregando avisos…</p>
+        </div>
+      </dialog>
+    {% endif %}
+
+    <dialog id="install-dialog" class="app-dialog">
+      <div class="dialog-head">
+        <h2>Leve o Manager com você</h2>
+        <button class="icon-button" data-close aria-label="Fechar instruções">×</button>
+      </div>
+      <p id="install-help"></p>
+      <p class="muted">
+        O aplicativo precisa de conexão para pedidos, cozinha e caixa.
+      </p>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite" hidden></div>
+    {% block scripts %}
+    {% endblock %}
+  </body>
+</html>

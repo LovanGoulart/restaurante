@@ -1,0 +1,17 @@
+{
+  "printWidth": 88,
+  "tabWidth": 2,
+  "singleQuote": false,
+  "htmlWhitespaceSensitivity": "ignore",
+  "plugins": ["prettier-plugin-jinja-template"],
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": { "parser": "jinja-template" }
+    },
+    {
+      "files": "*.webmanifest",
+      "options": { "parser": "json" }
+    }
+  ]
+}

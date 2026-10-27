@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="hero">
+    <div>
+      <div class="eyebrow">DO SALÃO PARA A COZINHA, SEM COMPLICAÇÃO</div>
+      <h1>
+        Bom atendimento.
+        <br />
+        Pedido no ponto.
+      </h1>
+      <p>Escolha os itens, informe a mesa e pronto.</p>
+      <span class="badge">● Atendimento no salão</span>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <span class="hero-food">🍔</span>
+      <span class="hero-sticker">
+        Feito na hora
+        <br />
+        <b>servido com carinho.</b>
+      </span>
+    </div>
+  </section>
+  <div class="pdv">
+    <section>
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">ESCOLHA OS FAVORITOS</div>
+          <h2>Cardápio da casa</h2>
+        </div>
+        <input
+          id="search"
+          placeholder="Buscar no cardápio…"
+          aria-label="Buscar produtos"
+          type="search"
+        />
+      </div>
+      <div class="chips" aria-label="Categorias">
+        <button class="chip active" data-category="all" aria-pressed="true">
+          Todos
+        </button>
+        {% for c in categorias %}
+          <button class="chip" data-category="{{ c.id }}" aria-pressed="false">
+            {{ c.nome }}
+          </button>
+        {% endfor %}
+      </div>
+      <div class="products">
+        {% for p in produtos %}
+          <article
+            class="product"
+            data-category="{{ p.categoria_id }}"
+            data-name="{{ p.nome|lower }}"
+          >
+            <div class="food">{{ p.emoji }}</div>
+            <div class="product-content">
+              <small>{{ p.categoria.nome }}</small>
+              <h3>{{ p.nome }}</h3>
+              <p>{{ p.descricao }}</p>
+              <div class="price">
+                <b>{{ p.preco|brl }}</b>
+                <button
+                  class="add"
+                  data-id="{{ p.id }}"
+                  data-name="{{ p.nome }}"
+                  data-price="{{ p.preco }}"
+                  aria-label="Adicionar {{ p.nome }}"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+      <p id="empty-search" hidden>
+        Nenhum produto encontrado. Tente outra palavra ou categoria.
+      </p>
+    </section>
+    <aside class="panel bag" id="bag">
+      <div class="bag-heading">
+        <div>
+          <div class="eyebrow">REVISE E ENVIE</div>
+          <h2>
+            Seu pedido
+            <span id="cart-count">0</span>
+          </h2>
+        </div>
+        <button class="bag-close icon-button" aria-label="Fechar sacola">×</button>
+      </div>
+      <label class="table-input">
+        ▣ Identifique a mesa
+        <input
+          id="mesa"
+          maxlength="40"
+          placeholder="Ex.: 08"
+          autocomplete="off"
+          inputmode="text"
+        />
+      </label>
+      <div id="cart">
+        <div class="empty">
+          <span>🛍️</span>
+          <h3>O que vamos servir?</h3>
+          <p>Toque em + para adicionar um produto.</p>
+        </div>
+      </div>
+      <div class="bag-footer">
+        <div class="total">
+          <span>Total do pedido</span>
+          <strong id="total">R$ 0,00</strong>
+        </div>
+        <button id="send" disabled>Enviar para a cozinha →</button>
+        <small>Confira os itens antes de enviar.</small>
+      </div>
+    </aside>
+  </div>
+  <button
+    id="mobile-cart"
+    class="mobile-cart"
+    aria-expanded="false"
+    aria-controls="bag"
+  >
+    <span>
+      🛍️
+      <b id="mobile-count">0</b>
+      itens · Ver pedido
+    </span>
+    <strong id="mobile-total">R$ 0,00</strong>
+  </button>
+  <div id="bag-backdrop" hidden></div>
+{% endblock %}
+
+{% block scripts %}
+  <script defer src="{{url_for('static',filename='js/pdv.js')}}"></script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="panel customer-register">
+    <div class="eyebrow">PEÇA DE ONDE ESTIVER</div>
+    <h1>Vamos criar sua conta?</h1>
+    <p>Escolha seus favoritos, acompanhe o preparo e receba os avisos por aqui.</p>
+    {% if error %}
+      <p class="error" role="alert">{{ error }}</p>
+    {% endif %}
+    <form method="post" id="register-form">
+      <input type="hidden" name="csrf" value="{{ csrf }}" />
+      <div class="form-grid">
+        <label>
+          Nome
+          <input
+            name="nome"
+            maxlength="100"
+            autocomplete="name"
+            required
+            value="{{ values.nome }}"
+          />
+        </label>
+        <label>
+          Login
+          <input
+            name="login"
+            maxlength="80"
+            minlength="3"
+            autocomplete="username"
+            required
+            value="{{ values.login }}"
+          />
+        </label>
+        <label>
+          CPF
+          <input
+            name="cpf"
+            maxlength="14"
+            inputmode="numeric"
+            placeholder="000.000.000-00"
+            required
+            aria-describedby="cpf-help"
+          />
+        </label>
+        <label>
+          Data de nascimento
+          <input
+            type="date"
+            name="nascimento"
+            required
+            value="{{ values.nascimento }}"
+          />
+        </label>
+        <label>
+          Senha
+          <input
+            type="password"
+            name="senha"
+            minlength="10"
+            maxlength="128"
+            autocomplete="new-password"
+            required
+          />
+        </label>
+        <label>
+          Confirmar senha
+          <input
+            type="password"
+            name="confirmar_senha"
+            minlength="10"
+            maxlength="128"
+            autocomplete="new-password"
+            required
+          />
+        </label>
+      </div>
+      <p class="muted" id="cpf-help">
+        O sistema confere os dígitos do CPF. Isso não confirma titularidade nem situação
+        cadastral na Receita Federal.
+      </p>
+      <label>
+        Como pretende receber?
+        <select name="modalidade" id="registration-mode">
+          <option value="retirada">Retirar no caixa · sem endereço</option>
+          <option
+            value="entrega"
+            {{ 'selected' if values.modalidade=='entrega' else '' }}
+          >
+            Tele-entrega · cadastrar endereço
+          </option>
+        </select>
+      </label>
+      <fieldset id="registration-address" class="address-fieldset" hidden>
+        <legend>Endereço de entrega</legend>
+        {% set addr=values %}
+        {% include '_endereco.html' %}
+      </fieldset>
+      <p class="muted">
+        Usaremos seu cadastro para identificar sua conta e atender seus pedidos. O
+        endereço é solicitado apenas para entrega.
+      </p>
+      <button>Criar conta e ver cardápio →</button>
+      <p>
+        Já tem conta?
+        <a href="/login">Entrar</a>
+      </p>
+    </form>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script defer src="/static/js/customer_forms.js"></script>
+{% endblock %}
