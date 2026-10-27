@@ -62,7 +62,7 @@ Somente o administrador possui acesso ao gerenciamento do sistema. O cadastro p�
 
 O PDV reúne os produtos por categoria, permite buscar itens e apresenta a montagem do pedido com identificação da mesa, quantidades e observações.
 
-![PDV do garçom](docs/images/pdv-garcom.png)
+![PDV do garçom](<tela garçom - pdv.png>)
 
 ### Fluxo de atendimento
 
@@ -83,7 +83,7 @@ O restaurante pode compartilhar o link do cardápio público para receber pedido
 
 O cardápio possui categorias, busca de produtos, preços, descrições e sacola para montagem do pedido.
 
-![Cardápio online do cliente](docs/images/cardapio-cliente.png)
+![Cardápio online do cliente](<tela cliente - cardapio.png>)
 
 ### Cadastro do cliente
 
@@ -130,7 +130,7 @@ Na própria conta, o cliente pode atualizar nome, endereço e senha. A alteraç�
 
 A área **Meus pedidos** apresenta somente os pedidos daquele cliente, com itens, valores e andamento.
 
-![Acompanhamento dos pedidos pelo cliente](docs/images/meus-pedidos-cliente.png)
+![Acompanhamento dos pedidos pelo cliente](<tela cliente - meus pedidos.png>)
 
 Os pedidos preservam os dados utilizados na compra, incluindo endereço, destinatário, taxa e preferência de pagamento. Alterações posteriores no cadastro não modificam pedidos já registrados.
 
@@ -140,7 +140,7 @@ Os pedidos são apresentados em cartões, com identificação da mesa ou modalid
 
 A tela possui contadores por status e filtros conforme o acesso do usuário.
 
-![Pedidos na visão do administrador](docs/images/pedidos-admin.png)
+![Pedidos na visão do administrador](<tela adm - pedidos.png>)
 
 | Status | Significado |
 | --- | --- |
@@ -168,7 +168,7 @@ A cozinha possui uma interface dedicada aos pedidos em aberto, em preparo e pron
 
 O usuário consulta os itens e as observações e pode atualizar o pedido para **Em preparo** e **Pronto**.
 
-![Interface da cozinha](docs/images/cozinha.png)
+![Interface da cozinha](<tela cozinha - pedidos.png>)
 
 Esse perfil não acessa PDV, caixa, equipe ou cadastros administrativos.
 
@@ -180,7 +180,7 @@ O administrador cadastra os usuários com perfil de entregador e atribui as tele
 
 Ao enviar o pedido com o entregador, o status passa para **Saiu para entrega**.
 
-![Área do entregador](docs/images/entregador.png)
+![Área do entregador](<tela entregador - minhas entregas.png>)
 
 O entregador visualiza somente os pedidos atribuídos a ele, com:
 
@@ -286,7 +286,7 @@ O dashboard oferece ao administrador uma visão do dia com:
 
 A apuração diária considera o horário de Brasília.
 
-![Dashboard administrativo](docs/images/dashboard.png)
+![Dashboard administrativo](<tela adm - dashboard.png>)
 
 ## Notificações em tempo real
 
@@ -294,7 +294,7 @@ A aplicação possui uma central de notificações com contador de avisos não l
 
 As atualizações utilizam **Server-Sent Events — SSE**, com reconexão automática e consulta periódica de recuperação na lista de pedidos.
 
-![Central de notificações](docs/images/notificacoes.png)
+![Central de notificações](<notificacoes.png>)
 
 Os avisos respeitam os perfis e os pedidos envolvidos:
 
