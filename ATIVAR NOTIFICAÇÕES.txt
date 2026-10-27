@@ -1,0 +1,5 @@
+ATIVAR NOTIFICAÇÕES:
+
+.\.venv\Scripts\python.exe setup_push.py
+
+.\.venv\Scripts\python.exe run.py
