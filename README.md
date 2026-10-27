@@ -294,7 +294,7 @@ A aplicação possui uma central de notificações com contador de avisos não l
 
 As atualizações utilizam **Server-Sent Events — SSE**, com reconexão automática e consulta periódica de recuperação na lista de pedidos.
 
-![Central de notificações](<notificacoes.png>)
+![Central de notificações](<notificações.png>)
 
 Os avisos respeitam os perfis e os pedidos envolvidos:
 
