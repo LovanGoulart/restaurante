@@ -1,0 +1,34 @@
+A tela Caixa e recebimentos controla os valores recebidos durante o expediente e ajuda o administrador a conferir quanto dinheiro deve existir na gaveta.
+
+Abrir o caixa: no início do atendimento, selecione Abrir caixa, informe o Fundo inicial e clique em Registrar operação. Esse fundo é o dinheiro disponível para troco. Se houver R$ 100,00 na gaveta, informe R$ 100,00; se estiver vazia, informe zero. Esse valor não representa uma venda.
+
+Registrar os pagamentos: quando um cliente pagar, registre o recebimento no próprio pedido e escolha a forma utilizada: dinheiro, Pix, crédito ou débito. O sistema adiciona automaticamente essa movimentação ao caixa aberto. Não é necessário lançar a venda novamente na tela do caixa. Pedido entregue não significa pedido pago: são registros separados.
+
+Acompanhar o saldo: o campo Saldo esperado em dinheiro indica quanto deveria haver em notas e moedas na gaveta. O cálculo considera:
+
+Fundo inicial + recebimentos em dinheiro + suprimentos − sangrias.
+
+Pix e cartões ficam registrados nas movimentações, mas não aumentam o saldo físico da gaveta.
+
+Suprimento: utilize quando acrescentar dinheiro que não veio de uma venda, como um reforço de troco. Selecione Suprimento, informe o valor, descreva o motivo e registre.
+
+Sangria: utilize quando retirar dinheiro da gaveta, por exemplo, para guardar no cofre. Selecione Sangria, informe o valor e o motivo. Isso reduz o saldo esperado e evita que a retirada pareça uma falta no fechamento.
+
+Entregadores: os pagamentos informados pelo entregador aguardam a conferência do administrador. Em Acerto de entregadores, confira o dinheiro e os comprovantes e confirme o acerto. Os recebimentos pendentes entram no caixa nessa etapa. Pedidos pagos antecipadamente não geram uma segunda cobrança.
+
+Exemplo de movimentação:
+
+Operação	Valor
+Fundo inicial	R$ 100,00
+Vendas recebidas em dinheiro	+ R$ 200,00
+Suprimento para troco	+ R$ 50,00
+Sangria para o cofre	− R$ 80,00
+Saldo esperado na gaveta	R$ 270,00
+
+Se também houver R$ 150,00 recebidos por Pix, esse valor estará registrado, mas o dinheiro esperado na gaveta continuará sendo R$ 270,00.
+
+Fechar o caixa: ao encerrar o expediente, confira os pagamentos, os acertos dos entregadores e as movimentações. Depois, conte o dinheiro físico, selecione Fechar caixa, informe o valor realmente contado e registre. Não some Pix e cartões nessa contagem.
+
+Se o esperado for R$ 270,00 e houver R$ 260,00, existe uma diferença de R$ 10,00 para investigar. Na versão atual, o sistema salva o valor contado no histórico, mas não apresenta um relatório automático detalhado de sobra ou falta. Fechar o caixa também não marca pedidos pendentes como pagos.
+
+Essa rotina é necessária para organizar os recebimentos, controlar entradas e retiradas e conferir se o dinheiro disponível corresponde às operações registradas. O sistema registra as informações; a confirmação de Pix, cartão e dinheiro continua sendo responsabilidade do administrador.
