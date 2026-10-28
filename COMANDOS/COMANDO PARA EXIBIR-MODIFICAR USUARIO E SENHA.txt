@@ -1,0 +1,8 @@
+COMANDO PARA EXIBIR USUARIO E SENHA
+
+python -c "import sqlite3; c=sqlite3.connect('file:instance/restaurante.db?mode=ro', uri=True); print(c.execute('SELECT id, nome, login, ativo FROM usuario WHERE perfil=?', ('admin',)).fetchall()); c.close()"
+
+
+COMANDO PARA MODIFICAR USUARIO E SENHA
+
+python -c "import sqlite3; from getpass import getpass; from werkzeug.security import generate_password_hash; c=sqlite3.connect('file:instance/restaurante.db?mode=rw',uri=True); admins=c.execute('SELECT id,nome,login FROM usuario WHERE perfil=?',('admin',)).fetchall(); print('Administradores:',admins); uid=int(input('ID do administrador: ')); assert any(a[0]==uid for a in admins),'Administrador inexistente'; login=input('Novo login: ').strip(); senha=getpass('Nova senha (minimo 10 caracteres): '); confirmar=getpass('Repita a senha: '); assert login and len(senha)>=10 and senha==confirmar,'Login vazio, senha curta ou confirmacao diferente'; c.execute('UPDATE usuario SET login=?,senha=?,ativo=1 WHERE id=? AND perfil=?',(login,generate_password_hash(senha),uid,'admin')); c.commit(); c.close(); print('Login e senha atualizados!')"

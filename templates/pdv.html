@@ -23,7 +23,7 @@
   </section>
   <div class="pdv">
     <section>
-      <div class="section-head">
+      <div class="section-head catalog-heading">
         <div>
           <div class="eyebrow">ESCOLHA OS FAVORITOS</div>
           <h2>Cardápio da casa</h2>
@@ -78,26 +78,36 @@
       </p>
     </section>
     <aside class="panel bag" id="bag">
-      <div class="bag-heading">
-        <div>
-          <div class="eyebrow">REVISE E ENVIE</div>
-          <h2>
-            Seu pedido
-            <span id="cart-count">0</span>
-          </h2>
-        </div>
-        <button class="bag-close icon-button" aria-label="Fechar sacola">×</button>
-      </div>
-      <label class="table-input">
-        ▣ Identifique a mesa
-        <input
-          id="mesa"
-          maxlength="40"
-          placeholder="Ex.: 08"
-          autocomplete="off"
-          inputmode="text"
-        />
-      </label>
+<div class="bag-heading">
+  <div class="bag-title">
+    <div class="eyebrow">REVISE E ENVIE</div>
+
+    <h2>
+      Seu pedido
+      <span id="cart-count">0</span>
+    </h2>
+  </div>
+
+  <label class="table-input">
+    <span>Identifique a mesa</span>
+
+    <input
+      id="mesa"
+      maxlength="40"
+      placeholder="Ex: Mesa 08"
+      autocomplete="off"
+      inputmode="text"
+    />
+  </label>
+
+  <button
+    class="bag-close icon-button"
+    aria-label="Fechar sacola"
+    type="button"
+  >
+    ×
+  </button>
+</div>
       <div id="cart">
         <div class="empty">
           <span>🛍️</span>

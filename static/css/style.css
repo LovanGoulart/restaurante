@@ -2200,3 +2200,455 @@ video {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* PDV: itens mais visíveis e controles compactos */
+#bag:not(.online-bag) #cart {
+  padding: 4px 4px 10px;
+  overscroll-behavior: contain;
+}
+
+#bag:not(.online-bag) .cart-item {
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #dbe3ee;
+  border-left: 4px solid #c64118;
+  border-radius: 12px;
+  background: #f7f9fc;
+}
+
+/* Nome do produto maior e com destaque */
+#bag:not(.online-bag) .cart-item > b {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 800;
+  color: #142238;
+  overflow-wrap: anywhere;
+}
+
+/* Quantidade à esquerda e preço à direita */
+#bag:not(.online-bag) .quantity {
+  display: grid;
+  grid-template-columns: 38px 28px 38px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  margin-top: 0;
+}
+
+/* Botões menores */
+#bag:not(.online-bag) .quantity button {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0;
+  border-radius: 9px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+#bag:not(.online-bag) .quantity span {
+  min-width: 0;
+  font-size: 16px;
+  text-align: center;
+}
+
+#bag:not(.online-bag) .quantity strong {
+  margin-left: 0;
+  font-size: 16px;
+  text-align: right;
+  color: #142238;
+}
+
+/* Observação mais compacta, mantendo leitura no celular */
+#bag:not(.online-bag) .cart-item textarea {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 8px;
+  padding: 9px 10px;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+/* No celular, reservar mais espaço para a lista */
+@media (max-width: 850px) {
+  #bag:not(.online-bag) {
+    height: 92dvh;
+    max-height: 92dvh;
+    padding: 14px 14px calc(12px + env(safe-area-inset-bottom));
+  }
+
+  #bag:not(.online-bag) .bag-heading {
+    flex-shrink: 0;
+    margin-bottom: 10px;
+  }
+
+  #bag:not(.online-bag) .table-input {
+    flex-shrink: 0;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  #bag:not(.online-bag) .table-input input {
+    min-height: 42px;
+    padding: 8px 10px;
+    font-size: 20px;
+  }
+
+  #bag:not(.online-bag) #cart {
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+  }
+
+  #bag:not(.online-bag) .bag-footer {
+    flex-shrink: 0;
+    padding-top: 6px;
+  }
+
+  #bag:not(.online-bag) .total {
+    padding: 10px 0;
+  }
+
+  #bag:not(.online-bag) .bag-footer > button {
+    min-height: 46px;
+  }
+}
+
+/* Desktop: ampliar a lista do pedido no PDV */
+@media (min-width: 851px) {
+  #bag:not(.online-bag) {
+    position: sticky;
+    top: calc(var(--header) + 12px);
+    height: calc(100dvh - var(--header) - 24px);
+    max-height: calc(100dvh - var(--header) - 24px);
+    padding: 14px;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Cabeçalho mais compacto */
+  #bag:not(.online-bag) .bag-heading {
+    flex-shrink: 0;
+    margin-bottom: 10px;
+  }
+
+  #bag:not(.online-bag) .bag-heading h2 {
+    font-size: 21px;
+    margin-top: 2px;
+  }
+
+  /* Mesa em uma linha, mantendo o destaque */
+  #bag:not(.online-bag) .table-input {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-shrink: 0;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  #bag:not(.online-bag) .table-input input {
+    width: 110px;
+    min-width: 0;
+    min-height: 40px;
+    margin: 0;
+    padding: 7px 10px;
+    font-size: 20px;
+  }
+
+  /* Lista ocupa todo o espaço restante */
+  #bag:not(.online-bag) #cart {
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    padding: 2px 6px 8px 0;
+    scrollbar-gutter: stable;
+  }
+
+  /* Itens compactos, com nomes legíveis */
+  #bag:not(.online-bag) .cart-item {
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+
+  #bag:not(.online-bag) .cart-item > b {
+    font-size: 18px;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+
+  #bag:not(.online-bag) .cart-item textarea {
+    min-height: 36px;
+    margin-top: 6px;
+    padding: 7px 9px;
+    font-size: 14px;
+  }
+
+  /* Total e envio sempre visíveis */
+  #bag:not(.online-bag) .bag-footer {
+    flex-shrink: 0;
+    padding-top: 6px;
+  }
+
+  #bag:not(.online-bag) .total {
+    padding: 10px 0;
+  }
+
+  #bag:not(.online-bag) .bag-footer > button {
+    min-height: 44px;
+  }
+
+  #bag:not(.online-bag) .bag-footer > small {
+    margin-top: 5px;
+  }
+}
+
+/* Em computadores maiores, ampliar a coluna do pedido */
+@media (min-width: 1200px) {
+  .pdv:has(> #bag:not(.online-bag)) {
+    grid-template-columns: minmax(0, 1fr) 410px;
+    gap: 20px;
+  }
+}
+
+/* Título e mesa lado a lado no PDV */
+#bag:not(.online-bag) .bag-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-bottom: 12px;
+}
+
+#bag:not(.online-bag) .bag-title {
+  flex: 1 1 120px;
+  min-width: 0;
+}
+
+#bag:not(.online-bag) .bag-heading .table-input {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  flex: 0 0 128px;
+  gap: 4px;
+  padding: 7px 9px;
+  margin: 0;
+  min-width: 0;
+}
+
+#bag:not(.online-bag) .bag-heading .table-input span {
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+#bag:not(.online-bag) .bag-heading .table-input input {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 5px 8px;
+  margin: 0;
+  font-size: 18px;
+}
+
+#bag:not(.online-bag) .bag-close {
+  flex-shrink: 0;
+}
+
+/* Preservar espaço para o botão de fechar no celular */
+@media (max-width: 850px) {
+  #bag:not(.online-bag) .bag-title {
+    flex-basis: 100px;
+  }
+
+  #bag:not(.online-bag) .bag-heading h2 {
+    font-size: 20px;
+  }
+
+  #bag:not(.online-bag) .bag-heading .table-input {
+    flex-basis: 112px;
+  }
+
+  #bag:not(.online-bag) .bag-close {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0;
+  }
+}
+
+/* Mesa mais larga e próxima do título */
+#bag:not(.online-bag) .bag-heading {
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+#bag:not(.online-bag) .bag-title {
+  flex: 0 1 auto;
+}
+
+#bag:not(.online-bag) .bag-heading .table-input {
+  flex: 1 1 160px;
+  max-width: 220px;
+}
+
+#bag:not(.online-bag) .bag-heading .table-input input {
+  width: 100%;
+}
+
+@media (max-width: 850px) {
+  #bag:not(.online-bag) .bag-heading {
+    gap: 8px;
+  }
+
+  #bag:not(.online-bag) .bag-heading .table-input {
+    flex: 1 1 110px;
+    max-width: 190px;
+  }
+}
+
+/* Ocultar o menu hambúrguer superior no celular */
+@media (max-width: 850px) {
+  .header-tools .user-button {
+    display: none;
+  }
+}
+
+/* Perfil e nome do usuário no cabeçalho */
+.header-tools {
+  min-width: 0;
+}
+
+.header-user {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+  max-width: 170px;
+  text-align: right;
+}
+
+.header-user-role {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #ffb28f;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.header-user-name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+/* Manter espaço para a marca e o sino no celular */
+@media (max-width: 850px) {
+  .header-user {
+    max-width: 125px;
+  }
+
+  .header-user-role {
+    font-size: 9px;
+  }
+
+  .header-user-name {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-user {
+    max-width: 100px;
+  }
+}
+
+.header-user {
+  margin-right: 10px;
+}
+
+/* Ajustes exclusivos do desktop */
+@media (min-width: 851px) {
+  /* Ocultar o botão hambúrguer superior */
+  .header-tools .user-button {
+    display: none;
+  }
+
+  /* Ocultar opções já disponíveis no menu superior */
+  #more-dialog .menu-links > a[href="/dashboard"],
+  #more-dialog .menu-links > a[href="/acerto-entregadores"] {
+    display: none;
+  }
+}
+
+/* Aproximar os filtros de dia e entregador */
+.settlement-filters {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.settlement-filters > label {
+  flex: 0 1 260px;
+  width: 260px;
+  min-width: 0;
+  margin: 0;
+}
+
+/* No celular, manter um filtro abaixo do outro */
+@media (max-width: 600px) {
+  .settlement-filters > label {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
+
+/* Busca próxima ao título no desktop */
+@media (min-width: 851px) {
+  .section-head.catalog-heading {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .section-head.catalog-heading > div {
+    flex: 0 1 auto;
+  }
+
+  .section-head.catalog-heading #search {
+    flex: 0 1 280px;
+    width: 280px;
+    min-width: 0;
+    margin: 0;
+  }
+}
+
+@media (min-width: 851px) {
+  .section-head.catalog-heading #search {
+    flex: 0 1 380px;
+    width: 380px;
+    max-width: 100%;
+  }
+}

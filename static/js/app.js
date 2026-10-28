@@ -499,6 +499,9 @@ if (document.body.dataset.user) {
   }
   function live(text, state) {
     const el = document.querySelector("#live-status");
+
+    if (!el) return;
+
     el.textContent = "● " + text;
     el.className = "live-status " + state;
   }

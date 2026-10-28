@@ -67,16 +67,49 @@
                 {{ 'Cozinha' if user.perfil=='cozinha' else 'Pedidos' }}
               </a>
               {% if user.perfil=='admin' %}
-                <a href="/dashboard">Dashboard</a>
-                <a href="/caixa">Caixa</a>
-                <button class="nav-more" data-open="more-dialog">Gerenciar ▾</button>
+                <a
+                  href="/dashboard"
+                  class="{{ 'selected' if request.endpoint == 'dashboard' else '' }}"
+                >
+                  Dashboard
+                </a>
+
+                <a
+                  href="/caixa"
+                  class="{{ 'selected' if request.endpoint == 'caixa' else '' }}"
+                >
+                  Caixa
+                </a>
+
+                <a
+                  href="/acerto-entregadores"
+                  class="{{ 'selected' if request.endpoint == 'couriers.settlement' else '' }}"
+                >
+                  Saldo Delivery
+                </a>
+
+                <button class="nav-more" data-open="more-dialog">
+                  Gerenciar ▾
+                </button>
               {% endif %}
             {% endif %}
           </nav>
           <div class="header-tools">
-            <span id="live-status" class="live-status" title="Conexão com o servidor">
-              ● Conectando
-            </span>
+            <div class="header-user" title="{{ user.nome }}">
+              <span class="header-user-role">
+                {{ {
+                  'admin': 'Administração',
+                  'garcom': 'Atendimento no salão',
+                  'cozinha': 'Operação da cozinha',
+                  'cliente': 'Sua conta',
+                  'entregador': 'Tele-entregas'
+                }[user.perfil] }}
+              </span>
+
+              <strong class="header-user-name">
+                {{ user.nome }}
+              </strong>
+            </div>
             <button
               class="icon-button"
               id="notifications-open"
@@ -113,17 +146,6 @@
       </div>
     </header>
     <main id="main">
-      {% if user %}
-        <div class="workspace-line">
-          <span>
-            {{ {'admin':'Administração','garcom':'Atendimento no salão','cozinha':'Operação da cozinha','cliente':'Sua conta','entregador':'Tele-entregas'}[user.perfil] }}
-          </span>
-          <span>
-            Olá,
-            <b>{{ user.nome }}</b>
-          </span>
-        </div>
-      {% endif %}
 
       {% if user %}
         <section id="sound-panel" class="sound-panel" hidden>
@@ -136,6 +158,7 @@
           <button id="sound-enable" type="button">Ativar som ♪</button>
         </section>
       {% endif %}
+
       <section id="pwa-prompt" class="pwa-prompt" hidden>
         <div>
           <b>Seu restaurante, sempre à mão.</b>
@@ -226,7 +249,7 @@
               <span>→</span>
             </a>
             <a href="/acerto-entregadores">
-              ▣ Acerto de entregadores
+              ▣ Saldo delivery
               <span>→</span>
             </a>
             <a href="/clientes">

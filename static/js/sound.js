@@ -29,8 +29,8 @@
         ? "Som desativado. Ative para ouvir novos avisos."
         : running
           ? "Som liberado para os avisos desta sessão."
-          : "Som ativado nas preferências. Toque em Liberar som nesta tela.";
-    panel.hidden = !supported || (enabled && running);
+          : "Som ativado. A liberação do áudio será tentada ao interagir com a página.";
+    panel.hidden = !supported || enabled;
     panelMessage.textContent = enabled
       ? "O navegador precisa de um toque para liberar o áudio nesta tela."
       : "Ative para ouvir avisos de pedidos novos ou prontos, conforme seu perfil.";
