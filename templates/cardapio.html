@@ -3,25 +3,36 @@
 {% block content %}
   <section class="hero">
     <div>
-      <div class="eyebrow">{{ loja.nome }}</div>
-      <h1>
-        Seu favorito.
-        <br />
-        Do seu jeito.
-      </h1>
-      <p>Retire no caixa ou receba em casa.</p>
+      <div class="eyebrow">{{ restaurant_name }}</div>
+
+      <h1>{{ appearance.title }}</h1>
+
+      <p>{{ appearance.subtitle }}</p>
+
       <span class="badge">
-        {{ '● Pedidos online disponíveis' if loja.pedidos_ativos else '◷ Pedidos online pausados' }}
+        {{ '● Pedidos online disponíveis'
+          if loja.pedidos_ativos
+          else '◷ Pedidos online pausados' }}
       </span>
     </div>
-    <div class="hero-art" aria-hidden="true">
-      <span class="hero-food">🍕</span>
-      <span class="hero-sticker">
-        Mais sabor
-        <br />
-        <b>menos complicação.</b>
-      </span>
-    </div>
+
+    {% if appearance.cover %}
+      <img
+        class="pdv-cover"
+        src="{{ url_for('appearance.media', name=appearance.cover) }}"
+        alt="Capa de {{ restaurant_name }}"
+      >
+    {% else %}
+      <div class="hero-art" aria-hidden="true">
+        <span class="hero-food">🍕</span>
+
+        <span class="hero-sticker">
+          Mais sabor
+          <br>
+          <b>do seu jeito.</b>
+        </span>
+      </div>
+    {% endif %}
   </section>
   <div class="pdv">
     <section>

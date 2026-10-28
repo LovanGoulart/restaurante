@@ -3,7 +3,10 @@
 <h1>Personalização e fotos</h1>
 <p>Configure a identidade do restaurante e as imagens exibidas no cardápio.</p>
 {% if request.args.get('saved') %}<p role="status" class="panel">Alterações salvas.</p>{% endif %}
-<div class="management personalizacao-layout"><section class="panel"><h2>Identidade e capa do PDV</h2>
+<div class="management personalizacao-layout"><section class="panel"><h2>Identidade e capa do cardápio do cliente</h2>
+<p class="muted">
+  A imagem e os textos da capa aparecem no cardápio público.
+</p>
 <form method="post" enctype="multipart/form-data">
 <input type="hidden" name="csrf" value="{{ csrf }}">
 <label>Nome do restaurante<input name="name" value="{{ restaurant_name }}" maxlength="100" required></label>
