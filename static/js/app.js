@@ -350,7 +350,8 @@ if (orders) {
         fullCards.set(p.id, article.outerHTML);
         const card = document.createElement("button");
         card.type = "button";
-        card.className = "compact-order " + p.status;
+        card.className =
+  "compact-order " + p.status + (p.pago ? " order-paid" : "");
         card.dataset.detail = p.id;
         card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${labels[p.status]}</span></span><span>Pedido #${p.id} · ${escapeHTML(p.cliente || p.garcom)}</span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? "Pago" : "Não pago"}</b></span><small>Ver detalhes e ações →</small>`;
         article.replaceWith(card);

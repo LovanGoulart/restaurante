@@ -261,7 +261,25 @@ def create_app(overrides=None):
             (Pedido.status == "entregue", 4),
             else_=5,
         )
-        q = db.select(Pedido).order_by(priority, Pedido.id.desc()).limit(200)
+        q = db.select(Pedido)
+
+        if g.user.perfil == "admin":
+            admin_priority = case(
+                (Pedido.status == "entregue", 0),
+                (Pedido.status == "em_preparo", 1),
+                (Pedido.status == "aberto", 2),
+                (Pedido.status == "pronto", 3),
+                (Pedido.status == "saiu_entrega", 4),
+                else_=5,
+            )
+
+            q = q.order_by(
+                Pedido.pago.asc(),
+                admin_priority,
+            )
+
+        q = q.order_by(priority, Pedido.id.desc()).limit(200)
+
         if g.user.perfil == "garcom":
             q = q.where(~Pedido.online.has())
         if g.user.perfil == "cozinha":

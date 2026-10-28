@@ -491,3 +491,23 @@ body:has(#orders[data-role="cliente"])
   font-size: 14px;
   padding: 8px 12px;
 }
+
+/* Pedidos não pagos permanecem brancos */
+#orders[data-role="admin"] .compact-order {
+  background: #fff;
+}
+
+/* Somente pedidos pagos recebem fundo verde suave */
+#orders[data-role="admin"] .compact-order.order-paid {
+  background: #edf7f0;
+}
+
+/* Não pagos: amarelo suave */
+#orders[data-role="admin"] .compact-order:not(.order-paid) {
+  background: #fff7e8;
+}
+
+/* Pagos: verde suave */
+#orders[data-role="admin"] .compact-order.order-paid {
+  background: #edf7f0;
+}
