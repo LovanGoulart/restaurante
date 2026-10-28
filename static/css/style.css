@@ -2647,8 +2647,8 @@ video {
 
 @media (min-width: 851px) {
   .section-head.catalog-heading #search {
-    flex: 0 1 380px;
-    width: 380px;
+    flex: 0 1 75%;
+    width: 420px;
     max-width: 100%;
   }
 }
