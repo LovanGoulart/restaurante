@@ -511,3 +511,115 @@ body:has(#orders[data-role="cliente"])
 #orders[data-role="admin"] .compact-order.order-paid {
   background: #edf7f0;
 }
+
+@media (min-width: 851px) {
+  .section-head.catalog-heading {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .section-head.catalog-heading > div {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .section-head.catalog-heading #search {
+    flex: 0 1 65%;
+    width: 420px;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+}
+
+/* Meus pedidos: cards lado a lado no desktop */
+@media (min-width: 851px) {
+  #orders[data-role="cliente"] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: none;
+    gap: 20px;
+    align-items: start;
+  }
+}
+
+/* Cards menores no desktop */
+@media (min-width: 851px) {
+  #orders[data-role="cliente"] {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 320px));
+    justify-content: start;
+    gap: 14px;
+  }
+
+  #orders[data-role="cliente"] .order-head {
+    padding: 12px;
+  }
+
+  #orders[data-role="cliente"] .order-body {
+    padding: 12px;
+  }
+
+  #orders[data-role="cliente"] .order li {
+    padding-block: 8px;
+  }
+}
+
+/* Entregues e não pagos: azul claro */
+#orders[data-role="admin"] .compact-order.entregue:not(.order-paid) {
+  background: #eef4ff;
+}
+
+/* Meus pedidos: aproveitar melhor o espaço no desktop */
+@media (min-width: 851px) {
+  #orders[data-role="cliente"] {
+    display: block;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    column-width: 300px;
+    column-count: auto;
+    column-gap: 16px;
+  }
+
+  #orders[data-role="cliente"] .order {
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 16px;
+    vertical-align: top;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+/* Meus pedidos: preencher a largura no desktop */
+@media (min-width: 851px) {
+  #main #orders[data-role="cliente"] {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    gap: 16px;
+    align-items: start;
+
+    /* Desativar o layout anterior de colunas */
+    column-count: auto;
+    column-width: auto;
+  }
+
+  #main #orders[data-role="cliente"] .order {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+  }
+}
+
+/* Dois cards por linha em computadores menores */
+@media (min-width: 851px) and (max-width: 1100px) {
+  #main #orders[data-role="cliente"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

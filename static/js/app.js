@@ -120,7 +120,7 @@ if (orders) {
   }
   function titleFor(p) {
     return p.canal === "salao"
-      ? "Mesa " + p.mesa
+      ? "Código do cliente - " + p.mesa
       : p.modalidade === "entrega"
         ? "Tele-entrega"
         : "Retirada no caixa";
