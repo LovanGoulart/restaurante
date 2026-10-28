@@ -253,37 +253,43 @@ def create_app(overrides=None):
     @app.get("/api/pedidos")
     @access("admin", "garcom", "cozinha")
     def list_orders():
-        priority = case(
-            (Pedido.status == "aberto", 0),
-            (Pedido.status == "pronto", 1),
-            (Pedido.status == "em_preparo", 2),
-            (Pedido.status == "saiu_entrega", 3),
-            (Pedido.status == "entregue", 4),
-            else_=5,
-        )
         q = db.select(Pedido)
-
         if g.user.perfil == "admin":
-            admin_priority = case(
+            priority = case(
                 (Pedido.status == "entregue", 0),
-                (Pedido.status == "em_preparo", 1),
-                (Pedido.status == "aberto", 2),
-                (Pedido.status == "pronto", 3),
+                (Pedido.status == "pronto", 1),
+                (Pedido.status == "em_preparo", 2),
+                (Pedido.status == "aberto", 3),
                 (Pedido.status == "saiu_entrega", 4),
                 else_=5,
             )
 
             q = q.order_by(
                 Pedido.pago.asc(),
-                admin_priority,
+                priority,
+                Pedido.id.desc(),
             )
-
-        q = q.order_by(priority, Pedido.id.desc()).limit(200)
-
-        if g.user.perfil == "garcom":
-            q = q.where(~Pedido.online.has())
-        if g.user.perfil == "cozinha":
-            q = q.where(Pedido.status.in_(["aberto", "em_preparo", "pronto"]))
+        elif g.user.perfil == "garcom":
+            # O garçom consulta somente os pedidos do salão.
+            priority = case(
+                (Pedido.status == "pronto", 0),
+                (Pedido.status == "em_preparo", 1),
+                (Pedido.status == "aberto", 2),
+                (Pedido.status == "entregue", 3),
+                else_=4,
+            )
+            q = q.where(~Pedido.online.has()).order_by(priority, Pedido.id.desc())
+        elif g.user.perfil == "cozinha":
+            # Pedidos prontos deixam a fila da cozinha.
+            priority = case(
+                (Pedido.status == "aberto", 0),
+                (Pedido.status == "em_preparo", 1),
+                else_=2,
+            )
+            q = q.where(Pedido.status.in_(["aberto", "em_preparo"])).order_by(
+                priority, Pedido.id.desc()
+            )
+        q = q.limit(200)
         return jsonify([serialize_order(p, g.user) for p in db.session.scalars(q)])
 
     @app.post("/api/pedidos")

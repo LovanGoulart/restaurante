@@ -1,15 +1,25 @@
-
 {% extends 'base.html' %}
 
-
-
 {% block content %}
+  {% if user.perfil in ['garcom', 'cozinha'] %}
+    <style>
+      #orders:is([data-role="garcom"], [data-role="cozinha"]) .compact-order:not(.order-paid) {
+        background: #fff7e8;
+      }
+      #orders:is([data-role="garcom"], [data-role="cozinha"]) .compact-order.entregue:not(.order-paid) {
+        background: #eef4ff;
+      }
+      #orders:is([data-role="garcom"], [data-role="cozinha"]) .compact-order.order-paid {
+        background: #edf7f0;
+      }
+    </style>
+  {% endif %}
 
   <div class="section-head">
     <div>
       <div class="eyebrow">SALÃO E COZINHA CONECTADOS</div>
       <h1>
-        {{ 'Acompanhe seu pedido.' if customer else 'Vamos preparar?' if user.perfil=='cozinha' else 'Pedidos' }}
+        {{ 'Acompanhe seu pedido.' if customer else 'Pedidos' }}
       </h1>
       <p class="page-subtitle">
         {{ 'O andamento aparece aqui automaticamente.' if customer else 'Os novos pedidos aparecem aqui automaticamente.' if user.perfil=='cozinha' else 'Pedidos do salão e online, conforme seu acesso.' }}
@@ -31,7 +41,7 @@
         <option value="nao_pago">Não pagos</option>
       </select>
     </label>
-    
+
 {% if user.perfil in ['admin','cozinha'] %}
 
       <label>
@@ -43,7 +53,7 @@
           <option value="entrega">Tele-entrega</option>
         </select>
       </label>
-    
+
 {% endif %}
 
     <span id="last-updated" class="muted"></span>
@@ -57,14 +67,14 @@
   >
     <div class="panel">Carregando pedidos…</div>
   </div>
-  
-{% if user.perfil == 'admin' %}
+
+{% if user.perfil in ['admin', 'garcom', 'cozinha'] %}
 
   <dialog id="order-detail" class="app-dialog order-detail">
     <div class="dialog-head"><h2>Detalhes do pedido</h2><button type="button" class="icon-button" data-close aria-label="Fechar detalhes">×</button></div>
     <div id="order-detail-content"></div>
   </dialog>
-  
+
 {% endif %}
 
   <dialog id="payment-dialog" class="app-dialog">

@@ -34,16 +34,14 @@
           </span>
         </a>
 
-        
 {% if user %}
 
           <nav class="desktop-nav" aria-label="Navegação principal">
-            
-            
+
 {% if user.perfil=='entregador' %}
 
               <a href="/entregas" class="selected">Minhas entregas</a>
-            
+
 {% elif user.perfil=='cliente' %}
 
               <a
@@ -59,27 +57,25 @@
                 Meus pedidos
               </a>
               <a href="/minha-conta">Minha conta</a>
-            
+
 {% else %}
 
-              
-{% if user.perfil in ['admin','garcom'] %}
+<a
+  class="{{ 'selected' if request.endpoint == 'pedidos' else '' }}"
+  href="/pedidos"
+>
+  Pedidos
+</a>
 
-              <a
-                class="{{ 'selected' if request.endpoint=='pedidos' else '' }}"
-                href="/pedidos"
-              >
-                {{ 'Cozinha' if user.perfil=='cozinha' else 'Pedidos' }}
-              </a>
-              
+{% if user.perfil in ['admin', 'garcom'] %}
+  <a
+    class="{{ 'selected' if request.endpoint == 'pdv' else '' }}"
+    href="/pdv"
+  >
+    PDV
+  </a>
 {% endif %}
-              <a
-                  class="{{ 'selected' if request.endpoint=='pdv' else '' }}"
-                  href="/pdv"
-                >
-                  PDV
-                </a>              
-              
+
 {% if user.perfil=='admin' %}
 
                 <a
@@ -106,10 +102,9 @@
                 <button class="nav-more" data-open="more-dialog">
                   Gerenciar ▾
                 </button>
-              
+
 {% endif %}
 
-            
 {% endif %}
 
           </nav>
@@ -155,7 +150,7 @@
               ☰
             </button>
           </div>
-        
+
 {% else %}
 
           <nav class="guest-nav" aria-label="Menu do cliente">
@@ -163,14 +158,13 @@
             <a href="/login">Entrar</a>
             <a href="/cadastro" class="guest-signup">Criar conta</a>
           </nav>
-        
+
 {% endif %}
 
       </div>
     </header>
     <main id="main">
 
-      
 {% if user %}
 
         <section id="sound-panel" class="sound-panel" hidden>
@@ -182,9 +176,8 @@
           </div>
           <button id="sound-enable" type="button">Ativar som ♪</button>
         </section>
-      
-{% endif %}
 
+{% endif %}
 
       <section id="pwa-prompt" class="pwa-prompt" hidden>
         <div>
@@ -196,26 +189,24 @@
       <div id="offline-banner" class="connection-banner" role="status" hidden>
         Sem conexão. Aguarde reconectar para enviar pedidos e registrar operações.
       </div>
-      
+
 {% block content %}
 
-      
 {% endblock %}
 
     </main>
 
-    
 {% if user %}
 
       <nav class="mobile-nav" aria-label="Navegação no celular">
-        
+
 {% if user.perfil=='entregador' %}
 
           <a href="/entregas" class="selected">
             <span>▤</span>
             Entregas
           </a>
-        
+
 {% elif user.perfil=='cliente' %}
 
           <a
@@ -232,18 +223,16 @@
             <span>▤</span>
             Meus pedidos
           </a>
-        
+
 {% else %}
 
-
-          
 {% if user.perfil in ['admin','garcom'] %}
 
             <a href="/pdv" class="{{ 'selected' if request.endpoint=='pdv' else '' }}">
               <span>▦</span>
               PDV
             </a>
-          
+
 {% endif %}
 
           <a
@@ -251,19 +240,18 @@
             class="{{ 'selected' if request.endpoint=='pedidos' else '' }}"
           >
             <span>▤</span>
-            {{ 'Cozinha' if user.perfil=='cozinha' else 'Pedidos' }}
+            Pedidos
           </a>
-          
+
 {% if user.perfil=='admin' %}
 
             <a href="/caixa">
               <span>▣</span>
               Caixa
             </a>
-          
+
 {% endif %}
 
-        
 {% endif %}
 
         <button data-open="more-dialog">
@@ -280,12 +268,11 @@
           <button class="icon-button" data-close aria-label="Fechar menu">×</button>
         </div>
         <div class="menu-links">
-          
+
 {% if user.perfil == "admin" %}
 <a href="/personalizacao">🎨 Personalização e fotos</a>
 {% endif %}
 
-          
 {% if user.perfil=='admin' %}
 
             <a href="/dashboard">
@@ -320,18 +307,16 @@
               ↗ Ver cardápio público
               <span>→</span>
             </a>
-          
+
 {% endif %}
 
-
-          
 {% if user.perfil=='cliente' %}
 
             <a href="/minha-conta">
               👤 Minha conta e endereço
               <span>→</span>
             </a>
-          
+
 {% endif %}
 
           <button class="install-trigger" hidden>↗ Instalar aplicativo</button>
@@ -364,9 +349,8 @@
           <p>Carregando avisos…</p>
         </div>
       </dialog>
-    
-{% endif %}
 
+{% endif %}
 
     <dialog id="install-dialog" class="app-dialog">
       <div class="dialog-head">
@@ -379,10 +363,9 @@
       </p>
     </dialog>
     <div id="toast" role="status" aria-live="polite" hidden></div>
-    
+
 {% block scripts %}
 
-    
 {% endblock %}
 
   </body>

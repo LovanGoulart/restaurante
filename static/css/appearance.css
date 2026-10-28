@@ -623,3 +623,64 @@ body:has(#orders[data-role="cliente"])
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Cards dos três perfis internos */
+#orders:is(
+  [data-role="admin"],
+  [data-role="garcom"],
+  [data-role="cozinha"]
+) .compact-order:not(.order-paid) {
+  background: #fff7e8;
+}
+
+#orders:is(
+  [data-role="admin"],
+  [data-role="garcom"],
+  [data-role="cozinha"]
+) .compact-order.entregue:not(.order-paid) {
+  background: #eef4ff;
+}
+
+#orders:is(
+  [data-role="admin"],
+  [data-role="garcom"],
+  [data-role="cozinha"]
+) .compact-order.order-paid {
+  background: #edf7f0;
+}
+
+/* Cores por status para cozinha e garçom */
+#orders:is([data-role="cozinha"], [data-role="garcom"])
+.compact-order.aberto {
+  background: #fff7e8;
+}
+
+#orders:is([data-role="cozinha"], [data-role="garcom"])
+.compact-order.em_preparo {
+  background: #eef4ff;
+}
+
+#orders:is([data-role="cozinha"], [data-role="garcom"])
+.compact-order.pronto {
+  background: #edf9f2;
+}
+
+#orders:is([data-role="cozinha"], [data-role="garcom"])
+.compact-order.entregue {
+  background: #f5f1f8;
+}
+
+/* Pedidos prontos: verde claro em todos os perfis */
+body #main #orders .compact-order.pronto,
+body #main #orders .order.pronto,
+#order-detail #order-detail-content .order.pronto {
+  background: #edf9f2;
+}
+
+/* Cabeçalho e conteúdo acompanham o fundo verde */
+body #main #orders .order.pronto .order-head,
+body #main #orders .order.pronto .order-body,
+#order-detail #order-detail-content .order.pronto .order-head,
+#order-detail #order-detail-content .order.pronto .order-body {
+  background: transparent;
+}
