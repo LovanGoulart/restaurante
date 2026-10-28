@@ -2652,3 +2652,28 @@ video {
     max-width: 100%;
   }
 }
+
+/* Aproximar os filtros na tela Pedidos */
+.orders-toolbar.orders-filters {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.orders-filters > label {
+  flex: 0 1 260px;
+  min-width: 0;
+}
+
+/* Manter o horário de atualização à direita */
+.orders-filters #last-updated {
+  margin-left: auto;
+}
+
+@media (max-width: 600px) {
+  .orders-filters > label {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
+

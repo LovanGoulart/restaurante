@@ -1,29 +1,43 @@
+
 {% extends 'base.html' %}
 
+
+
 {% block content %}
+
   <div class="eyebrow">CONTROLE FINANCEIRO</div>
   <h1>Caixa e recebimentos</h1>
   <div class="management">
     <section class="panel">
       <h2>{{ 'Caixa aberto #' ~ caixa.id if caixa else 'Caixa fechado' }}</h2>
-      {% if caixa %}
+      
+{% if caixa %}
+
         <p>Fundo inicial: {{ caixa.inicial|brl }}</p>
         <p>Saldo esperado em dinheiro</p>
         <h1>{{ saldo|brl }}</h1>
         <p class="muted">Pix e cartões não compõem o saldo físico.</p>
-      {% endif %}
+      
+{% endif %}
+
       <form method="post">
         <input type="hidden" name="csrf" value="{{ csrf }}" />
         <label>
           Operação
           <select name="acao">
-            {% if caixa %}
+            
+{% if caixa %}
+
               <option value="fechar">Fechar caixa</option>
               <option value="sangria">Sangria</option>
               <option value="suprimento">Suprimento</option>
-            {% else %}
+            
+{% else %}
+
               <option value="abrir">Abrir caixa</option>
-            {% endif %}
+            
+{% endif %}
+
           </select>
         </label>
         <label>
@@ -39,7 +53,9 @@
     </section>
     <section class="panel">
       <h2>Movimentações do caixa atual</h2>
-      {% for m in moves %}
+      
+{% for m in moves %}
+
         <div class="list-row">
           <div>
             <b>{{ m.descricao }}</b>
@@ -47,26 +63,40 @@
           </div>
           <strong>{{ m.valor|brl }}</strong>
         </div>
-      {% else %}
+      
+{% else %}
+
         <p>Nenhuma movimentação.</p>
-      {% endfor %}
+      
+{% endfor %}
+
     </section>
   </div>
   <section class="panel">
     <h2>Histórico de caixas</h2>
-    {% for c in historico %}
+    
+{% for c in historico %}
+
       <div class="list-row">
         <span>
-          #{{ c.id }} · {{ c.aberto.strftime('%d/%m/%Y %H:%M') }} UTC ·
+          #{{ c.id }} · {{ c.aberto|data_br }} (Brasília) ·
           {{ 'Fechado' if c.fechado else 'Aberto' }}
         </span>
         <span>
           Inicial {{ c.inicial|brl }}
-          {% if c.contado is not none %}
+          
+{% if c.contado is not none %}
+
             · Contado {{ c.contado|brl }}
-          {% endif %}
+          
+{% endif %}
+
         </span>
       </div>
-    {% endfor %}
+    
+{% endfor %}
+
   </section>
+
 {% endblock %}
+

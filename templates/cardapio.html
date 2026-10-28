@@ -54,7 +54,7 @@
             data-category="{{ p.categoria_id }}"
             data-name="{{ p.nome|lower }}"
           >
-            <div class="food">{{ p.emoji }}</div>
+            <div class="food">{% set photo = appearance.photos.get(p.id|string) %}{% if photo %}<img src="{{ url_for('appearance.media', name=photo) }}" alt="{{ p.nome }}" loading="lazy">{% else %}{{ p.emoji }}{% endif %}</div>
             <div class="product-content">
               <small>{{ p.categoria.nome }}</small>
               <h3>{{ p.nome }}</h3>
@@ -95,6 +95,7 @@
         </div>
         <button class="bag-close icon-button" aria-label="Fechar sacola">×</button>
       </div>
+      <div class="online-bag-content">
       <div id="cart"><p class="empty">Escolha os produtos para começar.</p></div>
       <div class="checkout-details">
         <label>
@@ -134,6 +135,7 @@
           Pagamento na retirada ou entrega. O Pix precisa ser combinado e conferido pelo
           restaurante.
         </p>
+      </div>
       </div>
       <div class="bag-footer">
         <div class="fee-line">

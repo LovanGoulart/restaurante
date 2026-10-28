@@ -1,15 +1,23 @@
+
 {% extends 'base.html' %}
 
+
+
 {% block content %}
+
   <h1>{{ kind|capitalize }}</h1>
   <div class="management">
     <section class="panel">
       <h2>{{ 'Editar cadastro' if edit else 'Novo cadastro' }}</h2>
       <form method="post">
         <input type="hidden" name="csrf" value="{{ csrf }}" />
-        {% if edit %}
+        
+{% if edit %}
+
           <input type="hidden" name="id" value="{{ edit.id }}" />
-        {% endif %}
+        
+{% endif %}
+
         <label>
           Nome
           <input
@@ -19,7 +27,10 @@
             value="{{ edit.nome if edit else '' }}"
           />
         </label>
-        {% if kind=='produtos' %}
+        
+{% if kind=='produtos' %}
+
+          <p><a href="/personalizacao">📷 Gerenciar fotos dos produtos</a></p>
           <label>
             Descrição
             <textarea name="descricao" maxlength="500">
@@ -39,27 +50,51 @@
           <label>
             Categoria
             <select name="categoria_id" required>
-              {% for c in categorias %}
+              
+{% for c in categorias %}
+
                 <option
                   value="{{ c.id }}"
                   {{ 'selected' if edit and edit.categoria_id==c.id else '' }}
                 >
                   {{ c.nome }}
                 </option>
-              {% endfor %}
+              
+{% endfor %}
+
             </select>
           </label>
           <label>
             Ícone
             <input
+              id="product-emoji"
               name="emoji"
               maxlength="10"
               value="{{ edit.emoji if edit else '🍽️' }}"
             />
           </label>
-        {% endif %}
+        
+{% endif %}
 
-        {% if kind=='usuarios' %}
+
+        
+{% if kind=='produtos' %}
+
+<fieldset class="icon-picker"><legend>Escolha um ícone</legend>
+
+{% for icon in ['🍽️','🍔','🍕','🍟','🌭','🥪','🌮','🥗','🍝','🍛','🍗','🥩','🐟','🍣','🍤','🥟','🥖','🧀','🥚','🍰','🧁','🍫','🍦','🍩','🍓','🍎','☕','🥤','🧃','🍺','🍷','💧'] %}
+
+<button type="button" data-product-icon="{{ icon }}" aria-label="Selecionar ícone {{ icon }}">{{ icon }}</button>
+
+{% endfor %}
+</fieldset>
+
+{% endif %}
+
+
+
+{% if kind=='usuarios' %}
+
           <label>
             Login
             <input
@@ -82,16 +117,24 @@
           <label>
             Perfil
             <select name="perfil">
-              {% for r in ['admin','garcom','cozinha','entregador'] %}
+              
+{% for r in ['admin','garcom','cozinha','entregador'] %}
+
                 <option {{ 'selected' if edit and edit.perfil==r else '' }}>
                   {{ r }}
                 </option>
-              {% endfor %}
+              
+{% endfor %}
+
             </select>
           </label>
-        {% endif %}
+        
+{% endif %}
 
-        {% if kind!='categorias' %}
+
+        
+{% if kind!='categorias' %}
+
           <label class="check">
             <input
               type="checkbox"
@@ -100,35 +143,55 @@
             />
             Ativo
           </label>
-        {% endif %}
+        
+{% endif %}
+
         <button>Salvar cadastro</button>
-        {% if edit %}
+        
+{% if edit %}
+
           <a href="/cadastros/{{ kind }}">Cancelar edição</a>
-        {% endif %}
+        
+{% endif %}
+
       </form>
     </section>
     <section class="panel">
       <h2>Cadastros existentes</h2>
-      {% for r in rows %}
+      
+{% for r in rows %}
+
         <div class="list-row">
           <div>
             <b>{{ r.nome }}</b>
-            {% if kind=='produtos' %}
+            
+{% if kind=='produtos' %}
+
               <p>
                 {{ r.preco|brl }} · {{ r.categoria.nome }} ·
                 {{ 'Ativo' if r.ativo else 'Inativo' }}
               </p>
-            {% elif kind=='usuarios' %}
+            
+{% elif kind=='usuarios' %}
+
               <p>
                 {{ r.login }} · {{ r.perfil }} · {{ 'Ativo' if r.ativo else 'Inativo' }}
               </p>
-            {% endif %}
+            
+{% endif %}
+
           </div>
           <a href="?editar={{ r.id }}">Editar →</a>
         </div>
-      {% else %}
+      
+{% else %}
+
         <p>Nenhum cadastro.</p>
-      {% endfor %}
+      
+{% endfor %}
+
     </section>
   </div>
+
 {% endblock %}
+

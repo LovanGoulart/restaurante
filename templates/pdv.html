@@ -4,15 +4,11 @@
   <section class="hero">
     <div>
       <div class="eyebrow">DO SALÃO PARA A COZINHA, SEM COMPLICAÇÃO</div>
-      <h1>
-        Bom atendimento.
-        <br />
-        Pedido no ponto.
-      </h1>
-      <p>Escolha os itens, informe a mesa e pronto.</p>
+      <h1>{{ appearance.title }}</h1>
+      <p>{{ appearance.subtitle }}</p>
       <span class="badge">● Atendimento no salão</span>
     </div>
-    <div class="hero-art" aria-hidden="true">
+    {% if appearance.cover %}<img class="pdv-cover" src="{{ url_for('appearance.media', name=appearance.cover) }}" alt="Capa do restaurante">{% else %}<div class="hero-art" aria-hidden="true">
       <span class="hero-food">🍔</span>
       <span class="hero-sticker">
         Feito na hora
@@ -20,6 +16,7 @@
         <b>servido com carinho.</b>
       </span>
     </div>
+    {% endif %}
   </section>
   <div class="pdv">
     <section>
@@ -52,7 +49,7 @@
             data-category="{{ p.categoria_id }}"
             data-name="{{ p.nome|lower }}"
           >
-            <div class="food">{{ p.emoji }}</div>
+            <div class="food">{% set photo = appearance.photos.get(p.id|string) %}{% if photo %}<img src="{{ url_for('appearance.media', name=photo) }}" alt="{{ p.nome }}" loading="lazy">{% else %}{{ p.emoji }}{% endif %}</div>
             <div class="product-content">
               <small>{{ p.categoria.nome }}</small>
               <h3>{{ p.nome }}</h3>

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Personalização e fotos</h1>
+<p>Configure a identidade do restaurante e as imagens exibidas no cardápio.</p>
+{% if request.args.get('saved') %}<p role="status" class="panel">Alterações salvas.</p>{% endif %}
+<div class="management personalizacao-layout"><section class="panel"><h2>Identidade e capa do PDV</h2>
+<form method="post" enctype="multipart/form-data">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<label>Nome do restaurante<input name="name" value="{{ restaurant_name }}" maxlength="100" required></label>
+{% for key, label in [('navy','Menu superior'),('orange','Cor principal e botões'),('accent','Destaques'),('bg','Fundo das páginas')] %}
+<label>{{ label }}<input type="color" name="{{ key }}" value="{{ appearance[key] }}"></label>{% endfor %}
+<label>Título da capa<input name="title" value="{{ appearance.title }}" maxlength="180" required></label>
+<label>Descrição da capa<input name="subtitle" value="{{ appearance.subtitle }}" maxlength="180" required></label>
+{% if appearance.cover %}<img class="media-preview" src="{{ url_for('appearance.media', name=appearance.cover) }}" alt="Capa atual">{% endif %}
+<label>Imagem da capa<input type="file" name="cover" accept="image/jpeg,image/png,image/webp"></label>
+<label class="check"><input type="checkbox" name="remove_cover">Restaurar ilustração original</label>
+<p>JPG, PNG ou WebP, até 5 MB por imagem. Escolha cores com bom contraste.</p>
+<button>Salvar identidade visual</button></form></section>
+<section class="panel product-photos-panel">
+  <h2>Fotos dos produtos</h2>
+  <p class="muted">
+    As fotos aparecem no PDV e no cardápio público.
+    JPG, PNG ou WebP, até 5 MB.
+  </p>
+
+  <div class="product-photos-grid">
+    {% for p in products %}
+      {% set photo = appearance.photos.get(p.id|string) %}
+
+      <form
+        class="photo-form product-photo-card"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <input type="hidden" name="csrf" value="{{ csrf }}">
+        <input type="hidden" name="action" value="photo">
+        <input type="hidden" name="product_id" value="{{ p.id }}">
+
+        <div class="product-photo-image">
+          {% if photo %}
+            <img
+              src="{{ url_for('appearance.media', name=photo) }}"
+              alt="{{ p.nome }}"
+              loading="lazy"
+            >
+          {% else %}
+            <span aria-hidden="true">{{ p.emoji or '🍽️' }}</span>
+            <small>Sem foto cadastrada</small>
+          {% endif %}
+        </div>
+
+        <div class="product-photo-content">
+          <h3>{{ p.nome }}</h3>
+
+          <label>
+            {{ 'Trocar foto' if photo else 'Adicionar foto' }}
+            <input
+              type="file"
+              name="photo"
+              accept="image/jpeg,image/png,image/webp"
+            >
+          </label>
+
+          {% if photo %}
+            <label class="check">
+              <input type="checkbox" name="remove">
+              Remover foto e usar ícone
+            </label>
+          {% endif %}
+
+          <button type="submit">Salvar foto</button>
+        </div>
+      </form>
+    {% else %}
+      <p>Cadastre produtos para adicionar fotos.</p>
+    {% endfor %}
+  </div>
+</section></div>{% endblock %}

@@ -1,25 +1,42 @@
+
 {% extends 'base.html' %}
 
+
+
 {% block content %}
+
   <div class="eyebrow">VISÃO GERAL · DIA ATUAL · HORÁRIO DE BRASÍLIA</div>
   <h1>O ritmo do seu restaurante</h1>
   <div class="stats">
-    {% for label,value in [('Pedidos',orders|length),('Vendas',total|brl),('Recebido',recebido|brl),('Pedidos não pagos',pendentes)] %}
+    
+{% for label,value in [('Pedidos',orders|length),('Vendas',total|brl),('Recebido',recebido|brl),('Pedidos não pagos',pendentes)] %}
+
       <article class="panel">
         <p>{{ label }}</p>
         <h1>{{ value }}</h1>
       </article>
-    {% endfor %}
+    
+{% endfor %}
+
   </div>
   <section class="panel">
     <h2>Pedidos do dia</h2>
-    {% for p in orders %}
+    <p class="muted">A receber primeiro; dentro de cada grupo: prontos, em preparo, abertos, em entrega e entregues.</p>
+    
+{% for p in orders %}
+
       <div class="list-row">
         <span>#{{ p.id }} · {{ p.mesa }} · {{ p.status.replace('_',' ') }}</span>
         <b>{{ p.total|brl }} · {{ 'Pago' if p.pago else 'A receber' }}</b>
       </div>
-    {% else %}
+    
+{% else %}
+
       <p>O primeiro pedido do dia está por vir.</p>
-    {% endfor %}
+    
+{% endfor %}
+
   </section>
+
 {% endblock %}
+

@@ -1,0 +1,493 @@
+.food {
+  overflow: hidden;
+}
+.food img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pdv-cover {
+  width: 40%;
+  max-height: 280px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+.media-preview {
+  width: 100%;
+  max-width: 260px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.photo-form {
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+}
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+  gap: 18px;
+}
+.overview-card {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.overview-card ul {
+  padding-left: 20px;
+}
+.overview-pages {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px;
+}
+.brand > span {
+  max-width: 170px;
+  overflow-wrap: anywhere;
+}
+.desktop-nav {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.hero {
+  overflow: hidden;
+}
+@media (max-width: 850px) {
+  .pdv-cover {
+    width: 100%;
+    max-height: 180px;
+  }
+  .hero:has(.pdv-cover) {
+    flex-wrap: wrap;
+  }
+  .brand > span {
+    max-width: 135px;
+  }
+}
+
+.compact-orders {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 14px;
+  align-items: start;
+}
+.compact-order {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: white;
+  color: var(--ink);
+  text-align: left;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--orange);
+  border-radius: 14px;
+  min-width: 0;
+  box-shadow: var(--shadow);
+}
+.compact-order.pronto {
+  border-top-color: var(--green);
+}
+.compact-order.em_preparo {
+  border-top-color: var(--blue);
+}
+.compact-order.entregue {
+  border-top-color: #8771ad;
+}
+.compact-order.saiu_entrega {
+  border-top-color: #754ac7;
+}
+.compact-order:hover {
+  background: #f8fafc;
+}
+.compact-order:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.compact-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.compact-heading strong {
+  font-size: 20px;
+}
+.compact-items {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 14px;
+}
+.order-detail {
+  width: min(760px, 94vw);
+  max-width: 94vw;
+  max-height: 90dvh;
+  overflow: auto;
+}
+.order-detail .order {
+  margin-bottom: 0;
+}
+.icon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+}
+.icon-picker button {
+  background: #eef2f8;
+  color: var(--ink);
+  padding: 4px;
+  width: 44px;
+  min-height: 44px;
+  font-size: 25px;
+}
+.icon-picker button[aria-pressed="true"] {
+  outline: 3px solid var(--orange);
+}
+
+/* Configurações à esquerda e produtos à direita */
+.personalizacao-layout {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.personalizacao-layout > .panel {
+  min-width: 0;
+}
+
+.product-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+/* Card individual do produto */
+.photo-form.product-photo-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.product-photo-image {
+  height: 145px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #f1f4f8;
+}
+
+.product-photo-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-photo-image > span {
+  font-size: 48px;
+}
+
+.product-photo-image > small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.product-photo-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+  padding: 13px;
+}
+
+.product-photo-content h3 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.product-photo-content label {
+  margin: 0;
+  font-size: 12px;
+}
+
+.product-photo-content input[type="file"] {
+  width: 100%;
+  min-width: 0;
+  padding: 7px;
+  font-size: 12px;
+}
+
+.product-photo-content .check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.product-photo-content .check input {
+  flex-shrink: 0;
+}
+
+.product-photo-content > button {
+  width: 100%;
+  min-height: 40px;
+  margin-top: auto;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+@media (max-width: 950px) {
+  .personalizacao-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Manter o comportamento atual no celular */
+.online-bag-content {
+  display: contents;
+}
+
+/* Sacola do cliente no desktop */
+@media (min-width: 851px) {
+  .pdv:has(> .online-bag) {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 20px;
+  }
+
+  #bag.online-bag {
+    position: sticky;
+    top: calc(var(--header) + 12px);
+    height: calc(100dvh - var(--header) - 24px);
+    max-height: calc(100dvh - var(--header) - 24px);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+
+  /* Título sempre visível */
+  #bag.online-bag .bag-heading {
+    flex-shrink: 0;
+    margin-bottom: 12px;
+  }
+
+  /* Única área de rolagem */
+  #bag.online-bag .online-bag-content {
+    display: block;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    padding-right: 8px;
+  }
+
+  /* Remover a rolagem e o limite interno dos itens */
+  #bag.online-bag #cart {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+  }
+
+  #bag.online-bag .cart-item {
+    padding: 12px 0;
+  }
+
+  #bag.online-bag .cart-item > b {
+    display: block;
+    font-size: 17px;
+    line-height: 1.35;
+  }
+
+  #bag.online-bag .quantity {
+    gap: 8px;
+  }
+
+  #bag.online-bag .quantity button {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    font-size: 19px;
+  }
+
+  #bag.online-bag .quantity strong {
+    font-size: 15px;
+  }
+
+  #bag.online-bag .checkout-details {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  /* Total e confirmação sempre visíveis */
+  #bag.online-bag .bag-footer {
+    flex-shrink: 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    background: #fff;
+  }
+
+  #bag.online-bag .total {
+    padding: 10px 0;
+  }
+
+  #bag.online-bag .bag-footer > button {
+    min-height: 46px;
+  }
+}
+
+/* Mais largura em monitores maiores */
+@media (min-width: 1200px) {
+  .pdv:has(> .online-bag) {
+    grid-template-columns: minmax(0, 1fr) 430px;
+  }
+}
+
+/* Sacola do cliente no celular */
+@media (max-width: 850px) {
+  #bag.online-bag {
+    height: 95dvh;
+    max-height: 95dvh;
+    padding: 14px 14px calc(12px + env(safe-area-inset-bottom));
+    overflow: hidden;
+  }
+
+  /* Título e botão de fechar sempre visíveis */
+  #bag.online-bag .bag-heading {
+    flex-shrink: 0;
+    margin-bottom: 10px;
+  }
+
+  #bag.online-bag .bag-heading h2 {
+    font-size: 22px;
+  }
+
+  /* Uma única rolagem para produtos e opções */
+  #bag.online-bag .online-bag-content {
+    display: block;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 5px;
+  }
+
+  #bag.online-bag #cart {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+  }
+
+  /* Separar e destacar os produtos */
+  #bag.online-bag .cart-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--orange);
+    border-radius: 12px;
+    background: #f7f9fc;
+  }
+
+  #bag.online-bag .cart-item > b {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 18px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  #bag.online-bag .quantity {
+    gap: 8px;
+  }
+
+  #bag.online-bag .quantity button {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0;
+    font-size: 20px;
+  }
+
+  #bag.online-bag .quantity strong {
+    font-size: 16px;
+  }
+
+  #bag.online-bag .cart-item textarea {
+    min-height: 40px;
+    margin-top: 8px;
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  #bag.online-bag .checkout-details {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  /* Total e confirmação fixos na base da sacola */
+  #bag.online-bag .bag-footer {
+    flex-shrink: 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    background: #fff;
+  }
+
+  #bag.online-bag .total {
+    padding: 10px 0;
+  }
+
+  #bag.online-bag .bag-footer > button {
+    min-height: 46px;
+  }
+}
+
+/* Meus pedidos: esconder os contadores de cada status */
+body:has(#orders[data-role="cliente"]) #status-summary {
+  display: none;
+}
+
+/* Esconder o filtro, mantendo o horário da atualização */
+body:has(#orders[data-role="cliente"])
+.orders-toolbar > label:has(#status-filter) {
+  display: none;
+}
+
+/* Um pedido por linha */
+#orders[data-role="cliente"] {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 760px;
+  margin-inline: auto;
+  gap: 16px;
+}
+
+#orders[data-role="cliente"] .order {
+  margin-bottom: 0;
+}
+
+#orders[data-role="cliente"] .pill {
+  font-size: 14px;
+  padding: 8px 12px;
+}

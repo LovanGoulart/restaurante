@@ -16,7 +16,7 @@ from flask import (
     send_from_directory,
 )
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import update
+from sqlalchemy import update, case
 from models import db, Usuario, Categoria, Produto, Pedido, Item, Caixa, Movimento
 from config import Config
 from notifications import bp as notifications_bp, emit_order
@@ -33,10 +33,24 @@ def create_app(overrides=None):
     app.config.from_object(Config)
     if overrides:
         app.config.update(overrides)
+    from appearance import bp as appearance_bp
+
+    app.register_blueprint(appearance_bp)
+    app.config["MAX_CONTENT_LENGTH"] = 6 * 1024 * 1024
     db.init_app(app)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(customers_bp)
     app.register_blueprint(couriers_bp)
+
+    @app.template_filter("data_br")
+    def data_br(value):
+        if not value:
+            return ""
+        return (
+            value.replace(tzinfo=timezone.utc)
+            .astimezone(ZoneInfo("America/Sao_Paulo"))
+            .strftime("%d/%m/%Y %H:%M")
+        )
 
     @app.template_filter("brl")
     def brl(v):
@@ -210,6 +224,8 @@ def create_app(overrides=None):
 
     @app.get("/")
     def home():
+        if g.user and g.user.perfil == "admin":
+            return redirect(url_for("pedidos"))
         if not g.user or g.user.perfil == "cliente":
             return redirect(url_for("customers.menu"))
         if g.user.perfil == "entregador":
@@ -237,7 +253,15 @@ def create_app(overrides=None):
     @app.get("/api/pedidos")
     @access("admin", "garcom", "cozinha")
     def list_orders():
-        q = db.select(Pedido).order_by(Pedido.id.desc()).limit(200)
+        priority = case(
+            (Pedido.status == "aberto", 0),
+            (Pedido.status == "pronto", 1),
+            (Pedido.status == "em_preparo", 2),
+            (Pedido.status == "saiu_entrega", 3),
+            (Pedido.status == "entregue", 4),
+            else_=5,
+        )
+        q = db.select(Pedido).order_by(priority, Pedido.id.desc()).limit(200)
         if g.user.perfil == "garcom":
             q = q.where(~Pedido.online.has())
         if g.user.perfil == "cozinha":
@@ -518,6 +542,14 @@ def create_app(overrides=None):
         orders = db.session.scalars(
             db.select(Pedido).where(Pedido.criado >= start, Pedido.criado < end)
         ).all()
+        priority = {
+            "pronto": 0,
+            "em_preparo": 1,
+            "aberto": 2,
+            "saiu_entrega": 3,
+            "entregue": 4,
+        }
+        orders.sort(key=lambda p: (p.pago, priority.get(p.status, 5), -p.id))
         return render_template(
             "dashboard.html",
             orders=orders,

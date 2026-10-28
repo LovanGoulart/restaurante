@@ -84,6 +84,19 @@ if (orders) {
     paymentId = null,
     driverOptions = [];
   const choices = new Map();
+  const detail = document.querySelector("#order-detail");
+  let selectedOrder = null;
+  const fullCards = new Map();
+  function showDetail(id) {
+    selectedOrder = id;
+    document.querySelector("#order-detail-content").innerHTML =
+      fullCards.get(id) || "<p>Pedido não disponível. Atualize a lista.</p>";
+    if (!detail.open) detail.showModal();
+  }
+  if (detail)
+    detail.addEventListener("close", () => {
+      selectedOrder = null;
+    });
   const labels = {
       aberto: "Aberto",
       em_preparo: "Em preparo",
@@ -323,6 +336,27 @@ if (orders) {
         })
         .join("") ||
       '<div class="panel empty"><span>✓</span><h3>Nenhum pedido por aqui.</h3><p>Os pedidos deste perfil aparecerão aqui.</p></div>';
+    if (detail) {
+      orders.classList.add("compact-orders");
+      fullCards.clear();
+      const visible = list.filter(
+        (p) =>
+          (!filter || (filter === "nao_pago" ? !p.pago : p.status === filter)) &&
+          (!channel || p.modalidade === channel),
+      );
+      const articles = [...orders.querySelectorAll("article.order")];
+      articles.forEach((article, index) => {
+        const p = visible[index];
+        fullCards.set(p.id, article.outerHTML);
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "compact-order " + p.status;
+        card.dataset.detail = p.id;
+        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${labels[p.status]}</span></span><span>Pedido #${p.id} · ${escapeHTML(p.cliente || p.garcom)}</span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? "Pago" : "Não pago"}</b></span><small>Ver detalhes e ações →</small>`;
+        article.replaceWith(card);
+      });
+      if (detail.open && selectedOrder !== null) showDetail(selectedOrder);
+    }
   }
   async function refresh() {
     if (busy || fetching) {
@@ -358,9 +392,14 @@ if (orders) {
       render();
     }
   };
-  orders.addEventListener("click", async (e) => {
+  async function orderAction(e) {
+    const open = e.target.closest("[data-detail]");
+    if (open) {
+      showDetail(Number(open.dataset.detail));
+      return;
+    }
     const b = e.target.closest("button");
-    if (!b) return;
+    if (!b || !(b.dataset.assign || b.dataset.pay || b.dataset.status)) return;
     if (b.dataset.assign) {
       const id = Number(b.dataset.assign),
         driver = Number(document.querySelector("#courier-" + id).value);
@@ -402,6 +441,12 @@ if (orders) {
       busy = false;
       refresh();
     }
+  }
+  orders.addEventListener("click", orderAction);
+  detail?.addEventListener("click", orderAction);
+  detail?.addEventListener("change", (e) => {
+    if (e.target.dataset.courierSelect)
+      choices.set(Number(e.target.dataset.courierSelect), e.target.value);
   });
   document.querySelector("#payment-confirm").onclick = async (e) => {
     if (!paymentId) return;

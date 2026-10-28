@@ -1,11 +1,15 @@
+
 {% extends 'base.html' %}
 
+
+
 {% block content %}
+
   <div class="section-head">
     <div>
       <div class="eyebrow">SALÃO E COZINHA CONECTADOS</div>
       <h1>
-        {{ 'Acompanhe seu pedido.' if customer else 'Vamos preparar?' if user.perfil=='cozinha' else 'Cada pedido, no seu tempo.' }}
+        {{ 'Acompanhe seu pedido.' if customer else 'Vamos preparar?' if user.perfil=='cozinha' else 'Pedidos' }}
       </h1>
       <p class="page-subtitle">
         {{ 'O andamento aparece aqui automaticamente.' if customer else 'Os novos pedidos aparecem aqui automaticamente.' if user.perfil=='cozinha' else 'Pedidos do salão e online, conforme seu acesso.' }}
@@ -14,7 +18,7 @@
     <button id="orders-refresh" class="secondary">↻ Atualizar agora</button>
   </div>
   <div class="status-summary" id="status-summary"></div>
-  <div class="orders-toolbar">
+  <div class="orders-toolbar orders-filters">
     <label>
       Filtrar pedidos
       <select id="status-filter">
@@ -27,7 +31,9 @@
         <option value="nao_pago">Não pagos</option>
       </select>
     </label>
-    {% if user.perfil in ['admin','cozinha'] %}
+    
+{% if user.perfil in ['admin','cozinha'] %}
+
       <label>
         Origem
         <select id="channel-filter">
@@ -37,7 +43,9 @@
           <option value="entrega">Tele-entrega</option>
         </select>
       </label>
-    {% endif %}
+    
+{% endif %}
+
     <span id="last-updated" class="muted"></span>
   </div>
   <p id="poll-error" class="error" role="alert" hidden></p>
@@ -49,6 +57,16 @@
   >
     <div class="panel">Carregando pedidos…</div>
   </div>
+  
+{% if user.perfil == 'admin' %}
+
+  <dialog id="order-detail" class="app-dialog order-detail">
+    <div class="dialog-head"><h2>Detalhes do pedido</h2><button type="button" class="icon-button" data-close aria-label="Fechar detalhes">×</button></div>
+    <div id="order-detail-content"></div>
+  </dialog>
+  
+{% endif %}
+
   <dialog id="payment-dialog" class="app-dialog">
     <div class="dialog-head">
       <h2>Confirmar recebimento</h2>
@@ -72,4 +90,6 @@
     </p>
     <button id="payment-confirm">Confirmar pagamento</button>
   </dialog>
+
 {% endblock %}
+

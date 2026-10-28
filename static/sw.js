@@ -1,5 +1,7 @@
-const CACHE = "restaurant-v3.2";
+const CACHE = "restaurant-v3.4-pedidos-br";
 const ASSETS = [
+  "/static/js/br-fields.js",
+  "/static/css/appearance.css",
   "/static/css/style.css",
   "/static/js/app.js",
   "/static/js/sound.js",
