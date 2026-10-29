@@ -183,7 +183,7 @@ if (orders) {
   }
   function titleFor(p) {
     return p.canal === "salao"
-      ? "Código do cliente - " + p.mesa
+      ? "Comanda: " + p.mesa
       : p.modalidade === "entrega"
         ? "Tele-entrega"
         : "Retirada no caixa";
@@ -375,6 +375,26 @@ if (orders) {
       </article>
     `;
   }
+  function normalizarComanda(valor) {
+  return String(valor ?? "")
+    .replace(/\D/g, "")
+    .replace(/^0+(?=\d)/, "");
+  }
+
+  function correspondeComanda(pedido) {
+    const campo = document.querySelector("#comanda-search");
+    const busca = campo?.value.trim() || "";
+
+    if (!busca) return true;
+
+    const numero = normalizarComanda(busca);
+
+    return (
+      numero !== "" &&
+      pedido.modalidade === "salao" &&
+      normalizarComanda(pedido.mesa) === numero
+    );
+  }
   function render() {
     const filter = document.querySelector("#status-filter").value,
       role = orders.dataset.role,
@@ -394,7 +414,8 @@ if (orders) {
         .filter(
           (p) =>
             (!filter || (filter === "nao_pago" ? !p.pago : p.status === filter)) &&
-            (!channel || p.modalidade === channel),
+            (!channel || p.modalidade === channel) &&
+            correspondeComanda(p),
         )
         .map((p) => orderHTML(p, role))
         .join("") ||
@@ -405,7 +426,8 @@ if (orders) {
       const visible = list.filter(
         (p) =>
           (!filter || (filter === "nao_pago" ? !p.pago : p.status === filter)) &&
-          (!channel || p.modalidade === channel),
+          (!channel || p.modalidade === channel) &&
+          correspondeComanda(p),
       );
       const articles = [...orders.querySelectorAll("article.order")];
       articles.forEach((article, index) => {
@@ -583,6 +605,57 @@ if (orders) {
       choices.set(Number(e.target.dataset.courierSelect), e.target.value);
   });
   document.querySelector("#status-filter").onchange = render;
+  const comandaSearch = document.querySelector("#comanda-search");
+
+if (comandaSearch) {
+  function buscarComanda() {
+    // Durante a busca, mostra a comanda independentemente
+    // dos filtros de situação e origem selecionados.
+    if (comandaSearch.value.trim()) {
+      document.querySelector("#status-filter").value = "";
+
+      const origem = document.querySelector("#channel-filter");
+      if (origem) origem.value = "";
+    }
+
+    render();
+  }
+
+  comandaSearch.addEventListener("input", buscarComanda);
+  comandaSearch.addEventListener("search", buscarComanda);
+
+ comandaSearch.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") return;
+
+  event.preventDefault();
+
+  const numero = normalizarComanda(comandaSearch.value);
+  if (!numero) return;
+
+  buscarComanda();
+
+  const encontrados = list
+    .filter(
+      (pedido) =>
+        pedido.modalidade === "salao" &&
+        normalizarComanda(pedido.mesa) === numero
+    )
+    .sort(
+      (a, b) =>
+        Number(a.pago) - Number(b.pago) ||
+        b.id - a.id
+    );
+
+  const pedido = encontrados[0];
+
+  if (pedido) {
+    showDetail(pedido.id);
+  } else {
+    alert("Nenhum pedido encontrado para essa comanda.");
+    comandaSearch.select();
+  }
+ });
+}
   document.querySelector("#channel-filter")?.addEventListener("change", render);
   document.querySelector("#orders-refresh").onclick = refresh;
   window.addEventListener("orders-updated", refresh);

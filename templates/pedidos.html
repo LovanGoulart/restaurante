@@ -29,6 +29,18 @@
   </div>
   <div class="status-summary" id="status-summary"></div>
   <div class="orders-toolbar orders-filters">
+    {% if user.perfil == 'admin' %}
+  <label>
+    Buscar comanda
+    <input
+      type="search"
+      id="comanda-search"
+      placeholder="Digite ou bipe a comanda"
+      inputmode="numeric"
+      autocomplete="off"
+    >
+  </label>
+{% endif %}
     <label>
       Filtrar pedidos
       <select id="status-filter">

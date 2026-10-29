@@ -245,3 +245,10 @@ body:has([data-role="garcom"])
 .compact-order.entregue:not(.order-paid) {
   background: #fff !important;
 }
+
+/* Busca de comanda alinhada aos filtros */
+.orders-filters #comanda-search {
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+}
