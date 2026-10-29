@@ -264,21 +264,43 @@ def create_app(overrides=None):
                 else_=5,
             )
 
+            # Tele-entregas prontas aguardando encaminhamento ficam no topo.
+            tele_entrega_pronta = (
+                (Pedido.status == "pronto")
+                & Pedido.online.has(modalidade="entrega")
+            )
+
             q = q.order_by(
+                case(
+                    (tele_entrega_pronta, 0),
+                    else_=1,
+                ),
                 Pedido.pago.asc(),
                 priority,
                 Pedido.id.desc(),
             )
         elif g.user.perfil == "garcom":
-            # O garçom consulta somente os pedidos do salão.
             priority = case(
                 (Pedido.status == "pronto", 0),
                 (Pedido.status == "em_preparo", 1),
                 (Pedido.status == "aberto", 2),
-                (Pedido.status == "entregue", 3),
-                else_=4,
+                else_=3,
             )
-            q = q.where(~Pedido.online.has()).order_by(priority, Pedido.id.desc())
+
+            q = (
+                db.select(Pedido)
+                .where(
+                    # Somente pedidos registrados no PDV do salão.
+                    Pedido.online.has(),
+
+                    # Entregues ficam fora da lista do garçom.
+                    Pedido.status.in_(["aberto", "em_preparo", "pronto"]),
+                )
+                .order_by(
+                    priority,
+                    Pedido.id.desc(),
+                )
+            )
         elif g.user.perfil == "cozinha":
             # Pedidos prontos deixam a fila da cozinha.
             priority = case(
@@ -291,6 +313,15 @@ def create_app(overrides=None):
             )
         q = q.limit(200)
         return jsonify([serialize_order(p, g.user) for p in db.session.scalars(q)])
+
+    @app.get("/api/pedidos/<int:id>/detalhes")
+    @access("admin", "garcom", "cozinha", "cliente")
+    def order_details(id):
+        p = db.get_or_404(Pedido, id)
+        own(p)
+        if g.user.perfil == "cliente" and (not p.online or p.usuario_id != g.user.id):
+            abort(403)
+        return jsonify(serialize_order(p, g.user))
 
     @app.post("/api/pedidos")
     @access("admin", "garcom")
@@ -315,10 +346,14 @@ def create_app(overrides=None):
         p = db.get_or_404(Pedido, id)
         own(p)
         target = (request.get_json(silent=True) or {}).get("status")
-        if target == "entregue" and p.entrega and not p.entrega.entregue_em:
+        if (
+            target == "entregue"
+            and p.online
+            and p.online.modalidade == "entrega"
+        ):
             abort(
                 409,
-                "A entrega atribuída deve ser concluída pelo entregador com o registro do recebimento.",
+                "A tele-entrega deve ser confirmada pelo entregador."
             )
         allowed = {
             "aberto": "em_preparo",

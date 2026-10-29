@@ -80,7 +80,9 @@ def process_pending(send=None):
                     "/entregas"
                     if u.perfil == "entregador"
                     else "/meus-pedidos" if u.perfil == "cliente" else "/pedidos"
-                ),
+                )
+                + "?pedido="
+                + str(n.pedido_id),
             },
             ensure_ascii=False,
         )

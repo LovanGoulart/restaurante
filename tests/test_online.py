@@ -394,7 +394,7 @@ class Online(unittest.TestCase):
         notices = self.client.get("/api/notificacoes").json["items"]
         self.assertTrue(
             any(
-                n["tipo"] == "saiu_entrega" and n["url"] == "/meus-pedidos"
+                n["tipo"] == "saiu_entrega" and n["url"] == f"/meus-pedidos?pedido={id}"
                 for n in notices
             )
         )

@@ -87,20 +87,90 @@ if (orders) {
   const detail = document.querySelector("#order-detail");
   let selectedOrder = null;
   const fullCards = new Map();
+  const desktopBackdrop = document.createElement("div");
+  desktopBackdrop.className = "order-detail-backdrop";
+  desktopBackdrop.hidden = true;
+  document.body.append(desktopBackdrop);
+  let detailTrigger = null;
   function showDetail(id) {
+    const html = fullCards.get(id);
+    if (!detail || !html) {
+      if (detail?.open) detail.close();
+      return;
+    }
     selectedOrder = id;
-    document.querySelector("#order-detail-content").innerHTML =
-      fullCards.get(id) || "<p>Pedido não disponível. Atualize a lista.</p>";
-    if (!detail.open) detail.showModal();
+    const content = document.querySelector("#order-detail-content");
+    const container = document.createElement("div");
+    container.innerHTML = html;
+    const normalized = container.firstElementChild.outerHTML;
+    if (content.firstElementChild?.outerHTML !== normalized)
+      content.innerHTML = normalized;
+    if (!detail.open) {
+      detailTrigger = document.activeElement;
+      if (orders.dataset.role === "admin" && matchMedia("(min-width: 851px)").matches) {
+        detail.classList.add("desktop-page-detail");
+        detail.setAttribute("aria-modal", "true");
+        detail.style.top = "";
+        desktopBackdrop.hidden = false;
+        detail.show();
+      } else detail.showModal();
+      detail.querySelector("[data-close]")?.focus({ preventScroll: true });
+    }
   }
-  if (detail)
+  desktopBackdrop.onclick = () => detail?.close();
+  if (detail) {
     detail.addEventListener("close", () => {
       selectedOrder = null;
+      linkedOrder = null;
+      desktopBackdrop.hidden = true;
+      detail.classList.remove("desktop-page-detail");
+      detail.removeAttribute("aria-modal");
+      detail.style.top = "";
+      if (detailTrigger?.isConnected) detailTrigger.focus({ preventScroll: true });
     });
+    document.addEventListener("keydown", (e) => {
+      if (
+        !detail.open ||
+        !detail.classList.contains("desktop-page-detail") ||
+        document.querySelector("#payment-dialog")?.open
+      )
+        return;
+      if (e.key === "Escape") {
+        detail.close();
+        e.preventDefault();
+      }
+      if (e.key === "Tab") {
+        const focusable = [
+          ...detail.querySelectorAll(
+            "button:not(:disabled),a[href],select,input:not([type=hidden])",
+          ),
+        ];
+        const first = focusable[0],
+          last = focusable.at(-1);
+        if (e.shiftKey && document.activeElement === first) {
+          last?.focus();
+          e.preventDefault();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          first?.focus();
+          e.preventDefault();
+        }
+      }
+    });
+  }
+  let linkedOrder = null;
+  let requestedOrder =
+    Number(new URLSearchParams(location.search).get("pedido")) || null;
   const labels = {
-      aberto: "Aberto",
+      aberto:
+        ["admin", "garcom"].includes(orders.dataset.role)
+          ? "Enviado à cozinha"
+          : orders.dataset.role === "cozinha"
+            ? "Pendente"
+            : "Aberto",
       em_preparo: "Em preparo",
-      pronto: "Pronto",
+      pronto: ["admin", "garcom"].includes(orders.dataset.role)
+        ? "Pedido pronto"
+        : "Pronto",
       saiu_entrega: "Saiu para entrega",
       entregue: "Entregue",
     },
@@ -120,7 +190,7 @@ if (orders) {
   }
   function titleFor(p) {
     return p.canal === "salao"
-      ? "Código do cliente - " + p.mesa
+      ? "Comanda: " + p.mesa
       : p.modalidade === "entrega"
         ? "Tele-entrega"
         : "Retirada no caixa";
@@ -199,11 +269,148 @@ if (orders) {
       `
     );
   }
+  function orderHTML(p, role) {
+    const online = p.canal === "online",
+      next = nextFor(p),
+      canAct =
+        next &&
+        !(
+          role === "admin" &&
+          p.modalidade === "entrega" &&
+          (p.status === "pronto" || (p.status === "saiu_entrega" && p.entregador))
+        ) &&
+        (role === "admin" ||
+          (role === "cozinha" && ["aberto", "em_preparo"].includes(p.status)) ||
+          (role === "garcom" && !online && p.status === "pronto"));
+    return /* HTML */ `
+      <article
+        data-order-id="${p.id}"
+        class="panel order ${p.status} ${p.pago ? "order-paid" : ""} ${online ? "online-order" : ""}"
+      >
+        <div class="order-head">
+          <div class="table-badge">
+            <small>${online ? "PEDIDO ONLINE" : "MESA"}</small>
+            <strong class="${online ? "online-title" : ""}">
+              ${online ? (p.modalidade === "entrega" ? "Tele-entrega" : "Retirada no caixa") : escapeHTML(p.mesa.replace(/^mesa\s*/i, "")) || escapeHTML(p.mesa)}
+            </strong>
+            <div class="order-number">PEDIDO #${p.id}</div>
+          </div>
+          <span class="pill">${labels[p.status]}</span>
+        </div>
+        <div class="order-body">
+          <div class="order-meta">
+            <span>
+              ${online ? "👤 " + escapeHTML(p.cliente) : "♙ " + escapeHTML(p.garcom)}
+            </span>
+            <time>
+              ${new Date(p.criado + "Z").toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
+            </time>
+          </div>
+          <ul>
+            ${p.itens
+              .map(
+                (i) => /* HTML */ `
+                  <li>
+                    <span class="item-qty">${i.quantidade}×</span>
+                    <div>
+                      <b>${escapeHTML(i.nome)}</b>
+                      ${
+                        i.observacao
+                          ? /* HTML */ `
+                              <small>Obs.: ${escapeHTML(i.observacao)}</small>
+                            `
+                          : ""
+                      }
+                    </div>
+                  </li>
+                `,
+              )
+              .join("")}
+          </ul>
+          ${addressHTML(p)}${
+            p.forma_pagamento
+              ? /* HTML */ `
+                  <p class="muted">
+                    Pagamento escolhido:
+                    <b>${paymentLabels[p.forma_pagamento]}</b>
+                    ${p.troco_para !== null && p.troco_para !== undefined ? " · Troco para " + money(p.troco_para) : ""}
+                  </p>
+                `
+              : ""
+          }${
+            p.taxa_entrega
+              ? /* HTML */ `
+                  <div class="fee-line">
+                    <span>Inclui taxa de entrega</span>
+                    <b>${money(p.taxa_entrega)}</b>
+                  </div>
+                `
+              : ""
+          }
+          <div class="total">
+            <strong>${money(p.total)}</strong>
+            <span class="payment-state ${p.pago ? "paid" : ""}">
+              ${p.pago ? "✓ Pago" : "A receber"}
+            </span>
+          </div>
+          ${
+            canAct
+              ? /* HTML */ `
+                  <button class="status-action" data-status="${next}" data-id="${p.id}">
+                    ${p.status === "aberto" ? "Iniciar preparo →" : p.status === "em_preparo" ? "✓ Marcar como pronto" : next === "saiu_entrega" ? "Saiu para entrega →" : online && p.modalidade === "retirada" ? "✓ Confirmar retirada" : "✓ Registrar entrega"}
+                  </button>
+                `
+              : ""
+          }${assignmentHTML(p, role)}${role === "admin" && !p.pago && p.entregador?.concluida ? '<a class="button-link" href="/acerto-entregadores">Conferir acerto do entregador →</a>' : ""}${
+            role === "admin" && !p.pago && !p.entregador?.concluida
+              ? /* HTML */ `
+                  <button class="secondary" data-pay="${p.id}">
+                    Registrar pagamento
+                  </button>
+                `
+              : ""
+          }${
+            role === "cliente" && p.status === "pronto"
+              ? /* HTML */ `
+                  <p class="ready-note">
+                    ${p.modalidade === "retirada" ? "Seu pedido está pronto! Retire no caixa." : "Seu pedido está pronto e aguarda saída para entrega."}
+                  </p>
+                `
+              : ""
+          }
+        </div>
+      </article>
+    `;
+  }
+  function normalizarComanda(valor) {
+  return String(valor ?? "")
+    .replace(/\D/g, "")
+    .replace(/^0+(?=\d)/, "");
+  }
+
+  function correspondeComanda(pedido) {
+    const campo = document.querySelector("#comanda-search");
+    const busca = campo?.value.trim() || "";
+
+    if (!busca) return true;
+
+    const numero = normalizarComanda(busca);
+
+    return (
+      numero !== "" &&
+      pedido.modalidade === "salao" &&
+      normalizarComanda(pedido.mesa) === numero
+    );
+  }
   function render() {
     const filter = document.querySelector("#status-filter").value,
       role = orders.dataset.role,
       channel = document.querySelector("#channel-filter")?.value;
     document.querySelector("#status-summary").innerHTML = Object.keys(labels)
+      .filter(
+        (status) =>
+          role !== "garcom" || status !== "saiu_entrega"
+      )
       .map(
         (s) => /* HTML */ `
           <button class="status-card ${s}" data-filter="${s}">
@@ -218,122 +425,10 @@ if (orders) {
         .filter(
           (p) =>
             (!filter || (filter === "nao_pago" ? !p.pago : p.status === filter)) &&
-            (!channel || p.modalidade === channel),
+            (!channel || p.modalidade === channel) &&
+            correspondeComanda(p),
         )
-        .map((p) => {
-          const online = p.canal === "online",
-            next = nextFor(p),
-            canAct =
-              next &&
-              !(
-                role === "admin" &&
-                p.modalidade === "entrega" &&
-                (p.status === "pronto" || (p.status === "saiu_entrega" && p.entregador))
-              ) &&
-              (role === "admin" ||
-                (role === "cozinha" && ["aberto", "em_preparo"].includes(p.status)) ||
-                (role === "garcom" && !online && p.status === "pronto"));
-          return /* HTML */ `
-            <article class="panel order ${p.status} ${online ? "online-order" : ""}">
-              <div class="order-head">
-                <div class="table-badge">
-                  <small>${online ? "PEDIDO ONLINE" : "MESA"}</small>
-                  <strong class="${online ? "online-title" : ""}">
-                    ${online ? (p.modalidade === "entrega" ? "Tele-entrega" : "Retirada no caixa") : escapeHTML(p.mesa.replace(/^mesa\s*/i, "")) || escapeHTML(p.mesa)}
-                  </strong>
-                  <div class="order-number">PEDIDO #${p.id}</div>
-                </div>
-                <span class="pill">${labels[p.status]}</span>
-              </div>
-              <div class="order-body">
-                <div class="order-meta">
-                  <span>
-                    ${online ? "👤 " + escapeHTML(p.cliente) : "♙ " + escapeHTML(p.garcom)}
-                  </span>
-                  <time>
-                    ${new Date(p.criado + "Z").toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
-                  </time>
-                </div>
-                <ul>
-                  ${p.itens
-                    .map(
-                      (i) => /* HTML */ `
-                        <li>
-                          <span class="item-qty">${i.quantidade}×</span>
-                          <div>
-                            <b>${escapeHTML(i.nome)}</b>
-                            ${
-                              i.observacao
-                                ? /* HTML */ `
-                                    <small>Obs.: ${escapeHTML(i.observacao)}</small>
-                                  `
-                                : ""
-                            }
-                          </div>
-                        </li>
-                      `,
-                    )
-                    .join("")}
-                </ul>
-                ${addressHTML(p)}${
-                  p.forma_pagamento
-                    ? /* HTML */ `
-                        <p class="muted">
-                          Pagamento escolhido:
-                          <b>${paymentLabels[p.forma_pagamento]}</b>
-                          ${p.troco_para !== null && p.troco_para !== undefined ? " · Troco para " + money(p.troco_para) : ""}
-                        </p>
-                      `
-                    : ""
-                }${
-                  p.taxa_entrega
-                    ? /* HTML */ `
-                        <div class="fee-line">
-                          <span>Inclui taxa de entrega</span>
-                          <b>${money(p.taxa_entrega)}</b>
-                        </div>
-                      `
-                    : ""
-                }
-                <div class="total">
-                  <strong>${money(p.total)}</strong>
-                  <span class="payment-state ${p.pago ? "paid" : ""}">
-                    ${p.pago ? "✓ Pago" : "A receber"}
-                  </span>
-                </div>
-                ${
-                  canAct
-                    ? /* HTML */ `
-                        <button
-                          class="status-action"
-                          data-status="${next}"
-                          data-id="${p.id}"
-                        >
-                          ${p.status === "aberto" ? "Iniciar preparo →" : p.status === "em_preparo" ? "✓ Marcar como pronto" : next === "saiu_entrega" ? "Saiu para entrega →" : online && p.modalidade === "retirada" ? "✓ Confirmar retirada" : "✓ Registrar entrega"}
-                        </button>
-                      `
-                    : ""
-                }${assignmentHTML(p, role)}${role === "admin" && !p.pago && p.entregador?.concluida ? '<a class="button-link" href="/acerto-entregadores">Conferir acerto do entregador →</a>' : ""}${
-                  role === "admin" && !p.pago && !p.entregador?.concluida
-                    ? /* HTML */ `
-                        <button class="secondary" data-pay="${p.id}">
-                          Registrar pagamento
-                        </button>
-                      `
-                    : ""
-                }${
-                  role === "cliente" && p.status === "pronto"
-                    ? /* HTML */ `
-                        <p class="ready-note">
-                          ${p.modalidade === "retirada" ? "Seu pedido está pronto! Retire no caixa." : "Seu pedido está pronto e aguarda saída para entrega."}
-                        </p>
-                      `
-                    : ""
-                }
-              </div>
-            </article>
-          `;
-        })
+        .map((p) => orderHTML(p, role))
         .join("") ||
       '<div class="panel empty"><span>✓</span><h3>Nenhum pedido por aqui.</h3><p>Os pedidos deste perfil aparecerão aqui.</p></div>';
     if (detail) {
@@ -342,7 +437,8 @@ if (orders) {
       const visible = list.filter(
         (p) =>
           (!filter || (filter === "nao_pago" ? !p.pago : p.status === filter)) &&
-          (!channel || p.modalidade === channel),
+          (!channel || p.modalidade === channel) &&
+          correspondeComanda(p),
       );
       const articles = [...orders.querySelectorAll("article.order")];
       articles.forEach((article, index) => {
@@ -350,13 +446,33 @@ if (orders) {
         fullCards.set(p.id, article.outerHTML);
         const card = document.createElement("button");
         card.type = "button";
-        card.className =
-  "compact-order " + p.status + (p.pago ? " order-paid" : "");
+        card.className = "compact-order " + p.status + (p.pago ? " order-paid" : "");
         card.dataset.detail = p.id;
-        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${labels[p.status]}</span></span><span>Pedido #${p.id} · ${escapeHTML(p.cliente || p.garcom)}</span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? "Pago" : "Não pago"}</b></span><small>Ver detalhes e ações →</small>`;
+        const aguardandoEntregador =
+          role === "admin" &&
+          p.modalidade === "entrega" &&
+          ["pronto", "saiu_entrega"].includes(p.status);
+
+        card.classList.toggle(
+          "aguardando-entregador",
+          aguardandoEntregador
+        );
+        const statusDoCard =
+          role === "admin" && p.status === "entregue"
+            ? (p.pago ? "Finalizado" : "A receber")
+            : aguardandoEntregador
+              ? (p.status === "pronto" ? "Definir entregador" : "Em trânsito")
+              : labels[p.status];
+        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${statusDoCard}</span></span><span>Pedido #${p.id} · ${escapeHTML(p.cliente || p.garcom)}</span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? "Pago" : "Não pago"}</b></span><small>Ver detalhes e ações →</small>`;
         article.replaceWith(card);
       });
-      if (detail.open && selectedOrder !== null) showDetail(selectedOrder);
+      if (detail.open && selectedOrder !== null) {
+        if (!fullCards.has(selectedOrder) && linkedOrder?.id === selectedOrder) {
+          fullCards.set(selectedOrder, orderHTML(linkedOrder, role));
+        }
+        if (fullCards.has(selectedOrder)) showDetail(selectedOrder);
+        else detail.close();
+      }
     }
   }
   async function refresh() {
@@ -369,7 +485,48 @@ if (orders) {
       list = await api(orders.dataset.api || "/api/pedidos");
       if (orders.dataset.role === "admin")
         driverOptions = await api("/api/entregadores");
+      if (linkedOrder && !list.some((p) => p.id === linkedOrder.id)) {
+        try {
+          linkedOrder = await api("/api/pedidos/" + linkedOrder.id + "/detalhes");
+          if (!detail) list.unshift(linkedOrder);
+        } catch {
+          linkedOrder = null;
+          if (detail?.open) detail.close();
+        }
+      }
+      if (requestedOrder) {
+        document.querySelector("#status-filter").value = "";
+        const channel = document.querySelector("#channel-filter");
+        if (channel) channel.value = "";
+      }
       render();
+      if (requestedOrder) {
+        const id = requestedOrder;
+        requestedOrder = null;
+        try {
+          const listed = list.find((p) => p.id === id);
+          const p = listed || (await api("/api/pedidos/" + id + "/detalhes"));
+          if (!listed) linkedOrder = p;
+          if (detail) {
+            fullCards.set(id, orderHTML(p, orders.dataset.role));
+            showDetail(id);
+          } else {
+            let card = orders.querySelector('[data-order-id="' + id + '"]');
+            if (!card) {
+              if (!list.length) orders.innerHTML = "";
+              orders.insertAdjacentHTML(
+                "afterbegin",
+                orderHTML(p, orders.dataset.role),
+              );
+              card = orders.querySelector('[data-order-id="' + id + '"]');
+            }
+            card?.classList.add("notification-target");
+            card?.scrollIntoView({ block: "center", behavior: "smooth" });
+          }
+        } catch (e) {
+          toast("Não foi possível abrir este pedido: " + e.message);
+        }
+      }
       document.querySelector("#poll-error").hidden = true;
       document.querySelector("#last-updated").textContent =
         "Atualizado às " + new Date().toLocaleTimeString("pt-BR");
@@ -474,6 +631,58 @@ if (orders) {
       choices.set(Number(e.target.dataset.courierSelect), e.target.value);
   });
   document.querySelector("#status-filter").onchange = render;
+  const comandaSearch = document.querySelector("#comanda-search");
+
+if (comandaSearch) {
+  function buscarComanda() {
+    comandaSearch.value = comandaSearch.value.replace(/\D/g, "");
+    // Durante a busca, mostra a comanda independentemente
+    // dos filtros de situação e origem selecionados.
+    if (comandaSearch.value.trim()) {
+      document.querySelector("#status-filter").value = "";
+
+      const origem = document.querySelector("#channel-filter");
+      if (origem) origem.value = "";
+    }
+
+    render();
+  }
+
+  comandaSearch.addEventListener("input", buscarComanda);
+  comandaSearch.addEventListener("search", buscarComanda);
+
+ comandaSearch.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") return;
+
+  event.preventDefault();
+
+  const numero = normalizarComanda(comandaSearch.value);
+  if (!numero) return;
+
+  buscarComanda();
+
+  const encontrados = list
+    .filter(
+      (pedido) =>
+        pedido.modalidade === "salao" &&
+        normalizarComanda(pedido.mesa) === numero
+    )
+    .sort(
+      (a, b) =>
+        Number(a.pago) - Number(b.pago) ||
+        b.id - a.id
+    );
+
+  const pedido = encontrados[0];
+
+  if (pedido) {
+    showDetail(pedido.id);
+  } else {
+    alert("Nenhum pedido encontrado para essa comanda.");
+    comandaSearch.select();
+  }
+ });
+}
   document.querySelector("#channel-filter")?.addEventListener("change", render);
   document.querySelector("#orders-refresh").onclick = refresh;
   window.addEventListener("orders-updated", refresh);

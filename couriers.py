@@ -151,6 +151,19 @@ def list_deliveries():
         .order_by(Entrega.id.desc())
     )
     rows = db.session.scalars(q).all()
+    requested = request.args.get("pedido", type=int)
+    if requested and not any(e.pedido_id == requested for e in rows):
+        extra = db.session.scalar(
+            db.select(Entrega).where(
+                Entrega.pedido_id == requested, Entrega.entregador_id == g.user.id
+            )
+        )
+        if (
+            extra
+            and extra.pedido.online
+            and extra.pedido.online.modalidade == "entrega"
+        ):
+            rows.insert(0, extra)
     result = []
     for e in rows:
         item = serialize_order(e.pedido, g.user)

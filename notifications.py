@@ -158,9 +158,13 @@ def as_dict(n):
         pedido_id=n.pedido_id,
         criado=n.criado.isoformat() + "Z",
         url=(
-            "/entregas"
-            if g.user.perfil == "entregador"
-            else "/meus-pedidos" if g.user.perfil == "cliente" else "/pedidos"
+            (
+                "/entregas"
+                if g.user.perfil == "entregador"
+                else "/meus-pedidos" if g.user.perfil == "cliente" else "/pedidos"
+            )
+            + "?pedido="
+            + str(n.pedido_id)
         ),
     )
 

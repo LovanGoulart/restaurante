@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   document
-    .querySelectorAll('input[type="date"],input[type="number"][step="0.01"]')
+    .querySelectorAll(
+      'input[type="date"]:not(#delivery-date),input[type="number"][step="0.01"]')
     .forEach((original) => {
       const date = original.type === "date",
         display = document.createElement("input");
