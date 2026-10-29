@@ -280,20 +280,26 @@ def create_app(overrides=None):
                 Pedido.id.desc(),
             )
         elif g.user.perfil == "garcom":
-            # O garçom consulta somente os pedidos do salão.
             priority = case(
                 (Pedido.status == "pronto", 0),
                 (Pedido.status == "em_preparo", 1),
                 (Pedido.status == "aberto", 2),
-                (Pedido.status == "entregue", 3),
-                else_=4,
+                else_=3,
             )
-            q = q.where(~Pedido.online.has()).order_by(
-                case(
-                    ((Pedido.status == "entregue") & Pedido.pago.is_(True), 1), else_=0
-                ),
-                priority,
-                Pedido.id.desc(),
+
+            q = (
+                db.select(Pedido)
+                .where(
+                    # Somente pedidos registrados no PDV do salão.
+                    Pedido.online.has(),
+
+                    # Entregues ficam fora da lista do garçom.
+                    Pedido.status.in_(["aberto", "em_preparo", "pronto"]),
+                )
+                .order_by(
+                    priority,
+                    Pedido.id.desc(),
+                )
             )
         elif g.user.perfil == "cozinha":
             # Pedidos prontos deixam a fila da cozinha.

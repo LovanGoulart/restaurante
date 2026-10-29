@@ -162,13 +162,15 @@ if (orders) {
     Number(new URLSearchParams(location.search).get("pedido")) || null;
   const labels = {
       aberto:
-        orders.dataset.role === "admin"
+        ["admin", "garcom"].includes(orders.dataset.role)
           ? "Enviado à cozinha"
           : orders.dataset.role === "cozinha"
             ? "Pendente"
             : "Aberto",
       em_preparo: "Em preparo",
-      pronto: orders.dataset.role === "admin" ? "Pedido pronto" : "Pronto",
+      pronto: ["admin", "garcom"].includes(orders.dataset.role)
+        ? "Pedido pronto"
+        : "Pronto",
       saiu_entrega: "Saiu para entrega",
       entregue: "Entregue",
     },
