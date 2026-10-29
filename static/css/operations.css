@@ -1,0 +1,247 @@
+/* Ajustes operacionais: saída, cores e detalhes. */
+.desktop-logout {
+  display: none;
+}
+@media (min-width: 851px) {
+  .desktop-logout {
+    display: block;
+    margin: 0;
+  }
+  .desktop-logout button {
+    min-height: 38px;
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+}
+#orders-refresh,
+#delivery-refresh,
+#settlement-refresh {
+  display: none !important;
+}
+/* Prontos: fundo padrão; apenas faixa e cabeçalho suaves verdes. */
+body #main #orders .order.pronto,
+#order-detail #order-detail-content .order.pronto,
+body #main #orders .order.entregue.order-paid,
+body #main #orders .compact-order.entregue.order-paid,
+#order-detail #order-detail-content .order.entregue.order-paid,
+#delivery-orders .order.entregue.order-paid {
+  background: #fff !important;
+  border-top-color: #08744f !important;
+}
+body #main #orders .order.pronto .order-head,
+#order-detail #order-detail-content .order.pronto .order-head,
+body #main #orders .order.entregue.order-paid .order-head,
+#order-detail #order-detail-content .order.entregue.order-paid .order-head,
+#delivery-orders .order.entregue.order-paid .order-head {
+  background: #edf9f2 !important;
+}
+body #main #orders .order.pronto .order-body,
+#order-detail #order-detail-content .order.pronto .order-body,
+body #main #orders .order.entregue.order-paid .order-body,
+#order-detail #order-detail-content .order.entregue.order-paid .order-body,
+#delivery-orders .order.entregue.order-paid .order-body {
+  background: #fff !important;
+}
+body
+  #main
+  #orders:is([data-role="cozinha"], [data-role="garcom"])
+  .compact-order.em_preparo {
+  background: #eef4ff !important;
+}
+body:has(#orders:is([data-role="cozinha"], [data-role="garcom"]))
+  #order-detail
+  .order.em_preparo {
+  background: #eef4ff !important;
+}
+body:has(#orders:is([data-role="cozinha"], [data-role="garcom"]))
+  #order-detail
+  .order.em_preparo
+  .order-body {
+  background: transparent !important;
+}
+.notification-target {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.order-detail-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #101c3270;
+  backdrop-filter: blur(3px);
+  z-index: 140;
+}
+.order-detail-backdrop[hidden] {
+  display: none;
+}
+@media (min-width: 851px) {
+  #order-detail.desktop-page-detail {
+    position: absolute;
+    inset: auto 0 auto 0;
+    margin: 0 auto;
+    width: min(1000px, 94vw);
+    max-width: 94vw;
+    max-height: none;
+    height: auto;
+    overflow: visible;
+    z-index: 150;
+  }
+  #order-detail.desktop-page-detail .order,
+  #order-detail.desktop-page-detail .order-body {
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+/* Detalhes do pedido no desktop */
+@media (min-width: 851px) {
+  #order-detail.desktop-page-detail {
+    position: fixed;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+
+    width: min(900px, 94vw);
+    max-width: 94vw;
+    max-height: calc(100dvh - 32px);
+    box-sizing: border-box;
+
+    padding: 16px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Impede a rolagem da página atrás dos detalhes */
+  html:has(#order-detail.desktop-page-detail[open]),
+  body:has(#order-detail.desktop-page-detail[open]) {
+    overflow: hidden;
+  }
+
+  #order-detail.desktop-page-detail .dialog-head {
+    margin-bottom: 10px;
+    padding-bottom: 0;
+  }
+
+  #order-detail.desktop-page-detail .dialog-head h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  #order-detail.desktop-page-detail .order {
+    margin: 0;
+    padding: 0;
+  }
+
+  #order-detail.desktop-page-detail .order-head {
+    padding: 12px 16px;
+  }
+
+  #order-detail.desktop-page-detail .table-badge strong {
+    font-size: 22px;
+    line-height: 1.15;
+  }
+
+  #order-detail.desktop-page-detail .order-body {
+    padding: 12px 16px;
+  }
+
+  #order-detail.desktop-page-detail .order-meta {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+
+  #order-detail.desktop-page-detail .order-body > ul {
+    margin: 8px 0;
+    padding: 0;
+  }
+
+  #order-detail.desktop-page-detail .order-body > ul > li {
+    padding: 7px 0;
+  }
+
+  #order-detail.desktop-page-detail .delivery-address {
+    margin: 8px 0;
+    padding: 10px;
+  }
+
+  #order-detail.desktop-page-detail .order-body > p {
+    margin: 8px 0;
+  }
+
+  #order-detail.desktop-page-detail .total {
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+}
+
+/* Cozinha: detalhes em preparo com azul somente no topo */
+body:has([data-role="cozinha"])
+#order-detail #order-detail-content .order.em_preparo {
+  background: #fff !important;
+  border-top: 4px solid #2563eb !important;
+}
+
+body:has([data-role="cozinha"])
+#order-detail #order-detail-content .order.em_preparo .order-head {
+  background: #eef4ff !important;
+}
+
+body:has([data-role="cozinha"])
+#order-detail #order-detail-content .order.em_preparo .order-body {
+  background: #fff !important;
+}
+
+/* Administrador: cards em preparo em azul claro */
+body:has([data-role="admin"]) .compact-order.em_preparo {
+  background: #eef4ff !important;
+  border-top-color: #2563eb !important;
+}
+
+/* Administrador: entregues e não pagos em vermelho claro */
+body:has([data-role="admin"])
+.compact-order.entregue:not(.order-paid) {
+  background: #fff0f0 !important;
+  border-top-color: #dc2626 !important;
+}
+
+/* Desktop: Sair à direita do botão de notificações */
+@media (min-width: 851px) {
+  .header-tools {
+    margin-left: auto;
+  }
+
+  .header-tools .header-user {
+    order: 1;
+  }
+
+  .header-tools #notifications-open {
+    order: 2;
+  }
+
+  .header-tools .desktop-logout {
+    order: 3;
+    margin: 0;
+  }
+}
+
+/* Garçom: detalhes em preparo com azul somente no topo */
+body:has([data-role="garcom"])
+#order-detail #order-detail-content .order.em_preparo {
+  background: #fff !important;
+  border-top-color: #2563eb !important;
+}
+
+body:has([data-role="garcom"])
+#order-detail #order-detail-content .order.em_preparo .order-head {
+  background: #eef4ff !important;
+}
+
+body:has([data-role="garcom"])
+#order-detail #order-detail-content .order.em_preparo .order-body {
+  background: #fff !important;
+}
+
+/* Garçom: entregues não pagos com fundo branco na lista */
+body:has([data-role="garcom"])
+.compact-order.entregue:not(.order-paid) {
+  background: #fff !important;
+}

@@ -393,7 +393,9 @@ class Couriers(unittest.TestCase):
         self.login("driver1")
         notifications = self.client.get("/api/notificacoes").json["items"]
         self.assertEqual(len(notifications), 1)
-        self.assertEqual(notifications[0]["url"], "/entregas")
+        self.assertEqual(
+            notifications[0]["url"], f"/entregas?pedido={self.delivery.id}"
+        )
         self.login("driver2")
         self.assertEqual(self.client.get("/api/notificacoes").json["items"], [])
         self.assign(driver="driver2")

@@ -6,6 +6,12 @@
     open = document.querySelector("#settlement-open"),
     dialog = document.querySelector("#settlement-dialog"),
     error = document.querySelector("#settlement-error");
+  const confirmation = document.querySelector("#settlement-confirm-check");
+  const confirmButton = document.querySelector("#settlement-confirm");
+  const syncConfirmation = () => {
+    confirmButton.disabled = !confirmation.checked || busy;
+  };
+  confirmation.addEventListener("change", syncConfirmation);
   let items = [],
     ids = [],
     busy = false,
@@ -37,7 +43,7 @@
     all.indeterminate = checks.some((c) => c.checked) && !all.checked;
   }
   async function refresh() {
-    if (busy || loading) {
+    if (busy || loading || dialog.open) {
       pending = true;
       return;
     }
@@ -105,13 +111,14 @@
           )
           .join("") ||
         '<section class="panel">Nenhuma entrega concluída neste filtro.</section>';
+      const selectedIds = new Set(chosen());
       root.innerHTML =
         items
           .map(
             (e) => /* HTML */ `
               <div class="settlement-row">
                 <label class="check">
-                  ${!e.acertado ? `<input type="checkbox" data-select="${e.id}" aria-label="Conferir pedido ${e.pedido_id}">` : "<span>✓</span>"}
+                  ${!e.acertado ? `<input type="checkbox" data-select="${e.id}" ${selectedIds.has(e.id) ? "checked" : ""} aria-label="Conferir pedido ${e.pedido_id}">` : "<span>✓</span>"}
                   <span>
                     <b>Pedido #${e.pedido_id} · ${escapeHTML(e.cliente)}</b>
                     <small>
@@ -168,6 +175,7 @@
       money(total - cash) +
       " em pagamentos eletrônicos a conferir.";
     document.querySelector("#settlement-confirm-check").checked = false;
+    syncConfirmation();
     dialog.showModal();
   };
   document.querySelector("#settlement-confirm").onclick = async (e) => {
@@ -185,10 +193,14 @@
       toast(err.message);
     } finally {
       busy = false;
-      e.target.disabled = false;
+      syncConfirmation();
       refresh();
     }
   };
+  dialog.addEventListener("close", () => {
+    if (pending && !busy) refresh();
+  });
+  syncConfirmation();
   date.onchange = refresh;
   driver.onchange = refresh;
   document.querySelector("#settlement-refresh").onclick = refresh;

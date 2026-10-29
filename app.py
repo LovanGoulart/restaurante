@@ -278,7 +278,13 @@ def create_app(overrides=None):
                 (Pedido.status == "entregue", 3),
                 else_=4,
             )
-            q = q.where(~Pedido.online.has()).order_by(priority, Pedido.id.desc())
+            q = q.where(~Pedido.online.has()).order_by(
+                case(
+                    ((Pedido.status == "entregue") & Pedido.pago.is_(True), 1), else_=0
+                ),
+                priority,
+                Pedido.id.desc(),
+            )
         elif g.user.perfil == "cozinha":
             # Pedidos prontos deixam a fila da cozinha.
             priority = case(
@@ -291,6 +297,15 @@ def create_app(overrides=None):
             )
         q = q.limit(200)
         return jsonify([serialize_order(p, g.user) for p in db.session.scalars(q)])
+
+    @app.get("/api/pedidos/<int:id>/detalhes")
+    @access("admin", "garcom", "cozinha", "cliente")
+    def order_details(id):
+        p = db.get_or_404(Pedido, id)
+        own(p)
+        if g.user.perfil == "cliente" and (not p.online or p.usuario_id != g.user.id):
+            abort(403)
+        return jsonify(serialize_order(p, g.user))
 
     @app.post("/api/pedidos")
     @access("admin", "garcom")

@@ -4,6 +4,12 @@
     date = document.querySelector("#delivery-date"),
     error = document.querySelector("#delivery-error"),
     dialog = document.querySelector("#delivery-confirm-dialog");
+  const confirmation = document.querySelector("#delivery-confirm-check");
+  const confirmButton = document.querySelector("#delivery-confirm-button");
+  const syncConfirmation = () => {
+    confirmButton.disabled = !confirmation.checked || busy;
+  };
+  confirmation.addEventListener("change", syncConfirmation);
   let items = [],
     selected = null,
     busy = false,
@@ -22,6 +28,10 @@
     month: "2-digit",
     day: "2-digit",
   }).format(new Date());
+  const linkedOrder =
+    Number(new URLSearchParams(location.search).get("pedido")) || null;
+  let requestedOrder =
+    Number(new URLSearchParams(location.search).get("pedido")) || null;
   function render() {
     root.innerHTML =
       items
@@ -29,7 +39,10 @@
           const r = p.recebimento,
             a = p.endereco;
           return /* HTML */ `
-            <article class="panel order ${p.status} online-order">
+            <article
+              data-order-id="${p.id}"
+              class="panel order ${p.status} ${p.pago ? "order-paid" : ""} online-order"
+            >
               <div class="order-head">
                 <div class="table-badge">
                   <small>TELE-ENTREGA</small>
@@ -108,7 +121,11 @@
     }
     loading = true;
     try {
-      const data = await api("/api/entregas?data=" + date.value);
+      const data = await api(
+        "/api/entregas?data=" +
+          date.value +
+          (linkedOrder ? "&pedido=" + linkedOrder : ""),
+      );
       items = data.items;
       if (dialog.open && selected) {
         const fresh = items.find((p) => p.recebimento.id === selected.recebimento.id);
@@ -123,6 +140,14 @@
         }
       }
       render();
+      if (requestedOrder) {
+        const card = root.querySelector('[data-order-id="' + requestedOrder + '"]');
+        if (card) {
+          card.classList.add("notification-target");
+          card.scrollIntoView({ block: "center" });
+        } else toast("Esta entrega não está atribuída a você.");
+        requestedOrder = null;
+      }
       error.hidden = true;
     } catch (e) {
       error.textContent = e.message;
@@ -151,6 +176,7 @@
     document.querySelector("#delivery-method").value =
       selected.forma_pagamento || "dinheiro";
     document.querySelector("#delivery-confirm-check").checked = false;
+    syncConfirmation();
     dialog.showModal();
   };
   document.querySelector("#delivery-confirm-button").onclick = async (e) => {
@@ -172,10 +198,11 @@
       toast(err.message);
     } finally {
       busy = false;
-      e.target.disabled = false;
+      syncConfirmation();
       refresh();
     }
   };
+  syncConfirmation();
   date.onchange = refresh;
   document.querySelector("#delivery-refresh").onclick = refresh;
   window.addEventListener("orders-updated", refresh);

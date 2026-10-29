@@ -1,5 +1,20 @@
-const CACHE = "restaurant-v3.4-pedidos-br";
+function safeOrderURL(value) {
+  try {
+    const url = new URL(value, self.location.origin);
+    if (
+      url.origin !== self.location.origin ||
+      !["/pedidos", "/meus-pedidos", "/entregas"].includes(url.pathname)
+    )
+      return "/pedidos";
+    const id = url.searchParams.get("pedido");
+    return url.pathname + (id && /^\d+$/.test(id) ? "?pedido=" + id : "");
+  } catch {
+    return "/pedidos";
+  }
+}
+const CACHE = "restaurant-v3.5-operations";
 const ASSETS = [
+  "/static/css/operations.css",
   "/static/js/br-fields.js",
   "/static/css/appearance.css",
   "/static/css/style.css",
@@ -80,9 +95,7 @@ self.addEventListener("push", (e) => {
         badge: "/static/icons/icon-192.png",
         tag: "pedido-" + data.id,
         data: {
-          url: ["/entregas", "/meus-pedidos"].includes(data.url)
-            ? data.url
-            : "/pedidos",
+          url: safeOrderURL(data.url),
         },
         silent: shown,
       });
@@ -97,11 +110,14 @@ self.addEventListener("notificationclick", (e) => {
         type: "window",
         includeUncontrolled: true,
       });
-      const url = ["/entregas", "/meus-pedidos"].includes(e.notification.data?.url)
-        ? e.notification.data.url
-        : "/pedidos";
-      let target = windows.find((c) => new URL(c.url).pathname === url);
-      if (target) return target.focus();
+      const url = safeOrderURL(e.notification.data?.url);
+      const target = windows.find(
+        (c) => new URL(c.url).origin === self.location.origin,
+      );
+      if (target) {
+        await target.navigate(url);
+        return target.focus();
+      }
       return self.clients.openWindow(url);
     })(),
   );

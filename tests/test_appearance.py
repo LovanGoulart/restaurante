@@ -128,7 +128,7 @@ class AppearanceTest(unittest.TestCase):
         response = self.client.get("/api/pedidos")
         self.assertEqual(
             [p["status"] for p in response.json],
-            ["aberto", "pronto", "em_preparo", "saiu_entrega", "entregue"],
+            ["entregue", "pronto", "em_preparo", "aberto", "saiu_entrega"],
         )
         response = self.client.get("/pedidos")
         self.assertIn(b"order-detail-content", response.data)

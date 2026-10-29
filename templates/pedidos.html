@@ -16,7 +16,7 @@
   {% endif %}
 
   <div class="section-head">
-    <div>
+    <!--<div>
       <div class="eyebrow">SALÃO E COZINHA CONECTADOS</div>
       <h1>
         {{ 'Acompanhe seu pedido.' if customer else 'Pedidos' }}
@@ -24,8 +24,8 @@
       <p class="page-subtitle">
         {{ 'O andamento aparece aqui automaticamente.' if customer else 'Os novos pedidos aparecem aqui automaticamente.' if user.perfil=='cozinha' else 'Pedidos do salão e online, conforme seu acesso.' }}
       </p>
-    </div>
-    <button id="orders-refresh" class="secondary">↻ Atualizar agora</button>
+    </div>-->
+    <button hidden id="orders-refresh" class="secondary">↻ Atualizar agora</button>
   </div>
   <div class="status-summary" id="status-summary"></div>
   <div class="orders-toolbar orders-filters">
