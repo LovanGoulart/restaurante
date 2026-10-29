@@ -29,7 +29,7 @@
   </div>
   <div class="status-summary" id="status-summary"></div>
   <div class="orders-toolbar orders-filters">
-    {% if user.perfil == 'admin' %}
+    {% if user.perfil in ['admin', 'garcom'] %}
   <label>
     Buscar comanda
     <input
@@ -41,7 +41,7 @@
     >
   </label>
 {% endif %}
-    <label>
+    <label {% if user.perfil == 'garcom' %}style="display: none;"{% endif %}>
       Filtrar pedidos
       <select id="status-filter">
         <option value="">Todos os pedidos</option>

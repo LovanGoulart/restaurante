@@ -400,6 +400,10 @@ if (orders) {
       role = orders.dataset.role,
       channel = document.querySelector("#channel-filter")?.value;
     document.querySelector("#status-summary").innerHTML = Object.keys(labels)
+      .filter(
+        (status) =>
+          role !== "garcom" || status !== "saiu_entrega"
+      )
       .map(
         (s) => /* HTML */ `
           <button class="status-card ${s}" data-filter="${s}">
@@ -609,6 +613,7 @@ if (orders) {
 
 if (comandaSearch) {
   function buscarComanda() {
+    comandaSearch.value = comandaSearch.value.replace(/\D/g, "");
     // Durante a busca, mostra a comanda independentemente
     // dos filtros de situação e origem selecionados.
     if (comandaSearch.value.trim()) {
