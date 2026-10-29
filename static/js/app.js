@@ -161,9 +161,14 @@ if (orders) {
   let requestedOrder =
     Number(new URLSearchParams(location.search).get("pedido")) || null;
   const labels = {
-      aberto: "Aberto",
+      aberto:
+        orders.dataset.role === "admin"
+          ? "Enviado à cozinha"
+          : orders.dataset.role === "cozinha"
+            ? "Pendente"
+            : "Aberto",
       em_preparo: "Em preparo",
-      pronto: "Pronto",
+      pronto: orders.dataset.role === "admin" ? "Pedido pronto" : "Pronto",
       saiu_entrega: "Saiu para entrega",
       entregue: "Entregue",
     },
@@ -441,7 +446,22 @@ if (orders) {
         card.type = "button";
         card.className = "compact-order " + p.status + (p.pago ? " order-paid" : "");
         card.dataset.detail = p.id;
-        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${labels[p.status]}</span></span><span>Pedido #${p.id} · ${escapeHTML(p.cliente || p.garcom)}</span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? "Pago" : "Não pago"}</b></span><small>Ver detalhes e ações →</small>`;
+        const aguardandoEntregador =
+          role === "admin" &&
+          p.modalidade === "entrega" &&
+          ["pronto", "saiu_entrega"].includes(p.status);
+
+        card.classList.toggle(
+          "aguardando-entregador",
+          aguardandoEntregador
+        );
+        const statusDoCard =
+          role === "admin" && p.status === "entregue"
+            ? (p.pago ? "Finalizado" : "A receber")
+            : aguardandoEntregador
+              ? (p.status === "pronto" ? "Definir entregador" : "Em trânsito")
+              : labels[p.status];
+        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${statusDoCard}</span></span><span>Pedido #${p.id} · ${escapeHTML(p.cliente || p.garcom)}</span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? "Pago" : "Não pago"}</b></span><small>Ver detalhes e ações →</small>`;
         article.replaceWith(card);
       });
       if (detail.open && selectedOrder !== null) {

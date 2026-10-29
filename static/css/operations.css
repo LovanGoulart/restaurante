@@ -252,3 +252,40 @@ body:has([data-role="garcom"])
   min-height: 46px;
   box-sizing: border-box;
 }
+
+/* Admin: tele-entrega pronta ou em rota */
+body:has([data-role="admin"])
+#orders .compact-order.aguardando-entregador {
+  background: #171717 !important;
+  border-color: #353535 !important;
+  border-top-color: #171717 !important;
+  color: #fff !important;
+}
+
+body:has([data-role="admin"])
+#orders .compact-order.aguardando-entregador * {
+  color: #fff !important;
+}
+
+body:has([data-role="admin"])
+#orders .compact-order.aguardando-entregador
+.compact-heading > span {
+  background: #ffffff20 !important;
+}
+
+/* Tele-entregas: fundo cinza-chumbo mais suave */
+body:has([data-role="admin"])
+#orders .compact-order.aguardando-entregador {
+  background: #59636f !important;
+  border-color: #687380 !important;
+  border-top-color: #46515e !important;
+}
+
+/* Remover o fundo atrás da palavra Entregador */
+body:has([data-role="admin"])
+#orders .compact-order.aguardando-entregador
+.compact-heading > span {
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}

@@ -264,7 +264,17 @@ def create_app(overrides=None):
                 else_=5,
             )
 
+            # Tele-entregas prontas aguardando encaminhamento ficam no topo.
+            tele_entrega_pronta = (
+                (Pedido.status == "pronto")
+                & Pedido.online.has(modalidade="entrega")
+            )
+
             q = q.order_by(
+                case(
+                    (tele_entrega_pronta, 0),
+                    else_=1,
+                ),
                 Pedido.pago.asc(),
                 priority,
                 Pedido.id.desc(),
@@ -330,10 +340,14 @@ def create_app(overrides=None):
         p = db.get_or_404(Pedido, id)
         own(p)
         target = (request.get_json(silent=True) or {}).get("status")
-        if target == "entregue" and p.entrega and not p.entrega.entregue_em:
+        if (
+            target == "entregue"
+            and p.online
+            and p.online.modalidade == "entrega"
+        ):
             abort(
                 409,
-                "A entrega atribuída deve ser concluída pelo entregador com o registro do recebimento.",
+                "A tele-entrega deve ser confirmada pelo entregador."
             )
         allowed = {
             "aberto": "em_preparo",
