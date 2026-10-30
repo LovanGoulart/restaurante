@@ -2,7 +2,38 @@
 
 {% block content %}
   <div class="eyebrow">ACESSO DO ADMINISTRADOR</div>
+<div class="clientes-header">
   <h1>Clientes cadastrados</h1>
+
+  <a
+    href="{{ url_for('leads_export.exportar_clientes') }}"
+    class="excel-export-button"
+  >
+    <svg
+      width="23"
+      height="23"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M14 3h6v18h-6M14 8h6M14 13h6M14 18h6M17 3v18"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linejoin="round"
+      />
+      <path d="M2 5l12-2v18L2 19V5Z" fill="currentColor" />
+      <path
+        d="m6 9 4 6m0-6-4 6"
+        stroke="#217346"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </svg>
+
+    Exportar Excel
+  </a>
+</div>
   <section class="panel">
     <p class="muted">
       Até 200 cadastros recentes. CPF completo não é exibido. Contas de clientes não
