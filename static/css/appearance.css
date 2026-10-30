@@ -465,13 +465,15 @@
 }
 
 /* Meus pedidos: esconder os contadores de cada status */
-body:has(#orders:is([data-role="cliente"], [data-role="visitante"])) #status-summary {
+body:has(#orders:is([data-role="cliente"], [data-role="visitante"]))
+  #status-summary {
   display: none;
 }
 
 /* Esconder o filtro, mantendo o horário da atualização */
 body:has(#orders:is([data-role="cliente"], [data-role="visitante"]))
-.orders-toolbar > label:has(#status-filter) {
+  .orders-toolbar
+  > label:has(#status-filter) {
   display: none;
 }
 
@@ -625,48 +627,37 @@ body:has(#orders:is([data-role="cliente"], [data-role="visitante"]))
 }
 
 /* Cards dos três perfis internos */
-#orders:is(
-  [data-role="admin"],
-  [data-role="garcom"],
-  [data-role="cozinha"]
-) .compact-order:not(.order-paid) {
+#orders:is([data-role="admin"], [data-role="garcom"], [data-role="cozinha"])
+  .compact-order:not(.order-paid) {
   background: #fff7e8;
 }
 
-#orders:is(
-  [data-role="admin"],
-  [data-role="garcom"],
-  [data-role="cozinha"]
-) .compact-order.entregue:not(.order-paid) {
+#orders:is([data-role="admin"], [data-role="garcom"], [data-role="cozinha"])
+  .compact-order.entregue:not(.order-paid) {
   background: #eef4ff;
 }
 
-#orders:is(
-  [data-role="admin"],
-  [data-role="garcom"],
-  [data-role="cozinha"]
-) .compact-order.order-paid {
+#orders:is([data-role="admin"], [data-role="garcom"], [data-role="cozinha"])
+  .compact-order.order-paid {
   background: #edf7f0;
 }
 
 /* Cores por status para cozinha e garçom */
-#orders:is([data-role="cozinha"], [data-role="garcom"])
-.compact-order.aberto {
+#orders:is([data-role="cozinha"], [data-role="garcom"]) .compact-order.aberto {
   background: #fff7e8;
 }
 
 #orders:is([data-role="cozinha"], [data-role="garcom"])
-.compact-order.em_preparo {
+  .compact-order.em_preparo {
   background: #eef4ff;
 }
 
-#orders:is([data-role="cozinha"], [data-role="garcom"])
-.compact-order.pronto {
+#orders:is([data-role="cozinha"], [data-role="garcom"]) .compact-order.pronto {
   background: #edf9f2;
 }
 
 #orders:is([data-role="cozinha"], [data-role="garcom"])
-.compact-order.entregue {
+  .compact-order.entregue {
   background: #f5f1f8;
 }
 
@@ -683,4 +674,66 @@ body #main #orders .order.pronto .order-body,
 #order-detail #order-detail-content .order.pronto .order-head,
 #order-detail #order-detail-content .order.pronto .order-body {
   background: transparent;
+}
+/* A capa personalizada substitui o banner inteiro do cardápio público. */
+.restaurant-cover {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border-radius: 24px;
+  margin-bottom: 24px;
+  isolation: isolate;
+}
+.restaurant-cover-image {
+  grid-area: 1 / 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  object-fit: cover;
+  border-radius: 0;
+}
+.restaurant-cover.with-copy {
+  min-height: 240px;
+}
+.restaurant-cover-copy {
+  grid-area: 1 / 1;
+  z-index: 1;
+  min-width: 0;
+  padding: clamp(20px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.12));
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+.restaurant-cover-copy h1 {
+  margin: 0;
+  max-width: 24ch;
+  color: inherit;
+  font-size: clamp(26px, 3.6vw, 48px);
+  line-height: 1.12;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.restaurant-cover-copy p {
+  margin: 12px 0 0;
+  max-width: 65ch;
+  color: inherit;
+  line-height: 1.5;
+  font-size: clamp(14px, 1.5vw, 18px);
+}
+.restaurant-cover.image-only .restaurant-cover-image {
+  height: auto;
+  object-fit: contain;
+}
+@media (max-width: 850px) {
+  .restaurant-cover {
+    border-radius: 18px;
+    margin-bottom: 20px;
+  }
+  .restaurant-cover.with-copy {
+    min-height: 190px;
+  }
 }

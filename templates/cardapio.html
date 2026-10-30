@@ -1,13 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  {% if appearance.cover %}
+  <section class="restaurant-cover {{ 'image-only' if not appearance.title and not appearance.subtitle else 'with-copy' }}" aria-label="Capa de {{ restaurant_name }}">
+    <img class="restaurant-cover-image" src="{{ url_for('appearance.media', name=appearance.cover) }}" alt="Capa de {{ restaurant_name }}" fetchpriority="high">
+    {% if appearance.title or appearance.subtitle %}
+    <div class="restaurant-cover-copy">
+      {% if appearance.title %}<h1>{{ appearance.title }}</h1>{% endif %}
+      {% if appearance.subtitle %}<p>{{ appearance.subtitle }}</p>{% endif %}
+    </div>
+    {% endif %}
+  </section>
+  {% else %}
   <section class="hero">
     <div>
       <div class="eyebrow">{{ restaurant_name }}</div>
 
-      <h1>{{ appearance.title }}</h1>
+      {% if appearance.title %}<h1>{{ appearance.title }}</h1>{% endif %}
 
-      <p>{{ appearance.subtitle }}</p>
+      {% if appearance.subtitle %}<p>{{ appearance.subtitle }}</p>{% endif %}
 
       <span class="badge">
         {{ '● Pedidos online disponíveis'
@@ -16,13 +27,6 @@
       </span>
     </div>
 
-    {% if appearance.cover %}
-      <img
-        class="pdv-cover"
-        src="{{ url_for('appearance.media', name=appearance.cover) }}"
-        alt="Capa de {{ restaurant_name }}"
-      >
-    {% else %}
       <div class="hero-art" aria-hidden="true">
         <span class="hero-food">🍕</span>
 
@@ -32,8 +36,8 @@
           <b>do seu jeito.</b>
         </span>
       </div>
-    {% endif %}
   </section>
+  {% endif %}
   <div class="pdv">
     <section>
       {% include '_catalog_products.html' %}
