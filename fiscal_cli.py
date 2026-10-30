@@ -72,7 +72,7 @@ def process_batch(limit=25):
     return done
 
 
-def applications(slug):
+def applications(slug, report_skipped=False):
     global _original_app
     from app import app, create_app
     from config import Config
@@ -99,7 +99,18 @@ def applications(slug):
     ):
         if _original_app is None:
             _original_app = create_app()
-        yield "original", _original_app
+        # O SaaS pode ter um restaurante.db legado vazio, enquanto as bases
+        # reais ficam em instance/plataforma/restaurantes/<id>/.
+        # Existir um arquivo não significa que ele seja uma base operacional.
+        with _original_app.app_context():
+            initialized = inspect(db.engine).has_table("pedido")
+            db.session.remove()
+        if initialized:
+            yield "original", _original_app
+        elif report_skipped:
+            print(
+                "Banco original ignorado: não possui tabela de pedidos. As bases dos restaurantes foram preservadas."
+            )
 
 
 def main():
@@ -116,7 +127,7 @@ def main():
     )
     args = parser.parse_args()
     if args.acao == "migrar":
-        for name, app in applications(args.restaurante):
+        for name, app in applications(args.restaurante, report_skipped=True):
             with app.app_context():
                 print(
                     name
