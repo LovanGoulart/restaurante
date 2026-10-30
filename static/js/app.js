@@ -315,6 +315,28 @@ if (orders) {
       );
     return html + "</div>";
   }
+  function itemOptionsHTML(value) {
+    if (!value) return "";
+    const sections = String(value)
+      .split(/\s+\|\s+/)
+      .map((part) => {
+        const colon = part.indexOf(":");
+        const hasLabel = colon > 0 && colon <= 70;
+        const title = hasLabel ? part.slice(0, colon).trim() : "Observação";
+        const text = hasLabel ? part.slice(colon + 1).trim() : part.trim();
+        const isFlavors = /sabor/i.test(title);
+        const values = isFlavors ? text.split(/,\s+/) : [text];
+        return `<div class="order-item-option"><dt>${escapeHTML(title)}</dt><dd>${values.map((v) => `<span class="order-option-value${isFlavors ? " flavor-value" : ""}">${escapeHTML(v)}</span>`).join("")}</dd></div>`;
+      });
+    return `<dl class="order-item-options">${sections.join("")}</dl>`;
+  }
+  function orderItemHTML(p, i, role) {
+    return `<li class="order-item-card"><div class="order-item-content">
+      <div class="order-item-heading"><div class="order-item-name"><span class="item-qty">${i.quantidade}×</span><b>${escapeHTML(i.nome)}</b></div>${i.etapa ? `<span class="item-stage item-stage-${escapeHTML(i.etapa)}">${escapeHTML(itemStageLabels[i.etapa] || i.etapa)}</span>` : ""}</div>
+      ${itemOptionsHTML(i.observacao)}
+      <div class="order-item-footer">${itemChecks(p, i, role)}<div class="order-item-price">${i.quantidade > 1 ? `<span>${money(i.preco)} por unidade</span>` : ""}<strong>${money(i.preco * i.quantidade)}</strong></div></div>
+    </div></li>`;
+  }
   function orderHTML(p, role) {
     const online = p.canal === "online",
       next = nextFor(p),
@@ -361,26 +383,7 @@ if (orders) {
             </time>
           </div>
           <ul>
-            ${p.itens
-              .map(
-                (i) => /* HTML */ `
-                  <li>
-                    <span class="item-qty">${i.quantidade}×</span>
-                    <div>
-                      <b>${escapeHTML(i.nome)}</b
-                      >${i.etapa ? `<span class="item-stage item-stage-${escapeHTML(i.etapa)}">${escapeHTML(itemStageLabels[i.etapa] || i.etapa)}</span>` : ""}${itemChecks(p, i, role)}
-                      ${
-                        i.observacao
-                          ? /* HTML */ `
-                              <small>Obs.: ${escapeHTML(i.observacao)}</small>
-                            `
-                          : ""
-                      }
-                    </div>
-                  </li>
-                `,
-              )
-              .join("")}
+            ${p.itens.map((i) => orderItemHTML(p, i, role)).join("")}
           </ul>
           ${addressHTML(p)}${
             p.forma_pagamento
