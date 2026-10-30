@@ -4,6 +4,7 @@ from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 import secrets
 from leads_export import bp as leads_export_bp
+from sales_reports import bp as sales_reports_bp
 from flask import (
     Flask,
     render_template,
@@ -42,6 +43,7 @@ def create_app(overrides=None):
     app.register_blueprint(notifications_bp)
     app.register_blueprint(customers_bp)
     app.register_blueprint(leads_export_bp)
+    app.register_blueprint(sales_reports_bp)
     app.register_blueprint(couriers_bp)
 
     @app.template_filter("data_br")

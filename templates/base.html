@@ -99,7 +99,12 @@
                 >
                   Saldo Delivery
                 </a>
-
+                <a
+                  href="{{ url_for('sales_reports.pagina') }}"
+                  class="{{ 'selected' if request.endpoint in ['sales_reports.pagina', 'sales_reports.exportar'] else '' }}"
+                >
+                  Relatórios
+                </a>
                 <button class="nav-more" data-open="more-dialog">
                   Gerenciar ▾
                 </button>
@@ -273,9 +278,11 @@
           <button class="icon-button" data-close aria-label="Fechar menu">×</button>
         </div>
         <div class="menu-links">
-
+{% if user.perfil == 'admin' %}
+            <a href="{{ url_for('sales_reports.pagina') }}">Relatórios de vendas</a>
+{% endif %}
 {% if user.perfil == "admin" %}
-<a href="/personalizacao">🎨 Personalização e fotos</a>
+            <a href="/personalizacao">🎨 Personalização e fotos</a>
 {% endif %}
 
 {% if user.perfil=='admin' %}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sales_reports.css', v='compacto2') }}">
+{% set f = r.filtros %}
+{% set abas = [('evolucao','Visão geral'),('categorias','Categorias'),('clientes','Melhores clientes'),('produtos','Mais vendidos'),('pedidos','Pedidos')] %}
+{% set aba = request.args.get('aba', 'evolucao') %}
+{% if aba not in ['evolucao','categorias','clientes','produtos','pedidos'] %}{% set aba = 'evolucao' %}{% endif %}
+{% macro excel(tipo, texto='Exportar Excel') %}
+<a class="excel-export-button" href="{{ url_for('sales_reports.exportar', tipo=tipo, periodo=f.periodo, referencia=f.referencia.isoformat(), situacao=f.situacao) }}">
+  <svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M14 3h6v18h-6M14 8h6M14 13h6M14 18h6M17 3v18" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M2 5l12-2v18L2 19V5Z" fill="currentColor"/>
+    <path d="m6 9 4 6m0-6-4 6" stroke="#217346" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  {{ texto }}
+</a>
+{% endmacro %}
+
+<div class="sales-page" id="sales-report-page">
+  <div class="eyebrow">ACESSO DO ADMINISTRADOR</div>
+  <div class="sales-heading">
+    <div><h1>Relatórios de vendas</h1><p>Resultados e oportunidades do seu restaurante.</p></div>
+    {{ excel('completo', 'Exportar tudo em Excel') }}
+  </div>
+
+  <section class="sales-filter-panel" aria-label="Filtros dos relatórios"><div class="sales-filter-row">
+    <nav class="sales-periods" aria-label="Período">
+      {% for valor, nome in periodos.items() %}
+      <a href="{{ url_for('sales_reports.pagina', periodo=valor, referencia=f.referencia.isoformat(), situacao=f.situacao, aba=aba) }}" data-period-link class="{{ 'active' if f.periodo == valor else '' }}" {% if f.periodo == valor %}aria-current="page"{% endif %}>{{ nome }}</a>
+      {% endfor %}
+    </nav>
+    <form method="get" class="sales-filters">
+      <input type="hidden" name="periodo" value="{{ f.periodo }}"><input type="hidden" name="aba" id="sales-tab-value" value="{{ aba }}">
+      <label>Data de referência
+        <input type="date" name="referencia" value="{{ f.referencia.isoformat() }}" required>
+      </label>
+      <label>Pedidos incluídos
+        <select name="situacao">
+          <option value="pagos" {{ 'selected' if f.situacao == 'pagos' else '' }}>Somente pagos</option>
+          <option value="todos" {{ 'selected' if f.situacao == 'todos' else '' }}>Todos os pedidos</option>
+        </select>
+      </label>
+      <button type="submit">Consultar</button>
+    </form></div>
+    <p class="sales-period-caption">{{ f.inicio.strftime('%d/%m/%Y') }} a {{ fim_inclusivo.strftime('%d/%m/%Y') }} · Brasília · Semana de segunda a domingo.</p>
+
+  </section>
+
+  <div class="sales-metrics">
+    <div><span>Pedidos</span><strong>{{ r.quantidade }}</strong></div>
+    <div><span>Total dos pedidos</span><strong>{{ r.total | brl }}</strong></div>
+    <div><span>Marcado pago</span><strong>{{ r.recebido | brl }}</strong></div>
+    <div><span>Não pago</span><strong>{{ r.a_receber | brl }}</strong></div>
+    <div><span>Ticket médio</span><strong>{{ r.ticket | brl }}</strong></div>
+    <div><span>Unidades</span><strong>{{ r.unidades }}</strong></div>
+  </div>
+
+  <div class="sales-tabs" role="tablist" aria-label="Relatórios">
+    {% for valor, nome in abas %}<button type="button" role="tab" id="sales-tab-{{ valor }}" data-sales-tab="{{ valor }}" aria-controls="sales-{{ valor }}" aria-selected="{{ 'true' if aba == valor else 'false' }}" tabindex="{{ '0' if aba == valor else '-1' }}">{{ nome }}</button>{% endfor %}
+  </div>
+
+  <section id="sales-evolucao" class="sales-panel" role="tabpanel" aria-labelledby="sales-tab-evolucao" tabindex="0" {% if aba != 'evolucao' %}hidden{% endif %}>
+    <div class="sales-section-heading"><div><h2>Vendas {{ 'por hora' if f.periodo == 'dia' else 'por mês' if f.periodo == 'ano' else 'por dia' }}</h2><p>Produtos: {{ r.subtotal | brl }} · Entrega: {{ r.taxas | brl }}</p></div>{{ excel('resumo') }}</div>
+    {% if not r.quantidade %}<p class="sales-note">Nenhum pedido corresponde aos filtros selecionados.</p>{% endif %}
+    <div class="sales-chart sales-trend-chart" data-chart="evolucao" aria-label="Evolução do valor de vendas"></div><p class="sales-note">Valores em reais, incluindo entrega. Posicione o cursor nos pontos para consultar os valores.</p>
+  </section>
+
+  <section id="sales-categorias" class="sales-panel" role="tabpanel" aria-labelledby="sales-tab-categorias" tabindex="0" {% if aba != 'categorias' %}hidden{% endif %}>
+    <div class="sales-section-heading"><div><h2>Vendas por categoria</h2><p>Ordenadas pelo valor dos produtos, sem taxa de entrega.</p></div>{{ excel('categorias') }}</div>
+    
+    <div class="sales-ranking-layout"><div><div class="sales-chart-label">Top 5 categorias por valor</div><div class="sales-chart sales-rank-chart" data-chart="categorias" aria-label="Top 5 categorias por valor"></div></div><div><div class="sales-table-wrap"><table class="sales-table" data-paged-table="categorias" data-page-size="5"><thead><tr><th scope="col">Categoria atual</th><th scope="col" class="numeric">Unidades</th><th scope="col" class="numeric">Valor</th></tr></thead>
+      <tbody>{% for x in r.categorias %}<tr data-sales-row><td>{{ x.nome }}</td><td class="numeric">{{ x.unidades }}</td><td class="numeric">{{ x.valor | brl }}</td></tr>{% else %}<tr><td colspan="3">Nenhuma venda de produtos no período.</td></tr>{% endfor %}</tbody>
+      
+    </table></div><div class="sales-pagination" data-pagination="categorias"><span data-page-summary role="status" aria-live="polite"></span><div><button type="button" class="secondary" data-page-prev>← Anterior</button><button type="button" class="secondary" data-page-next>Próxima →</button></div></div></div></div>
+    <p class="sales-note">Categorias associadas pelo nome ao cadastro atual. Sem correspondência segura: “Categoria não identificada”.</p>
+  </section>
+
+  <section id="sales-clientes" class="sales-panel" role="tabpanel" aria-labelledby="sales-tab-clientes" tabindex="0" {% if aba != 'clientes' %}hidden{% endif %}>
+    <div class="sales-section-heading"><div><h2>Melhores clientes</h2><p>Ranking pelo valor dos pedidos no período, incluindo entrega.</p></div>{{ excel('clientes') }}</div>
+    <p class="sales-note">Somente clientes identificados em pedidos online. Pedidos do salão sem cliente associado: {{ r.salao | brl }}.</p>
+    <div class="sales-ranking-layout"><div><div class="sales-chart-label">Top 5 clientes por valor</div><div class="sales-chart sales-rank-chart" data-chart="clientes" aria-label="Top 5 clientes por valor"></div></div><div><div class="sales-table-wrap"><table class="sales-table" data-paged-table="clientes" data-page-size="5"><thead><tr><th scope="col">Cliente</th><th scope="col" class="numeric">Pedidos</th><th scope="col" class="numeric">Valor</th></tr></thead>
+      <tbody>{% for x in r.clientes %}<tr data-sales-row><td>{{ loop.index }}. {{ x.nome }}</td><td class="numeric">{{ x.pedidos }}</td><td class="numeric">{{ x.valor | brl }}</td></tr>{% else %}<tr><td colspan="3">Nenhum cliente identificado nos pedidos deste período.</td></tr>{% endfor %}</tbody>
+    </table></div><div class="sales-pagination" data-pagination="clientes"><span data-page-summary role="status" aria-live="polite"></span><div><button type="button" class="secondary" data-page-prev>← Anterior</button><button type="button" class="secondary" data-page-next>Próxima →</button></div></div></div></div>
+  </section>
+
+  <section id="sales-produtos" class="sales-panel" role="tabpanel" aria-labelledby="sales-tab-produtos" tabindex="0" {% if aba != 'produtos' %}hidden{% endif %}>
+    <div class="sales-section-heading"><div><h2>Produtos mais vendidos</h2><p>Ranking por quantidade de unidades; desempate pelo valor dos itens.</p></div>{{ excel('produtos') }}</div>
+    <div class="sales-ranking-layout"><div><div class="sales-chart-label">Top 5 produtos por unidades</div><div class="sales-chart sales-rank-chart" data-chart="produtos" aria-label="Top 5 produtos por unidades"></div></div><div><div class="sales-table-wrap"><table class="sales-table" data-paged-table="produtos" data-page-size="5"><thead><tr><th scope="col">Produto</th><th scope="col" class="numeric">Unidades</th><th scope="col" class="numeric">Valor</th></tr></thead>
+      <tbody>{% for x in r.produtos %}<tr data-sales-row><td>{{ loop.index }}. {{ x.nome }}</td><td class="numeric">{{ x.unidades }}</td><td class="numeric">{{ x.valor | brl }}</td></tr>{% else %}<tr><td colspan="3">Nenhum produto vendido no período.</td></tr>{% endfor %}</tbody>
+    </table></div><div class="sales-pagination" data-pagination="produtos"><span data-page-summary role="status" aria-live="polite"></span><div><button type="button" class="secondary" data-page-prev>← Anterior</button><button type="button" class="secondary" data-page-next>Próxima →</button></div></div></div></div>
+    <p class="sales-note">Os itens são agrupados pelo nome. Produtos renomeados podem aparecer separados. Valores usam o preço salvo no pedido.</p>
+  </section>
+
+  <section id="sales-pedidos" class="sales-panel" role="tabpanel" aria-labelledby="sales-tab-pedidos" tabindex="0" {% if aba != 'pedidos' %}hidden{% endif %}>
+    <div class="sales-section-heading"><div><h2>Pedidos do período</h2><p>Detalhamento dos pedidos que compõem os totais.</p></div>{{ excel('pedidos') }}</div>
+    <div class="sales-table-wrap"><table class="sales-table" data-paged-table="pedidos" data-page-size="7"><thead><tr><th scope="col">Pedido</th><th scope="col">Criado em</th><th scope="col">Origem</th><th scope="col">Comanda</th><th scope="col">Pagamento</th><th scope="col" class="numeric">Total</th></tr></thead>
+      <tbody>{% for x in r.pedidos %}<tr data-sales-row><td><a href="{{ url_for('pedidos', pedido=x.id) }}">#{{ x.id }}</a></td><td>{{ x.criado.strftime('%d/%m/%Y %H:%M') }}</td><td>{{ x.origem }}</td><td>{{ x.comanda or '—' }}</td><td>{{ 'Pago' if x.pago else 'Não pago' }}</td><td class="numeric">{{ x.total | brl }}</td></tr>{% else %}<tr><td colspan="6">Nenhum pedido no período.</td></tr>{% endfor %}</tbody>
+    </table></div><div class="sales-pagination" data-pagination="pedidos"><span data-page-summary role="status" aria-live="polite"></span><div><button type="button" class="secondary" data-page-prev>← Anterior</button><button type="button" class="secondary" data-page-next>Próxima →</button></div></div>
+  </section>
+  <details class="sales-method"><summary>Como ler os números</summary><p>O período usa a criação do pedido em Brasília; “Somente pagos” considera o pagamento atual. Para entradas por data de recebimento, consulte o caixa. Semana de segunda a domingo. Gráficos de ranking mostram os cinco primeiros; paginação e Excel incluem todos. Categorias usam o cadastro atual e não a categoria histórica da venda.</p></details>
+  <noscript><p>Ative o JavaScript para usar as abas e gráficos. A exportação completa continua disponível no botão superior.</p></noscript>
+</div>
+<script type="application/json" id="sales-chart-data">
+{
+  "evolucao": [{% for x in r.evolucao %}{{ {'label': x.rotulo, 'value': x.valor, 'orders': x.pedidos}|tojson }}{{ ',' if not loop.last }}{% endfor %}],
+  "categorias": [{% for x in r.categorias[:5] %}{{ {'label': x.nome, 'value': x.valor}|tojson }}{{ ',' if not loop.last }}{% endfor %}],
+  "clientes": [{% for x in r.clientes[:5] %}{{ {'label': x.nome, 'value': x.valor}|tojson }}{{ ',' if not loop.last }}{% endfor %}],
+  "produtos": [{% for x in r.produtos[:5] %}{{ {'label': x.nome, 'value': x.unidades}|tojson }}{{ ',' if not loop.last }}{% endfor %}]
+}
+</script>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script defer src="{{ url_for('static', filename='js/sales_reports.js', v='compacto2') }}"></script>
+{% endblock %}

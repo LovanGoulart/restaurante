@@ -5,11 +5,12 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from io import BytesIO
 import re
+import textwrap
 from zoneinfo import ZoneInfo
 
 from flask import Blueprint, send_file
 from openpyxl import Workbook
-from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from sqlalchemy.orm import joinedload, selectinload
@@ -110,16 +111,17 @@ def tabela(ws, titulo, nota, cabecalhos, linhas, larguras, nome,
            moedas=(), datas=(), identificadores=()):
     limite = get_column_letter(len(cabecalhos))
     ws.sheet_view.showGridLines = False
-    ws.sheet_view.zoomScale = 90
+    ws.sheet_view.zoomScale = 100
+    ws.sheet_properties.tabColor = "A8C4D8"
     ws.merge_cells(f"A1:{limite}1")
     ws["A1"] = titulo
-    ws["A1"].font = Font(name="Calibri", size=18, bold=True, color="FFFFFF")
-    ws["A1"].fill = PatternFill("solid", fgColor="102039")
+    ws["A1"].font = Font(name="Calibri", size=18, bold=True, color="334155")
+    ws["A1"].fill = PatternFill("solid", fgColor="F1F5F9")
     ws["A1"].alignment = Alignment(vertical="center")
-    ws.row_dimensions[1].height = 34
+    ws.row_dimensions[1].height = 40
     ws.merge_cells(f"A2:{limite}2")
     ws["A2"] = nota
-    ws["A2"].font = Font(name="Calibri", size=11, color="475569")
+    ws["A2"].font = Font(name="Calibri", size=11, color="64748B")
     ws["A2"].alignment = Alignment(wrap_text=True, vertical="center")
     ws.row_dimensions[2].height = 36
     ws.append([])
@@ -134,28 +136,54 @@ def tabela(ws, titulo, nota, cabecalhos, linhas, larguras, nome,
                 cell.value = texto(cell.value)
                 cell.data_type = "s"
             if cell.row >= 5:
-                cell.font = Font(name="Calibri", size=11, color="172B45")
-                cell.alignment = Alignment(vertical="top", wrap_text=True)
+                cell.font = Font(
+                    name="Calibri", size=11, color="475569",
+                    bold=cell.column == 2,
+                )
+                cell.fill = PatternFill(
+                    "solid", fgColor="FFFFFF" if cell.row % 2 else "F6F8FB"
+                )
+                cell.border = Border(bottom=Side(style="hair", color="E4EAF0"))
+                cell.alignment = Alignment(vertical="center", wrap_text=True)
                 if cell.column in moedas:
                     cell.number_format = MOEDA
+                    cell.alignment = Alignment(
+                        horizontal="right", vertical="center", wrap_text=True
+                    )
                 elif cell.column in datas:
                     cell.number_format = "dd/mm/yyyy"
                 elif cell.column in identificadores:
                     cell.number_format = "@"
 
     for cell in ws[4]:
-        cell.font = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
-        cell.fill = PatternFill("solid", fgColor="2454A4")
+        # Cores suaves separam cadastro, histórico e oportunidades.
+        cor = (
+            "E8EFF7" if nome != "TabelaLeads" or cell.column <= 6
+            else "E9F2EE" if cell.column <= 13 else "F8F0E4"
+        )
+        cell.font = Font(name="Calibri", size=11, bold=True, color="334155")
+        cell.fill = PatternFill("solid", fgColor=cor)
+        cell.border = Border(bottom=Side(style="thin", color="CBD5E1"))
         cell.alignment = Alignment(vertical="center", wrap_text=True)
-    ws.row_dimensions[4].height = 32
+    ws.row_dimensions[4].height = 38
     for indice, largura in enumerate(larguras, 1):
         ws.column_dimensions[get_column_letter(indice)].width = largura
     for numero in range(5, ws.max_row + 1):
-        ws.row_dimensions[numero].height = 92 if nome == "TabelaLeads" else 34
+        # Ajuste ao conteúdo evita linhas altas para clientes sem histórico.
+        maior = 1
+        for cell in ws[numero]:
+            if isinstance(cell.value, str):
+                largura = max(8, int(larguras[cell.column - 1] - 3))
+                linhas_texto = sum(
+                    max(1, len(textwrap.wrap(parte, width=largura)))
+                    for parte in cell.value.split("\n")
+                )
+                maior = max(maior, linhas_texto)
+        ws.row_dimensions[numero].height = min(409, max(30, maior * 16 + 12))
     if linhas:
         table = Table(displayName=nome, ref=f"A4:{limite}{ws.max_row}")
         table.tableStyleInfo = TableStyleInfo(
-            name="TableStyleMedium2", showRowStripes=True,
+            name="TableStyleLight9", showRowStripes=True,
         )
         ws.add_table(table)
     else:
