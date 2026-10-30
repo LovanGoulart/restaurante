@@ -61,9 +61,19 @@ window.ProductPicker = (() => {
       .filter(Boolean)
       .join(" | ");
   }
+  function choicePrice(group, choice) {
+    // Nos tamanhos, mostra o preço da pizza (base + acréscimo do tamanho).
+    // Bordas e outros complementos continuam mostrando seu próprio acréscimo.
+    const isSize = /tamanho|fatias/.test(normal(group.title));
+    if (isSize) return `<small>${money(current.preco + choice.price)}</small>`;
+    return choice.price ? `<small>+ ${money(choice.price)}</small>` : "";
+  }
   function update() {
     const selected = read();
     document.querySelector("#picker-quantity").textContent = quantity;
+    document.querySelector("#picker-unit-price").textContent = money(
+      price(current, selected),
+    );
     document.querySelector("#picker-total").textContent = money(
       price(current, selected) * quantity,
     );
@@ -95,7 +105,7 @@ window.ProductPicker = (() => {
     groups.innerHTML = current.groups
       .map(
         (g) =>
-          `<fieldset class="picker-group" data-group="${g.id}"><legend>${safe(g.title)} <span class="picker-count">${g.type === "text" ? "Texto" : "0 / " + g.max}</span></legend><small>${g.required ? "Obrigatório" : "Opcional"}${g.type === "multiple" ? " · Até " + g.max + " escolhas" : ""}</small>${g.type === "text" ? `<input type="text" maxlength="60" aria-label="${safe(g.title)}" ${g.required ? "required" : ""}>` : g.choices.map((c) => `<label class="picker-choice"><span>${safe(c.label)}${c.price ? `<small>+ ${money(c.price)}</small>` : ""}</span><input type="${g.type === "single" ? "radio" : "checkbox"}" name="${g.id}" value="${c.id}"></label>`).join("") + (!g.required && g.type === "single" ? `<button type="button" class="picker-clear" data-clear="${g.id}">Limpar escolha</button>` : "")}</fieldset>`,
+          `<fieldset class="picker-group" data-group="${g.id}"><legend>${safe(g.title)} <span class="picker-count">${g.type === "text" ? "Texto" : "0 / " + g.max}</span></legend><small>${g.required ? "Obrigatório" : "Opcional"}${g.type === "multiple" ? " · Até " + g.max + " escolhas" : ""}</small>${g.type === "text" ? `<input type="text" maxlength="60" aria-label="${safe(g.title)}" ${g.required ? "required" : ""}>` : g.choices.map((c) => `<label class="picker-choice"><span>${safe(c.label)}${choicePrice(g, c)}</span><input type="${g.type === "single" ? "radio" : "checkbox"}" name="${g.id}" value="${c.id}"></label>`).join("") + (!g.required && g.type === "single" ? `<button type="button" class="picker-clear" data-clear="${g.id}">Limpar escolha</button>` : "")}</fieldset>`,
       )
       .join("");
     for (const g of current.groups) {
@@ -258,9 +268,9 @@ window.ProductPicker = (() => {
         }
       };
     });
+    let category = "all";
     const filter = () => {
-      const q = normal(document.querySelector("#search").value.trim()),
-        category = document.querySelector("#category-select").value;
+      const q = normal(document.querySelector("#search").value.trim());
       let count = 0;
       document.querySelectorAll("[data-product]").forEach((p) => {
         p.hidden =
@@ -279,7 +289,16 @@ window.ProductPicker = (() => {
       document.querySelector("#empty-search").hidden = count > 0;
     };
     document.querySelector("#search").oninput = filter;
-    document.querySelector("#category-select").onchange = filter;
+    document.querySelectorAll(".catalog-chips .chip").forEach((button) => {
+      button.onclick = () => {
+        category = button.dataset.category;
+        document.querySelectorAll(".catalog-chips .chip").forEach((chip) => {
+          chip.classList.toggle("active", chip === button);
+          chip.setAttribute("aria-pressed", String(chip === button));
+        });
+        filter();
+      };
+    });
   }
   function line(i, k) {
     return `<div class="cart-item"><b>${safe(i.nome)}</b>${i.resumo ? `<p class="cart-options-summary">${safe(i.resumo)}</p>` : ""}${i.observacao ? `<p class="cart-options-summary">${safe(products.get(i.id)?.notes.label || "Observação")}: ${safe(i.observacao)}</p>` : ""}<div class="quantity"><button data-change="-1" data-index="${k}" aria-label="Diminuir ${safe(i.nome)}">−</button><span>${i.quantidade}</span><button data-change="1" data-index="${k}" aria-label="Aumentar ${safe(i.nome)}">+</button><strong>${money(i.preco * i.quantidade)}</strong></div><button type="button" class="cart-edit-options" data-edit="${k}">Editar opções e observação</button></div>`;

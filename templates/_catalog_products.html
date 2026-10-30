@@ -1,11 +1,12 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product-picker.css') }}">
-<div class="section-head catalog-heading">
-  <div><div class="eyebrow">ESCOLHA DO SEU JEITO</div><h2>Cardápio da casa</h2></div>
+<div class="catalog-controls">
   <input id="search" type="search" placeholder="Buscar no cardápio…" aria-label="Buscar produtos">
-</div>
-<div class="catalog-toolbar"><label for="category-select">Categorias</label>
-  <select id="category-select"><option value="all">Todas as categorias</option>{% for c in categorias %}<option value="{{ c.id }}">{{ c.nome }}</option>{% endfor %}</select>
-  <span>Toque em um produto para escolher as opções.</span>
+  <div class="chips catalog-chips" aria-label="Filtrar por categoria">
+    <button type="button" class="chip active" data-category="all" aria-pressed="true">Todos</button>
+    {% for c in categorias %}
+      <button type="button" class="chip" data-category="{{ c.id }}" aria-pressed="false">{{ c.nome }}</button>
+    {% endfor %}
+  </div>
 </div>
 <div class="catalog-sections">
 {% for c in categorias %}
@@ -30,7 +31,7 @@
 <dialog id="product-picker" aria-labelledby="picker-name">
   <form id="picker-form">
     <header class="picker-heading"><h2 id="picker-name"></h2><button type="button" id="picker-close" class="icon-button" aria-label="Fechar opções">×</button></header>
-    <div class="picker-body"><div id="picker-photo"></div><p id="picker-description"></p><div id="picker-groups"></div>
+    <div class="picker-body"><div id="picker-photo"></div><p id="picker-description"></p><p class="picker-unit-line"><span>Valor por unidade</span><strong id="picker-unit-price"></strong></p><div id="picker-groups"></div>
       <label id="picker-note-label"><span id="picker-note-title">Observação</span><textarea id="picker-note" maxlength="300" rows="2"></textarea></label>
       <p id="picker-error" role="alert" hidden></p>
     </div>

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product-picker.css') }}">
-<div class="section-head"><div><div class="eyebrow">CONFIGURAÇÃO DO CARDÁPIO</div><h1>Opções de {{ product.nome }}</h1><p>Preço base: <strong>{{ product.preco|brl }}</strong>. As escolhas abaixo somam acréscimos a esse preço, por unidade.</p></div><a href="{{ url_for('cadastros', kind='produtos') }}">← Produtos</a></div>
+<div class="section-head"><div><div class="eyebrow">CONFIGURAÇÃO DO CARDÁPIO</div><h1>Opções de {{ product.nome }}</h1><p>Preço base: <strong>{{ product.preco|brl }}</strong>. As escolhas abaixo somam acréscimos a esse preço, por unidade.</p></div><a class="product-options-back" href="{{ url_for('cadastros', kind='produtos') }}">← Voltar para Produtos</a></div>
 <form id="options-config" class="options-config panel" data-url="{{ url_for('product_options.configure', id=product.id) }}">
   <p class="notice">Estas opções aparecem no PDV do administrador, do garçom, no cardápio do cliente e no pedido pelo QR Code. Para ocultar o produto inteiro, desmarque “Ativo” em seu cadastro.</p>
   <h2>Monte as opções do produto</h2>
