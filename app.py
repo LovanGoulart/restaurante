@@ -50,6 +50,9 @@ def create_app(overrides=None):
 
     app.register_blueprint(management_bp)
     app.register_blueprint(salon_qr_bp)
+    from product_options import bp as product_options_bp
+
+    app.register_blueprint(product_options_bp)
 
     @app.template_filter("data_br")
     def data_br(value):

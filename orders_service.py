@@ -1,5 +1,6 @@
 from flask import abort
 from models import db, Produto, Item
+from product_options import resolve_item
 
 
 def add_items(pedido, itens):
@@ -17,10 +18,11 @@ def add_items(pedido, itens):
         obs = item.get("observacao", "")
         if not isinstance(obs, str) or len(obs) > 300 or not prod or not prod.ativo:
             abort(400, "Produto indisponível ou observação inválida.")
+        price, obs = resolve_item(prod, item)
         pedido.itens.append(
             Item(
                 nome=prod.nome,
-                preco=prod.preco,
+                preco=price,
                 quantidade=item["quantidade"],
                 observacao=obs.strip(),
             )

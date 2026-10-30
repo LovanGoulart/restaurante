@@ -181,7 +181,8 @@
 {% endif %}
 
           </div>
-          <a href="?editar={{ r.id }}">Editar →</a>
+          <div><a href="?editar={{ r.id }}">Editar →</a>
+          {% if kind=='produtos' %}<a class="button-link" href="{{ url_for('product_options.configure', id=r.id) }}">Opções do produto →</a>{% endif %}</div>
         </div>
       
 {% else %}

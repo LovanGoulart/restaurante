@@ -1,0 +1,39 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product-picker.css') }}">
+<div class="section-head catalog-heading">
+  <div><div class="eyebrow">ESCOLHA DO SEU JEITO</div><h2>Cardápio da casa</h2></div>
+  <input id="search" type="search" placeholder="Buscar no cardápio…" aria-label="Buscar produtos">
+</div>
+<div class="catalog-toolbar"><label for="category-select">Categorias</label>
+  <select id="category-select"><option value="all">Todas as categorias</option>{% for c in categorias %}<option value="{{ c.id }}">{{ c.nome }}</option>{% endfor %}</select>
+  <span>Toque em um produto para escolher as opções.</span>
+</div>
+<div class="catalog-sections">
+{% for c in categorias %}
+  {% set category_products = produtos|selectattr('categoria_id', 'equalto', c.id)|list %}
+  {% if category_products %}
+  <section class="catalog-category" data-category-section="{{ c.id }}">
+    <h2 class="category-title">{{ c.nome }} <small>{{ category_products|length }} {{ 'opção' if category_products|length == 1 else 'opções' }}</small></h2>
+    <div class="products">
+    {% for p in category_products %}
+      <article class="product catalog-product" data-product="{{ p.id }}" data-category="{{ p.categoria_id }}" data-name="{{ (p.nome ~ ' ' ~ p.descricao ~ ' ' ~ c.nome)|lower }}" role="button" tabindex="0" aria-label="Escolher opções de {{ p.nome }}" aria-haspopup="dialog">
+        <div class="product-content"><h3>{{ p.nome }}</h3><p>{{ p.descricao }}</p><div class="price"><b>{{ p.preco|brl }}{% if product_catalog([p])[0].groups %}<small> · Personalizar</small>{% endif %}</b><span class="add" data-id="{{ p.id }}" data-name="{{ p.nome }}" data-price="{{ p.preco }}" aria-label="Personalizar {{ p.nome }}" aria-hidden="true">+</span></div></div>
+        <div class="food">{% set photo = appearance.photos.get(p.id|string) %}{% if photo %}<img src="{{ url_for('appearance.media', name=photo) }}" alt="{{ p.nome }}" loading="lazy">{% else %}{{ p.emoji }}{% endif %}</div>
+      </article>
+    {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+{% endfor %}
+</div>
+<p id="empty-search" hidden>Nenhum produto encontrado. Tente outra palavra ou categoria.</p>
+<script type="application/json" id="product-catalog-data">{{ product_catalog(produtos)|tojson }}</script>
+<dialog id="product-picker" aria-labelledby="picker-name">
+  <form id="picker-form">
+    <header class="picker-heading"><h2 id="picker-name"></h2><button type="button" id="picker-close" class="icon-button" aria-label="Fechar opções">×</button></header>
+    <div class="picker-body"><div id="picker-photo"></div><p id="picker-description"></p><div id="picker-groups"></div>
+      <label id="picker-note-label"><span id="picker-note-title">Observação</span><textarea id="picker-note" maxlength="300" rows="2"></textarea></label>
+      <p id="picker-error" role="alert" hidden></p>
+    </div>
+    <footer class="picker-footer"><label>Quantidade<div class="picker-quantity"><button type="button" id="picker-minus" aria-label="Diminuir quantidade">−</button><output id="picker-quantity">1</output><button type="button" id="picker-plus" aria-label="Aumentar quantidade">+</button></div></label><button type="submit" id="picker-submit">Adicionar · <span id="picker-total"></span></button></footer>
+  </form>
+</dialog>

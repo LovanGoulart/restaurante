@@ -36,57 +36,7 @@
   </section>
   <div class="pdv">
     <section>
-      <div class="section-head catalog-heading">
-        <div>
-          <div class="eyebrow">ESCOLHA O QUE COMBINA COM VOCÊ</div>
-          <h2>Cardápio da casa</h2>
-        </div>
-        <input
-          id="search"
-          type="search"
-          placeholder="O que você quer pedir?"
-          aria-label="Buscar produtos"
-        />
-      </div>
-      <div class="chips">
-        <button class="chip active" data-category="all" aria-pressed="true">
-          Todos
-        </button>
-        {% for c in categorias %}
-          <button class="chip" data-category="{{ c.id }}" aria-pressed="false">
-            {{ c.nome }}
-          </button>
-        {% endfor %}
-      </div>
-      <div class="products">
-        {% for p in produtos %}
-          <article
-            class="product"
-            data-category="{{ p.categoria_id }}"
-            data-name="{{ p.nome|lower }}"
-          >
-            <div class="food">{% set photo = appearance.photos.get(p.id|string) %}{% if photo %}<img src="{{ url_for('appearance.media', name=photo) }}" alt="{{ p.nome }}" loading="lazy">{% else %}{{ p.emoji }}{% endif %}</div>
-            <div class="product-content">
-              <small>{{ p.categoria.nome }}</small>
-              <h3>{{ p.nome }}</h3>
-              <p>{{ p.descricao }}</p>
-              <div class="price">
-                <b>{{ p.preco|brl }}</b>
-                <button
-                  class="add"
-                  data-id="{{ p.id }}"
-                  data-name="{{ p.nome }}"
-                  data-price="{{ p.preco }}"
-                  aria-label="Adicionar {{ p.nome }}"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </article>
-        {% endfor %}
-      </div>
-      <p id="empty-search" hidden>Nenhum produto encontrado.</p>
+      {% include '_catalog_products.html' %}
     </section>
     <aside
       class="panel bag online-bag"
@@ -195,5 +145,6 @@
 {% endblock %}
 
 {% block scripts %}
+  <script defer src="{{ url_for('static', filename='js/product-picker.js') }}"></script>
   <script defer src="{{ request.script_root }}/static/js/cardapio.js"></script>
 {% endblock %}

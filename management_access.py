@@ -78,6 +78,8 @@ def guard():
         ):
             abort(403, "Confirme a senha do administrador para acessar esta área.")
         path = request.path
+        if scope == "produtos":
+            path = "/cadastros/produtos"
         if scope == "relatorios":
             path = "/relatorios-vendas"
         return redirect(

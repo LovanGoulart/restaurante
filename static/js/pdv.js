@@ -25,8 +25,17 @@ mobileCart.onclick = () => setBag(true);
 document.querySelector(".bag-close").onclick = () => setBag(false);
 document.querySelector("#bag-backdrop").onclick = () => setBag(false);
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && document.body.classList.contains("bag-open")) setBag(false);
-  if (e.key === "Tab" && document.body.classList.contains("bag-open")) {
+  if (
+    !document.querySelector("#product-picker").open &&
+    e.key === "Escape" &&
+    document.body.classList.contains("bag-open")
+  )
+    setBag(false);
+  if (
+    !document.querySelector("#product-picker").open &&
+    e.key === "Tab" &&
+    document.body.classList.contains("bag-open")
+  ) {
     const nodes = [
       ...bag.querySelectorAll("button:not(:disabled), input, textarea"),
     ].filter((el) => el.offsetParent !== null);
@@ -61,65 +70,32 @@ function updateTotals() {
 }
 function draw() {
   cartEl.innerHTML =
-    cart
-      .map(
-        (i, k) => /* HTML */ `
-          <div class="cart-item">
-            <b>${escapeHTML(i.nome)}</b>
-            <div class="quantity">
-              <button
-                data-change="-1"
-                data-index="${k}"
-                aria-label="Diminuir ${escapeHTML(i.nome)}"
-              >
-                −
-              </button>
-              <span>${i.quantidade}</span>
-              <button
-                data-change="1"
-                data-index="${k}"
-                aria-label="Aumentar ${escapeHTML(i.nome)}"
-              >
-                +
-              </button>
-              <strong>${money(i.preco * i.quantidade)}</strong>
-            </div>
-            <textarea
-              data-note="${k}"
-              maxlength="300"
-              rows="1"
-              placeholder="Observação (ex.: sem cebola)"
-              aria-label="Observação para ${escapeHTML(i.nome)}"
-            >
-${escapeHTML(i.observacao)}</textarea>
-          </div>
-        `,
-      )
-      .join("") ||
+    cart.map((i, k) => ProductPicker.line(i, k)).join("") ||
     '<div class="empty"><span>🛍️</span><h3>O que vamos servir?</h3><p>Toque em + para adicionar um produto.</p></div>';
   updateTotals();
 }
-document.querySelectorAll(".add").forEach(
-  (b) =>
-    (b.onclick = () => {
-      if (sending) return;
-      let i = cart.find((i) => i.id === +b.dataset.id);
-      if (i) {
-        if (i.quantidade < 99) i.quantidade++;
-      } else
-        cart.push({
-          id: +b.dataset.id,
-          nome: b.dataset.name,
-          preco: +b.dataset.price,
-          quantidade: 1,
-          observacao: "",
-        });
-      draw();
-      b.textContent = "✓";
-      setTimeout(() => (b.textContent = "+"), 650);
-    }),
-);
+ProductPicker.bind({
+  canEdit: () => !sending,
+  onAdd: (item) => {
+    if (cart.length >= 100) {
+      toast("Use até 100 linhas por envio.");
+      return;
+    }
+    cart.push(item);
+    draw();
+    toast("Item adicionado ao pedido.");
+  },
+});
 cartEl.onclick = (e) => {
+  const edit = e.target.closest("[data-edit]");
+  if (edit && !sending) {
+    const index = +edit.dataset.edit;
+    ProductPicker.edit(cart[index], (item) => {
+      cart[index] = item;
+      draw();
+    });
+    return;
+  }
   const b = e.target.closest("[data-change]");
   if (!b || sending) return;
   const k = +b.dataset.index;
@@ -131,58 +107,56 @@ cartEl.oninput = (e) => {
   if (e.target.dataset.note !== undefined)
     cart[+e.target.dataset.note].observacao = e.target.value;
 };
-let category = "all";
-function filter() {
-  const q = document.querySelector("#search").value.toLocaleLowerCase("pt-BR");
-  let count = 0;
-  document.querySelectorAll(".product").forEach((p) => {
-    p.hidden =
-      !(category === "all" || p.dataset.category === category) ||
-      !p.dataset.name.includes(q);
-    if (!p.hidden) count++;
-  });
-  document.querySelector("#empty-search").hidden = !!count;
-}
-document.querySelector("#search").oninput = filter;
-document.querySelectorAll(".chip").forEach(
-  (b) =>
-    (b.onclick = () => {
-      category = b.dataset.category;
-      document.querySelectorAll(".chip").forEach((c) => {
-        c.classList.toggle("active", c === b);
-        c.setAttribute("aria-pressed", String(c === b));
-      });
-      filter();
-    }),
-);
-let pendingKey=crypto.randomUUID().replaceAll("-", "");
+let pendingKey = crypto.randomUUID().replaceAll("-", "");
 send.onclick = async () => {
   if (sending) return;
-  const qr=bag.dataset.qr === "yes";
-  const comanda=document.querySelector("#comanda")?.value.trim();
-  const numero_mesa=document.querySelector("#numero-mesa")?.value.trim();
-  if(!qr && (!/^\d{1,12}$/.test(comanda || "") || !/^\d{1,12}$/.test(numero_mesa || ""))){
-    toast("Informe os números da comanda e da mesa."); return;
+  const qr = bag.dataset.qr === "yes";
+  const comanda = document.querySelector("#comanda")?.value.trim();
+  const numero_mesa = document.querySelector("#numero-mesa")?.value.trim();
+  if (
+    !qr &&
+    (!/^\d{1,12}$/.test(comanda || "") || !/^\d{1,12}$/.test(numero_mesa || ""))
+  ) {
+    toast("Informe os números da comanda e da mesa.");
+    return;
   }
   sending = true;
   updateTotals();
   try {
     const p = await api(qr ? "/api/salao/pedidos" : "/api/pedidos", {
-      comanda, numero_mesa, chave: pendingKey,
-      itens: cart.map(({ id, quantidade, observacao }) => ({
-        id,
-        quantidade,
-        observacao,
-      })),
+      comanda,
+      numero_mesa,
+      chave: pendingKey,
+      itens: cart.map(
+        ({ id, quantidade, observacao, opcoes, opcoes_versao }) => ({
+          id,
+          quantidade,
+          observacao,
+          opcoes,
+          opcoes_versao,
+        }),
+      ),
     });
     cart = [];
-    pendingKey=crypto.randomUUID().replaceAll("-", "");
+    pendingKey = crypto.randomUUID().replaceAll("-", "");
     draw();
     if (document.body.classList.contains("bag-open")) setBag(false);
-    toast(qr ? "Pedido enviado! Acompanhe em Meus pedidos." : (p.adicionado ? "Itens adicionados à comanda " : "Pedido enviado. Comanda ")+comanda+" · Mesa "+numero_mesa);
-    if(qr) location.assign(restaurantURL("/salao/meus-pedidos"));
+    toast(
+      qr
+        ? "Pedido enviado! Acompanhe em Meus pedidos."
+        : (p.adicionado
+            ? "Itens adicionados à comanda "
+            : "Pedido enviado. Comanda ") +
+            comanda +
+            " · Mesa " +
+            numero_mesa,
+    );
+    if (qr) location.assign(restaurantURL("/salao/meus-pedidos"));
   } catch (e) {
-    toast(e.message + " Se houve falha de conexão, confira Pedidos antes de reenviar.");
+    toast(
+      e.message +
+        " Se houve falha de conexão, confira Pedidos antes de reenviar.",
+    );
   } finally {
     sending = false;
     updateTotals();
@@ -192,9 +166,14 @@ window.addEventListener("offline", updateTotals);
 window.addEventListener("online", updateTotals);
 draw();
 
-const existing=new URLSearchParams(location.search).get('pedido');
-if(existing && bag.dataset.qr!=='yes') api('/api/pedidos/'+Number(existing)+'/detalhes').then(p=>{
- if(p.canal!=='salao'||p.pago) throw new Error('Comanda indisponível para adicionar itens.');
- document.querySelector('#comanda').value=p.comanda; document.querySelector('#numero-mesa').value=p.numero_mesa;
- toast('Adicionando itens à comanda '+p.comanda);
-}).catch(e=>toast(e.message));
+const existing = new URLSearchParams(location.search).get("pedido");
+if (existing && bag.dataset.qr !== "yes")
+  api("/api/pedidos/" + Number(existing) + "/detalhes")
+    .then((p) => {
+      if (p.canal !== "salao" || p.pago)
+        throw new Error("Comanda indisponível para adicionar itens.");
+      document.querySelector("#comanda").value = p.comanda;
+      document.querySelector("#numero-mesa").value = p.numero_mesa;
+      toast("Adicionando itens à comanda " + p.comanda);
+    })
+    .catch((e) => toast(e.message));

@@ -42,59 +42,7 @@
   </section>-->
   <div class="pdv">
     <section>
-      <div class="section-head catalog-heading">
-        <div>
-          <div class="eyebrow">ESCOLHA OS FAVORITOS</div>
-          <h2>Cardápio da casa</h2>
-        </div>
-        <input
-          id="search"
-          placeholder="Buscar no cardápio…"
-          aria-label="Buscar produtos"
-          type="search"
-        />
-      </div>
-      <div class="chips" aria-label="Categorias">
-        <button class="chip active" data-category="all" aria-pressed="true">
-          Todos
-        </button>
-        {% for c in categorias %}
-          <button class="chip" data-category="{{ c.id }}" aria-pressed="false">
-            {{ c.nome }}
-          </button>
-        {% endfor %}
-      </div>
-      <div class="products">
-        {% for p in produtos %}
-          <article
-            class="product"
-            data-category="{{ p.categoria_id }}"
-            data-name="{{ p.nome|lower }}"
-          >
-            <div class="food">{% set photo = appearance.photos.get(p.id|string) %}{% if photo %}<img src="{{ url_for('appearance.media', name=photo) }}" alt="{{ p.nome }}" loading="lazy">{% else %}{{ p.emoji }}{% endif %}</div>
-            <div class="product-content">
-              <small>{{ p.categoria.nome }}</small>
-              <h3>{{ p.nome }}</h3>
-              <p>{{ p.descricao }}</p>
-              <div class="price">
-                <b>{{ p.preco|brl }}</b>
-                <button
-                  class="add"
-                  data-id="{{ p.id }}"
-                  data-name="{{ p.nome }}"
-                  data-price="{{ p.preco }}"
-                  aria-label="Adicionar {{ p.nome }}"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </article>
-        {% endfor %}
-      </div>
-      <p id="empty-search" hidden>
-        Nenhum produto encontrado. Tente outra palavra ou categoria.
-      </p>
+      {% include '_catalog_products.html' %}
     </section>
     <aside class="panel bag" id="bag" data-qr="{{ 'yes' if qr_customer else 'no' }}">
 <div class="bag-heading">
@@ -109,32 +57,18 @@
 
   {% if not qr_customer %}
   <label class="table-input">
-    <span>Número da mesa:</span>    
-    <input 
-      id="numero-mesa" 
-      maxlength="12" 
-      inputmode="numeric" 
-      placeholder="" 
-      autocomplete="off">
-  </label>
+    <span>Comanda</span>
 
-  <label class="table-input">
-    <span>Número da comanda:</span>
     <input
       id="comanda"
       maxlength="12"
       placeholder=""
       autocomplete="off"
-      inputmode="numeric"/>
+      inputmode="numeric"
+    />
   </label>
-  {% else %}
-  
-  <div>
-    <strong>Mesa {{ session.get('qr_numero_mesa', '') }}</strong>
-    <p class="muted">O garçom informará sua comanda ao servir.</p>
-    <a href="{{ url_for('salon_qr.enter',editar=1) }}">Corrigir nome ou mesa para os próximos pedidos</a>
-  </div>
-  {% endif %}
+  <label class="table-input"><span>Mesa</span><input id="numero-mesa" maxlength="12" inputmode="numeric" placeholder="Ex.: 8" autocomplete="off"></label>
+  {% else %}<div><strong>Mesa {{ session.get('qr_numero_mesa', '') }}</strong><p class="muted">O garçom informará sua comanda ao servir.</p><a href="{{ url_for('salon_qr.enter',editar=1) }}">Corrigir nome ou mesa para os próximos pedidos</a></div>{% endif %}
 
   <button
     class="bag-close icon-button"
@@ -178,5 +112,6 @@
 {% endblock %}
 
 {% block scripts %}
+  <script defer src="{{ url_for('static', filename='js/product-picker.js') }}"></script>
   <script defer src="{{url_for('static',filename='js/pdv.js')}}"></script>
 {% endblock %}

@@ -1,3 +1,5 @@
+> **Cardápio e opções de produtos:** para esta atualização, leia primeiro [ATUALIZACAO_CARDAPIO_OPCOES.md](ATUALIZACAO_CARDAPIO_OPCOES.md). Não é necessária alteração no banco para a nova tela de opções.
+
 > **Instruções atualizadas:** consulte primeiro [ATUALIZACAO_ACESSOS_E_COMANDAS.md](ATUALIZACAO_ACESSOS_E_COMANDAS.md). Nesta versão o login geral e o login dos administradores do caixa usam e-mail, e a atualização de bancos requer `python atualizar_sistema.py`.
 
 # Administrador geral e restaurantes separados

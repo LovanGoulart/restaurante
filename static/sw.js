@@ -1,6 +1,6 @@
 const ROOT = new URL(self.registration.scope).pathname.replace(/\/$/, "");
 const CACHE_PREFIX = "restaurant-scope-" + ROOT + "-";
-const CACHE = CACHE_PREFIX + "v1";
+const CACHE = CACHE_PREFIX + "v2";
 function safeOrderURL(value) {
   try {
     const url = new URL(value, self.location.origin);
@@ -21,6 +21,9 @@ function safeOrderURL(value) {
   }
 }
 const ASSETS = [
+  "/static/css/product-picker.css",
+  "/static/js/product-picker.js",
+  "/static/js/product-options-admin.js",
   "/static/js/restaurant_scope.js",
   "/static/css/operations.css",
   "/static/js/br-fields.js",
