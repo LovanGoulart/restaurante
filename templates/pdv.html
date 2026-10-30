@@ -1,6 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <style>
+    /* Cabeçalho compacto exclusivo do PDV do administrador e do garçom. */
+    #bag[data-qr="no"] .bag-heading {
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 10px;
+    }
+    #bag[data-qr="no"] .bag-heading .table-input {
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: none;
+      margin: 0;
+    }
+    #bag[data-qr="no"] .bag-heading .table-input input {
+      width: 100%;
+      min-width: 0;
+    }
+    #bag[data-qr="no"] .bag-heading .bag-close {
+      flex: 0 0 auto;
+      align-self: center;
+    }
+  </style>
   <!--<section class="hero">
     <div>
       <div class="eyebrow">DO SALÃO PARA A COZINHA, SEM COMPLICAÇÃO</div>
@@ -76,29 +98,43 @@
     </section>
     <aside class="panel bag" id="bag" data-qr="{{ 'yes' if qr_customer else 'no' }}">
 <div class="bag-heading">
-  <div class="bag-title">
-    <div class="eyebrow">REVISE E ENVIE</div>
-
-    <h2>
-      Seu pedido
-      <span id="cart-count">0</span>
-    </h2>
-  </div>
+  {% if qr_customer %}
+    <div class="bag-title">
+      <div class="eyebrow">REVISE E ENVIE</div>
+      <h2>Seu pedido <span id="cart-count">0</span></h2>
+    </div>
+  {% else %}
+    <span id="cart-count" hidden>0</span>
+  {% endif %}
 
   {% if not qr_customer %}
   <label class="table-input">
-    <span>Número da comanda:</span>
+    <span>Número da mesa:</span>    
+    <input 
+      id="numero-mesa" 
+      maxlength="12" 
+      inputmode="numeric" 
+      placeholder="" 
+      autocomplete="off">
+  </label>
 
+  <label class="table-input">
+    <span>Número da comanda:</span>
     <input
       id="comanda"
       maxlength="12"
       placeholder=""
       autocomplete="off"
-      inputmode="numeric"
-    />
+      inputmode="numeric"/>
   </label>
-  <label class="table-input"><span>Número da mesa:</span><input id="numero-mesa" maxlength="12" inputmode="numeric" placeholder="Ex.: 8" autocomplete="off"></label>
-  {% else %}<div><strong>Mesa {{ session.get('qr_numero_mesa', '') }}</strong><p class="muted">O garçom informará sua comanda ao servir.</p><a href="{{ url_for('salon_qr.enter',editar=1) }}">Corrigir nome ou mesa para os próximos pedidos</a></div>{% endif %}
+  {% else %}
+  
+  <div>
+    <strong>Mesa {{ session.get('qr_numero_mesa', '') }}</strong>
+    <p class="muted">O garçom informará sua comanda ao servir.</p>
+    <a href="{{ url_for('salon_qr.enter',editar=1) }}">Corrigir nome ou mesa para os próximos pedidos</a>
+  </div>
+  {% endif %}
 
   <button
     class="bag-close icon-button"

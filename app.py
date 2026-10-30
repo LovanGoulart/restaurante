@@ -505,6 +505,39 @@ def create_app(overrides=None):
         db.session.commit()
         return jsonify(id=p.id)
 
+    @app.post("/api/pedidos/<int:id>/itens/<int:item_id>/checklist")
+    @access("admin", "garcom", "cozinha")
+    def item_checklist(id, item_id):
+        from orders_service import update_item_checklist
+
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            abort(400, "Marcação de item inválida.")
+        db.session.rollback()
+        db.session.execute(db.text("BEGIN IMMEDIATE"))
+        p = db.get_or_404(Pedido, id)
+        own(p)
+        item = db.get_or_404(Item, item_id)
+        if item.pedido_id != p.id:
+            abort(404)
+        old_status = p.status
+        changed = update_item_checklist(
+            p,
+            item,
+            g.user,
+            data.get("acao"),
+            data.get("marcado"),
+            data.get("etapa_anterior"),
+        )
+        if changed:
+            if p.status != old_status and p.status in {"pronto", "entregue"}:
+                emit_order(p, p.status)
+            else:
+                event = "item_" + data["acao"] if data["marcado"] else "item_atualizado"
+                emit_order(p, event, item=item)
+        db.session.commit()
+        return jsonify(ok=True, alterado=changed, pedido=serialize_order(p, g.user))
+
     @app.post("/api/pedidos/<int:id>/status")
     @access("admin", "garcom", "cozinha")
     def status(id):
@@ -541,15 +574,13 @@ def create_app(overrides=None):
         )
         if result.rowcount != 1:
             abort(409, "Pedido atualizado por outra pessoa.")
-        previous = {
-            "em_preparo": "aberto",
-            "pronto": "em_preparo",
-            "entregue": "pronto",
-        }.get(target)
-        if previous:
-            for item in p.itens:
-                if item.etapa == previous:
-                    item.etapa = target
+        for item in p.itens:
+            if target == "em_preparo" and item.etapa == "aberto":
+                item.etapa = target
+            elif target == "pronto" and item.etapa in {"aberto", "em_preparo"}:
+                item.etapa = target
+            elif target == "entregue":
+                item.etapa = target
         emit_order(p, target)
         db.session.commit()
         return jsonify(ok=True)

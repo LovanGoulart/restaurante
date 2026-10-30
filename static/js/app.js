@@ -198,7 +198,8 @@ if (orders) {
   }
   function titleFor(p) {
     return p.canal === "salao"
-      ? (p.aguardando_comanda ? "Aguardando comanda" : "Comanda: " + p.mesa) + (p.numero_mesa ? " · Mesa " + p.numero_mesa : "")
+      ? (p.aguardando_comanda ? "Aguardando comanda" : "Comanda: " + p.mesa) +
+          (p.numero_mesa ? " · Mesa " + p.numero_mesa : "")
       : p.modalidade === "entrega"
         ? "Tele-entrega"
         : "Retirada no caixa";
@@ -279,6 +280,41 @@ if (orders) {
       `
     );
   }
+  const itemStageLabels = {
+    aberto: "Pendente",
+    em_preparo: "Em preparo",
+    pronto: "Pronto para levar",
+    entregue: "Entregue",
+  };
+  function itemChecks(p, i, role) {
+    if (!["admin", "garcom", "cozinha"].includes(role)) return "";
+    const stage = i.etapa || "aberto";
+    const locked =
+      (p.pago && p.status === "entregue") ||
+      p.status === "saiu_entrega" ||
+      p.entregador?.concluida;
+    const checkbox = (action, label, checked, disabled) =>
+      `<label class="item-check"><input type="checkbox" data-item-check="${action}" data-order="${p.id}" data-item="${i.id}" data-stage="${escapeHTML(stage)}" ${checked ? "checked" : ""} ${disabled ? "disabled" : ""}><span>${label}</span></label>`;
+    let html =
+      '<div class="item-checklist" aria-label="Checklist de ' +
+      escapeHTML(i.nome) +
+      '">';
+    if (role === "cozinha" || role === "admin")
+      html += checkbox(
+        "pronto",
+        "Pronto",
+        ["pronto", "entregue"].includes(stage),
+        locked || stage === "entregue",
+      );
+    if ((role === "garcom" || role === "admin") && p.canal === "salao")
+      html += checkbox(
+        "entregue",
+        "Entregue na mesa",
+        stage === "entregue",
+        locked || p.aguardando_comanda,
+      );
+    return html + "</div>";
+  }
   function orderHTML(p, role) {
     const online = p.canal === "online",
       next = nextFor(p),
@@ -292,7 +328,10 @@ if (orders) {
         ) &&
         (role === "admin" ||
           (role === "cozinha" && ["aberto", "em_preparo"].includes(p.status)) ||
-          (role === "garcom" && !online && p.status === "pronto" && !p.aguardando_comanda));
+          (role === "garcom" &&
+            !online &&
+            p.status === "pronto" &&
+            !p.aguardando_comanda));
     return /* HTML */ `
       <article
         data-order-id="${p.id}"
@@ -302,14 +341,17 @@ if (orders) {
           <div class="table-badge">
             <small>${online ? "PEDIDO ONLINE" : "COMANDA"}</small>
             <strong class="${online ? "online-title" : ""}">
-              ${online ? (p.modalidade === "entrega" ? "Tele-entrega" : "Retirada no caixa") : (p.aguardando_comanda ? "A definir" : escapeHTML(p.mesa))}
+              ${online ? (p.modalidade === "entrega" ? "Tele-entrega" : "Retirada no caixa") : p.aguardando_comanda ? "A definir" : escapeHTML(p.mesa)}
             </strong>
-            <div class="order-number">PEDIDO #${p.id}${p.numero_mesa ? " · MESA "+escapeHTML(p.numero_mesa) : ""}</div>
+            <div class="order-number">
+              PEDIDO
+              #${p.id}${p.numero_mesa ? " · MESA " + escapeHTML(p.numero_mesa) : ""}
+            </div>
           </div>
           <span class="pill">${labels[p.status]}</span>
         </div>
         <div class="order-body">
-          ${["admin","garcom"].includes(role) && p.canal==="salao" && !p.pago ? (p.aguardando_comanda ? `<div class="qr-assignment"><label>Comanda<input id="qr-comanda-${p.id}" inputmode="numeric" maxlength="12"></label><label>Mesa<input id="qr-mesa-${p.id}" value="${escapeHTML(p.numero_mesa || '')}" inputmode="numeric" maxlength="12"></label><button data-qr-assign="${p.id}">Definir comanda e mesa</button><p class="muted">Confira a mesa informada pelo cliente e defina a comanda ao atender. Depois, registre a entrega.</p></div>` : `<a class="button-link secondary" href="${restaurantURL('/pdv')}?pedido=${p.id}">+ Adicionar itens à comanda</a>`) : ""}
+          ${["admin", "garcom"].includes(role) && p.canal === "salao" && !p.pago ? (p.aguardando_comanda ? `<div class="qr-assignment"><label>Comanda<input id="qr-comanda-${p.id}" inputmode="numeric" maxlength="12"></label><label>Mesa<input id="qr-mesa-${p.id}" value="${escapeHTML(p.numero_mesa || "")}" inputmode="numeric" maxlength="12"></label><button data-qr-assign="${p.id}">Definir comanda e mesa</button><p class="muted">Confira a mesa informada pelo cliente e defina a comanda ao atender. Depois, registre a entrega.</p></div>` : `<a class="button-link secondary" href="${restaurantURL("/pdv")}?pedido=${p.id}">+ Adicionar itens à comanda</a>`) : ""}
           <div class="order-meta">
             <span>
               ${online ? "👤 " + escapeHTML(p.cliente) : "♙ " + escapeHTML(p.garcom)}
@@ -325,7 +367,8 @@ if (orders) {
                   <li>
                     <span class="item-qty">${i.quantidade}×</span>
                     <div>
-                      <b>${escapeHTML(i.nome)}</b>${i.etapa ? `<small>Etapa do item: ${escapeHTML(labels[i.etapa] || i.etapa)}</small>` : ""}
+                      <b>${escapeHTML(i.nome)}</b
+                      >${i.etapa ? `<span class="item-stage item-stage-${escapeHTML(i.etapa)}">${escapeHTML(itemStageLabels[i.etapa] || i.etapa)}</span>` : ""}${itemChecks(p, i, role)}
                       ${
                         i.observacao
                           ? /* HTML */ `
@@ -422,7 +465,10 @@ if (orders) {
     const filter = document.querySelector("#status-filter").value,
       role = orders.dataset.role,
       channel = document.querySelector("#channel-filter")?.value;
-    document.querySelector("#status-summary").hidden=["cliente","visitante"].includes(role);
+    document.querySelector("#status-summary").hidden = [
+      "cliente",
+      "visitante",
+    ].includes(role);
     document.querySelector("#status-summary").innerHTML = Object.keys(labels)
       .filter((status) => role !== "garcom" || status !== "saiu_entrega")
       .map(
@@ -481,7 +527,7 @@ if (orders) {
                 ? "Definir entregador"
                 : "Em trânsito"
               : labels[p.status];
-        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${statusDoCard}</span></span><span>Pedido #${p.id} · ${escapeHTML(p.cliente || p.garcom)}</span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? "Pago" : "Não pago"}</b></span><small>Ver detalhes e ações →</small>`;
+        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${statusDoCard}</span></span><span>Pedido #${p.id} · ${escapeHTML(p.cliente || p.garcom)}</span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? "Pago" : "Não pago"}</b></span><small>${p.itens.filter((i) => i.etapa === "pronto").length} item(ns) pronto(s) · ${p.itens.filter((i) => i.etapa === "entregue").length}/${p.itens.length} entregue(s) · Ver detalhes →</small>`;
         article.replaceWith(card);
       });
       if (detail.open && selectedOrder !== null) {
@@ -579,11 +625,23 @@ if (orders) {
       showDetail(Number(open.dataset.detail));
       return;
     }
-    const qrButton=e.target.closest('[data-qr-assign]');
-    if(qrButton){
-      const id=qrButton.dataset.qrAssign; qrButton.disabled=true;
-      try{ await api('/api/pedidos/'+id+'/comanda',{comanda:document.querySelector('#qr-comanda-'+id).value,numero_mesa:document.querySelector('#qr-mesa-'+id).value}); toast('Comanda vinculada.'); await refresh(); }
-      catch(err){toast(err.message);} finally{qrButton.disabled=false;} return;
+    const qrButton = e.target.closest("[data-qr-assign]");
+    if (qrButton) {
+      const id = qrButton.dataset.qrAssign;
+      qrButton.disabled = true;
+      try {
+        await api("/api/pedidos/" + id + "/comanda", {
+          comanda: document.querySelector("#qr-comanda-" + id).value,
+          numero_mesa: document.querySelector("#qr-mesa-" + id).value,
+        });
+        toast("Comanda vinculada.");
+        await refresh();
+      } catch (err) {
+        toast(err.message);
+      } finally {
+        qrButton.disabled = false;
+      }
+      return;
     }
     const b = e.target.closest("button");
     if (!b || !(b.dataset.assign || b.dataset.pay || b.dataset.status)) return;
@@ -634,6 +692,43 @@ if (orders) {
       refresh();
     }
   }
+  async function checklistChanged(e) {
+    const input = e.target.closest("[data-item-check]");
+    if (!input) return;
+    const checked = input.checked;
+    if (busy) {
+      input.checked = !checked;
+      return;
+    }
+    busy = true;
+    input.disabled = true;
+    try {
+      await api(
+        `/api/pedidos/${input.dataset.order}/itens/${input.dataset.item}/checklist`,
+        {
+          acao: input.dataset.itemCheck,
+          marcado: checked,
+          etapa_anterior: input.dataset.stage,
+        },
+      );
+      toast(
+        checked
+          ? input.dataset.itemCheck === "pronto"
+            ? "Item marcado como pronto."
+            : "Item marcado como entregue."
+          : "Marcação desfeita.",
+      );
+    } catch (err) {
+      input.checked = !checked;
+      toast(err.message);
+    } finally {
+      busy = false;
+      input.disabled = false;
+      refresh();
+    }
+  }
+  orders.addEventListener("change", checklistChanged);
+  detail?.addEventListener("change", checklistChanged);
   orders.addEventListener("click", orderAction);
   detail?.addEventListener("click", orderAction);
   detail?.addEventListener("change", (e) => {

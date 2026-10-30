@@ -59,11 +59,12 @@ def serialize_order(p, user):
         criado=p.criado.isoformat(),
         itens=[
             dict(
+                id=i.id,
                 nome=i.nome,
                 quantidade=i.quantidade,
                 preco=i.preco,
                 observacao=i.observacao,
-                etapa=i.etapa,
+                etapa="entregue" if p.status == "entregue" else i.etapa,
             )
             for i in items
         ],
@@ -92,3 +93,67 @@ def serialize_order(p, user):
             acertado=bool(e.acertado_em),
         )
     return result
+
+
+def checklist_status(pedido):
+    """O status geral acompanha os itens que ainda faltam servir."""
+    stages = [i.etapa for i in pedido.itens]
+    if not stages:
+        return pedido.status
+    if all(stage == "entregue" for stage in stages):
+        return "entregue"
+    pending = [stage for stage in stages if stage != "entregue"]
+    if all(stage == "pronto" for stage in pending):
+        return "pronto"
+    if any(stage in {"em_preparo", "pronto", "entregue"} for stage in stages):
+        return "em_preparo"
+    return "aberto"
+
+
+def update_item_checklist(pedido, item, user, action, checked, expected):
+    if user.perfil not in {"admin", "cozinha", "garcom"}:
+        abort(403)
+    if action not in {"pronto", "entregue"} or type(checked) is not bool:
+        abort(400, "Marcação de item inválida.")
+    if user.perfil == "cozinha" and action != "pronto":
+        abort(403)
+    if user.perfil == "garcom" and (pedido.online or action != "entregue"):
+        abort(403)
+    if action == "entregue" and pedido.online:
+        abort(
+            403,
+            "Nos pedidos online, utilize a confirmação de retirada ou entrega do pedido.",
+        )
+    if pedido.status == "saiu_entrega" or (
+        pedido.entrega and pedido.entrega.entregue_em
+    ):
+        abort(409, "Pedido já encaminhado ao entregador ou com entrega confirmada.")
+    if pedido.status == "entregue" and pedido.pago:
+        abort(409, "Comanda finalizada. O checklist não pode mais ser alterado.")
+    if action == "entregue" and pedido.qr and not pedido.mesa:
+        abort(
+            409,
+            "Defina a comanda e confira a mesa antes de registrar a entrega do item.",
+        )
+    if expected not in {"aberto", "em_preparo", "pronto", "entregue"}:
+        abort(400, "Etapa anterior inválida. Reabra os detalhes do pedido.")
+    # Compatibilidade com pedidos antigos entregues pelo botão geral.
+    if pedido.status == "entregue":
+        for row in pedido.itens:
+            row.etapa = "entregue"
+    current = item.etapa
+    if current == "entregue" and action == "pronto":
+        abort(409, "Este item já foi entregue; a cozinha não pode desfazer a entrega.")
+    target = action if checked else "em_preparo" if action == "pronto" else "pronto"
+    if current == target:
+        return False
+    if current != expected:
+        abort(
+            409, "Este item foi atualizado por outro usuário. Confira a marcação atual."
+        )
+    # Não é possível desmarcar uma etapa que nunca foi marcada.
+    if not checked and current != action:
+        abort(409, "O item mudou. Confira a marcação atual.")
+    item.etapa = target
+    pedido.status = checklist_status(pedido)
+    return True

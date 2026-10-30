@@ -31,7 +31,7 @@ from config import DATA, data_dir
 bp = Blueprint("notifications", __name__)
 
 
-def emit_order(pedido, tipo):
+def emit_order(pedido, tipo, item=None):
 
     users = db.session.scalars(db.select(Usuario).where(Usuario.ativo.is_(True))).all()
 
@@ -44,7 +44,12 @@ def emit_order(pedido, tipo):
         "entregue": "Pedido entregue",
         "saiu_entrega": "Pedido saiu para entrega",
         "pago": "Pagamento registrado",
+        "item_pronto": "Item pronto para retirar",
+        "item_entregue": "Item entregue na mesa",
+        "item_atualizado": "Checklist do pedido atualizado",
     }
+
+    owners = {pedido.usuario_id} | {q.usuario_id for q in pedido.qr}
 
     for u in users:
 
@@ -62,7 +67,7 @@ def emit_order(pedido, tipo):
 
         if not (
             u.perfil == "admin"
-            or u.id == pedido.usuario_id
+            or u.id in owners
             or u.perfil == "cozinha"
             and tipo != "pago"
             or u.perfil == "garcom"
@@ -76,9 +81,12 @@ def emit_order(pedido, tipo):
 
             continue
 
+        if item and u.perfil == "visitante" and u.id != item.visitante_id:
+            continue
+
         alerta_cliente = (
             u.perfil in {"cliente", "visitante"}
-            and u.id == pedido.usuario_id
+            and u.id in owners
             and tipo
             in [
                 "novo",
@@ -87,6 +95,8 @@ def emit_order(pedido, tipo):
                 "saiu_entrega",
                 "entregue",
                 "pago",
+                "item_pronto",
+                "item_entregue",
             ]
         )
 
@@ -94,7 +104,18 @@ def emit_order(pedido, tipo):
             alerta_cliente
             or (is_driver and tipo in ["saiu_entrega", "atribuida"])
             or (tipo == "saiu_entrega" and u.id == pedido.usuario_id)
-            or (tipo == "pronto" and (u.id == pedido.usuario_id or u.perfil == "admin"))
+            or (
+                tipo == "pronto"
+                and (
+                    u.id in owners
+                    or u.perfil == "admin"
+                    or (pedido.qr and u.perfil == "garcom")
+                )
+            )
+            or (
+                tipo == "item_pronto"
+                and (u.id in owners or u.perfil in {"admin", "garcom"})
+            )
             or (tipo == "novo" and u.perfil in ["cozinha", "admin"])
         )
 
@@ -132,7 +153,10 @@ def emit_order(pedido, tipo):
             usuario_id=u.id,
             pedido_id=pedido.id,
             titulo=title,
-            mensagem=f"{label} · Pedido #{pedido.id}",
+            mensagem=(
+                f"{label} · Pedido #{pedido.id}"
+                + (f" · {item.quantidade}× {item.nome}" if item else "")
+            )[:250],
             tipo=tipo,
             alerta=alerta,
         )

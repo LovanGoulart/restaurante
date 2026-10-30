@@ -175,18 +175,26 @@ body:has(#orders:is([data-role="cozinha"], [data-role="garcom"]))
 
 /* Cozinha: detalhes em preparo com azul somente no topo */
 body:has([data-role="cozinha"])
-#order-detail #order-detail-content .order.em_preparo {
+  #order-detail
+  #order-detail-content
+  .order.em_preparo {
   background: #fff !important;
   border-top: 4px solid #2563eb !important;
 }
 
 body:has([data-role="cozinha"])
-#order-detail #order-detail-content .order.em_preparo .order-head {
+  #order-detail
+  #order-detail-content
+  .order.em_preparo
+  .order-head {
   background: #eef4ff !important;
 }
 
 body:has([data-role="cozinha"])
-#order-detail #order-detail-content .order.em_preparo .order-body {
+  #order-detail
+  #order-detail-content
+  .order.em_preparo
+  .order-body {
   background: #fff !important;
 }
 
@@ -197,8 +205,7 @@ body:has([data-role="admin"]) .compact-order.em_preparo {
 }
 
 /* Administrador: entregues e não pagos em vermelho claro */
-body:has([data-role="admin"])
-.compact-order.entregue:not(.order-paid) {
+body:has([data-role="admin"]) .compact-order.entregue:not(.order-paid) {
   background: #fff0f0 !important;
   border-top-color: #dc2626 !important;
 }
@@ -225,24 +232,31 @@ body:has([data-role="admin"])
 
 /* Garçom: detalhes em preparo com azul somente no topo */
 body:has([data-role="garcom"])
-#order-detail #order-detail-content .order.em_preparo {
+  #order-detail
+  #order-detail-content
+  .order.em_preparo {
   background: #fff !important;
   border-top-color: #2563eb !important;
 }
 
 body:has([data-role="garcom"])
-#order-detail #order-detail-content .order.em_preparo .order-head {
+  #order-detail
+  #order-detail-content
+  .order.em_preparo
+  .order-head {
   background: #eef4ff !important;
 }
 
 body:has([data-role="garcom"])
-#order-detail #order-detail-content .order.em_preparo .order-body {
+  #order-detail
+  #order-detail-content
+  .order.em_preparo
+  .order-body {
   background: #fff !important;
 }
 
 /* Garçom: entregues não pagos com fundo branco na lista */
-body:has([data-role="garcom"])
-.compact-order.entregue:not(.order-paid) {
+body:has([data-role="garcom"]) .compact-order.entregue:not(.order-paid) {
   background: #fff !important;
 }
 
@@ -254,28 +268,27 @@ body:has([data-role="garcom"])
 }
 
 /* Admin: tele-entrega pronta ou em rota */
-body:has([data-role="admin"])
-#orders .compact-order.aguardando-entregador {
+body:has([data-role="admin"]) #orders .compact-order.aguardando-entregador {
   background: #171717 !important;
   border-color: #353535 !important;
   border-top-color: #171717 !important;
   color: #fff !important;
 }
 
-body:has([data-role="admin"])
-#orders .compact-order.aguardando-entregador * {
+body:has([data-role="admin"]) #orders .compact-order.aguardando-entregador * {
   color: #fff !important;
 }
 
 body:has([data-role="admin"])
-#orders .compact-order.aguardando-entregador
-.compact-heading > span {
+  #orders
+  .compact-order.aguardando-entregador
+  .compact-heading
+  > span {
   background: #ffffff20 !important;
 }
 
 /* Tele-entregas: fundo cinza-chumbo mais suave */
-body:has([data-role="admin"])
-#orders .compact-order.aguardando-entregador {
+body:has([data-role="admin"]) #orders .compact-order.aguardando-entregador {
   background: #59636f !important;
   border-color: #687380 !important;
   border-top-color: #46515e !important;
@@ -283,8 +296,10 @@ body:has([data-role="admin"])
 
 /* Remover o fundo atrás da palavra Entregador */
 body:has([data-role="admin"])
-#orders .compact-order.aguardando-entregador
-.compact-heading > span {
+  #orders
+  .compact-order.aguardando-entregador
+  .compact-heading
+  > span {
   background: transparent !important;
   box-shadow: none !important;
   text-shadow: none !important;
@@ -346,7 +361,147 @@ body:has([data-role="admin"])
 
 .excel-export-button svg {
   flex-shrink: 0;
-}.bag-heading {flex-wrap:wrap;}
-.bag-heading .table-input {flex:1 1 130px;min-width:110px;}
-.qr-assignment {padding:12px;background:#fff6e4;border:1px solid #e6d6b2;border-radius:12px;display:grid;gap:10px;margin-bottom:12px;}
-.qr-assignment input {width:100%;}
+}
+.bag-heading {
+  flex-wrap: wrap;
+}
+.bag-heading .table-input {
+  flex: 1 1 130px;
+  min-width: 110px;
+}
+.qr-assignment {
+  padding: 12px;
+  background: #fff6e4;
+  border: 1px solid #e6d6b2;
+  border-radius: 12px;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.qr-assignment input {
+  width: 100%;
+}
+
+/* Checklist por item: pronto na cozinha e entregue no salão. */
+.item-checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 9px 0;
+}
+.item-checklist .item-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 8px 10px;
+  margin: 0;
+  border: 1px solid #d5dfeb;
+  border-radius: 9px;
+  background: #f6f9fd;
+  color: #243b55;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.item-checklist .item-check input {
+  width: 19px;
+  height: 19px;
+  min-width: 19px;
+  margin: 0;
+  accent-color: #147d54;
+  cursor: pointer;
+}
+.item-checklist .item-check:has(input:checked) {
+  background: #e8f6ed;
+  border-color: #aacdb8;
+}
+.item-checklist .item-check:has(input:disabled) {
+  cursor: default;
+  opacity: 0.7;
+}
+.order .item-stage {
+  display: inline-block;
+  margin: 5px 0;
+  padding: 4px 8px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #fff3d7;
+  color: #85600a;
+}
+.order .item-stage-pronto {
+  background: #e7f5eb;
+  color: #176c47;
+}
+.order .item-stage-entregue {
+  background: #edf1f5;
+  color: #526171;
+}
+.order .item-stage-em_preparo {
+  background: #e8f0ff;
+  color: #285799;
+}
+
+/* Checklist ao lado do produto; observações continuam abaixo. */
+.order li > div:has(> .item-checklist) {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px 12px;
+}
+.order li > div:has(> .item-checklist) > b {
+  grid-column: 1;
+  grid-row: 1;
+}
+.order li > div:has(> .item-checklist) > .item-stage {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
+  margin: 0;
+}
+.order li > div > .item-checklist {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+  justify-content: flex-end;
+  margin: 0;
+  max-width: 280px;
+}
+.order li > div:has(> .item-checklist) > small {
+  grid-column: 1 / -1;
+  margin-top: 0;
+  justify-self: start;
+}
+.item-checklist .item-check {
+  padding: 6px 9px;
+  min-height: 42px;
+}
+@media (max-width: 600px) {
+  .order li > div:has(> .item-checklist) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 9px;
+  }
+  .order li > div:has(> .item-checklist) > .item-stage {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .order li > div > .item-checklist {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    max-width: 104px;
+  }
+  .item-checklist .item-check {
+    gap: 6px;
+    padding: 6px;
+    font-size: 12px;
+  }
+}
+@media (max-width: 600px) {
+  .order li:has(.item-checklist) { gap: 7px; }
+  .order li:has(.item-checklist) > .item-qty { min-width: 20px; }
+  .order li > div > .item-checklist { max-width: 90px; }
+  .item-checklist .item-check { width: 100%;gap: 4px;padding: 5px;font-size: 11px; }
+  .item-checklist .item-check input { width: 16px;height: 16px;min-width: 16px; }
+}
