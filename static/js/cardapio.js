@@ -158,13 +158,19 @@ function lock(value) {
 ProductPicker.bind({
   canEdit: () => !sending && !pending,
   onAdd: (item) => {
-    if (cart.length >= 100) {
+    const items = Array.isArray(item) ? item : [item];
+    if (cart.length + items.length > 100) {
       toast("Use até 100 linhas por envio.");
-      return;
+      return false;
     }
-    cart.push(item);
+    cart.push(...items);
     draw();
-    toast("Item adicionado ao pedido.");
+    toast(
+      items.length > 1
+        ? "Pizzas adicionadas separadamente ao pedido."
+        : "Item adicionado ao pedido.",
+    );
+    return true;
   },
 });
 cartEl.onclick = (e) => {
@@ -173,14 +179,44 @@ cartEl.onclick = (e) => {
   if (edit && !sending && !pending) {
     const index = +edit.dataset.edit;
     ProductPicker.edit(cart[index], (item) => {
-      cart[index] = item;
+      const items = Array.isArray(item) ? item : [item];
+      if (cart.length - 1 + items.length > 100) {
+        toast("Use até 100 linhas por envio.");
+        return false;
+      }
+      cart.splice(index, 1, ...items);
       draw();
+      return true;
     });
     return;
   }
   const b = e.target.closest("[data-change]");
   if (!b) return;
   const k = +b.dataset.index;
+  if (
+    +b.dataset.change === 1 &&
+    cart[k].quantidade < 99 &&
+    ProductPicker.isPizza(cart[k])
+  ) {
+    ProductPicker.edit(
+      {
+        ...cart[k],
+        quantidade: cart[k].quantidade + 1,
+        quantidade_original: cart[k].quantidade,
+      },
+      (item) => {
+        const items = Array.isArray(item) ? item : [item];
+        if (cart.length - 1 + items.length > 100) {
+          toast("Use até 100 linhas por envio.");
+          return false;
+        }
+        cart.splice(k, 1, ...items);
+        draw();
+        return true;
+      },
+    );
+    return;
+  }
   cart[k].quantidade = Math.min(99, cart[k].quantidade + +b.dataset.change);
   if (cart[k].quantidade <= 0) cart.splice(k, 1);
   draw();

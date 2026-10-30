@@ -17,7 +17,9 @@ window.ProductPicker = (() => {
     flavorCount = 1,
     lastSize = null,
     pizza = null,
-    editing = false;
+    editing = false,
+    units = [],
+    unitIndex = 0;
   form.noValidate = true;
   const safe = escapeHTML;
   const normal = (s) =>
@@ -94,6 +96,53 @@ window.ProductPicker = (() => {
       return `<small>${money(current.preco + choice.price)}</small>`;
     return choice.price ? `<small>+ ${money(choice.price)}</small>` : "";
   }
+  const unitNav = document.createElement("div");
+  unitNav.id = "pizza-unit-nav";
+  unitNav.className = "chips";
+  unitNav.hidden = true;
+  unitNav.setAttribute("aria-label", "Escolher pizza para personalizar");
+  document.querySelector("#pizza-progress").after(unitNav);
+  function captureUnit() {
+    if (!pizza || !units[unitIndex]) return;
+    units[unitIndex].flavors = [...read()[pizza.flavors.id]];
+    units[unitIndex].note = notes.value;
+  }
+  function loadUnit() {
+    if (!pizza) return;
+    const chosen = units[unitIndex]?.flavors || [];
+    groups
+      .querySelector(`[data-group="${pizza.flavors.id}"]`)
+      .querySelectorAll("input")
+      .forEach((i) => (i.checked = chosen.includes(i.value)));
+    notes.value = units[unitIndex]?.note || "";
+  }
+  function selectUnit(index) {
+    captureUnit();
+    unitIndex = index;
+    loadUnit();
+    update();
+    error.hidden = true;
+    document.querySelector(".picker-body").scrollTop = 0;
+  }
+  function changeQuantity(delta) {
+    captureUnit();
+    quantity = Math.max(1, Math.min(99, quantity + delta));
+    if (pizza) {
+      while (units.length < quantity) units.push({ flavors: [], note: "" });
+      units.length = quantity;
+      unitIndex = Math.min(unitIndex, quantity - 1);
+      loadUnit();
+    }
+    update();
+  }
+  function unitSelections(unit) {
+    return { ...read(), [pizza.flavors.id]: [...unit.flavors] };
+  }
+  unitNav.onclick = (e) => {
+    const b = e.target.closest("[data-pizza-unit]");
+    if (b) selectUnit(Number(b.dataset.pizzaUnit));
+  };
+  notes.addEventListener("input", captureUnit);
   function update() {
     let selected = read();
     if (pizza) {
@@ -106,6 +155,7 @@ window.ProductPicker = (() => {
           .querySelector(`[data-group="${pizza.flavors.id}"]`)
           .querySelectorAll("input")
           .forEach((i) => (i.checked = false));
+        units.forEach((u) => (u.flavors = []));
         selected = read();
       }
       const max = size
@@ -126,11 +176,21 @@ window.ProductPicker = (() => {
       document.querySelector("#pizza-progress").textContent =
         stage === 1
           ? "1. Tamanho e quantidade de sabores"
-          : `2. Escolha exatamente ${flavorCount} ${flavorCount === 1 ? "sabor" : "sabores"}`;
+          : quantity > 1
+            ? `Pizza ${unitIndex + 1} de ${quantity} · Escolha exatamente ${flavorCount} sabores nesta pizza (${quantity * flavorCount} escolhas no total)`
+            : `2. Escolha exatamente ${flavorCount} ${flavorCount === 1 ? "sabor" : "sabores"}`;
       for (const g of current.groups)
         groups.querySelector(`[data-group="${g.id}"]`).hidden =
           stage === 1 ? g.type === "flavors" : g.type !== "flavors";
     }
+    unitNav.hidden = !pizza || stage !== 2 || quantity === 1;
+    if (!unitNav.hidden)
+      unitNav.innerHTML = units
+        .map(
+          (u, index) =>
+            `<button type="button" class="chip ${index === unitIndex ? "active" : ""}" data-pizza-unit="${index}" aria-pressed="${index === unitIndex}">Pizza ${index + 1}${u.flavors.length === flavorCount ? " ✓" : ""}</button>`,
+        )
+        .join("");
     document.querySelector("#pizza-progress").hidden = !pizza;
     document.querySelector("#pizza-count-label").hidden = !pizza || stage !== 1;
     document.querySelector("#picker-back").hidden = !pizza || stage !== 2;
@@ -140,9 +200,11 @@ window.ProductPicker = (() => {
     document.querySelector("#picker-submit").firstChild.textContent =
       pizza && stage === 1
         ? "Próximo · "
-        : editing
-          ? "Salvar · "
-          : "Adicionar · ";
+        : pizza && unitIndex < quantity - 1
+          ? "Próxima pizza · "
+          : editing
+            ? "Salvar · "
+            : "Adicionar · ";
     document.querySelector("#picker-quantity").textContent = quantity;
     document.querySelector("#picker-unit-price").textContent = money(
       price(current, selected),
@@ -152,7 +214,17 @@ window.ProductPicker = (() => {
         ? "A partir de, por unidade"
         : "Valor por unidade";
     document.querySelector("#picker-total").textContent = money(
-      price(current, selected) * quantity,
+      pizza
+        ? units.reduce(
+            (sum, u, index) =>
+              sum +
+              price(
+                current,
+                index === unitIndex ? selected : unitSelections(u),
+              ),
+            0,
+          )
+        : price(current, selected) * quantity,
     );
     document.querySelector("#picker-minus").disabled = quantity === 1;
     document.querySelector("#picker-plus").disabled = quantity === 99;
@@ -174,6 +246,14 @@ window.ProductPicker = (() => {
     flavorCount = item?.quantidade_sabores || 1;
     previous = document.activeElement;
     quantity = item?.quantidade || 1;
+    unitIndex = 0;
+    units = Array.from({ length: quantity }, (_, index) => ({
+      flavors:
+        index < (item?.quantidade_original ?? item?.quantidade ?? 0)
+          ? [...(item?.opcoes?.[pizza?.flavors.id] || [])]
+          : [],
+      note: item?.observacao || "",
+    }));
     document.querySelector("#picker-name").textContent = current.nome;
     document.querySelector("#picker-description").textContent =
       current.descricao;
@@ -221,14 +301,8 @@ window.ProductPicker = (() => {
     previous?.focus();
   });
   document.querySelector("#picker-close").onclick = () => dialog.close();
-  document.querySelector("#picker-minus").onclick = () => {
-    quantity = Math.max(1, quantity - 1);
-    update();
-  };
-  document.querySelector("#picker-plus").onclick = () => {
-    quantity = Math.min(99, quantity + 1);
-    update();
-  };
+  document.querySelector("#picker-minus").onclick = () => changeQuantity(-1);
+  document.querySelector("#picker-plus").onclick = () => changeQuantity(1);
   groups.addEventListener("change", (e) => {
     const field = e.target.closest("[data-group]");
     const g = current.groups.find((g) => g.id === field.dataset.group);
@@ -241,6 +315,7 @@ window.ProductPicker = (() => {
       error.textContent = `Escolha no máximo ${g.type === "flavors" ? flavorCount : g.max} em ${g.title}.`;
       error.hidden = false;
     } else error.hidden = true;
+    captureUnit();
     update();
   });
   groups.addEventListener("click", (e) => {
@@ -291,38 +366,61 @@ window.ProductPicker = (() => {
       groups.querySelector(`[data-group="${pizza.flavors.id}"] input`).focus();
       return;
     }
-    const details = summary(current, selected),
-      note = current.notes.enabled ? notes.value.trim() : "";
-    const stored = [
-      details,
-      note
-        ? (details || current.notes.label !== "Observação"
-            ? current.notes.label + ": "
-            : "") + note
-        : "",
-    ]
-      .filter(Boolean)
-      .join(" | ");
-    if (stored.length > 300) {
+    captureUnit();
+    if (pizza && unitIndex < quantity - 1) {
+      selectUnit(unitIndex + 1);
+      return;
+    }
+    if (pizza) {
+      const missing = units.findIndex((u) => u.flavors.length !== flavorCount);
+      if (missing !== -1) {
+        selectUnit(missing);
+        error.textContent = `Complete os ${flavorCount} sabores da pizza ${missing + 1}.`;
+        error.hidden = false;
+        return;
+      }
+    }
+    function makeItem(selections, note, count) {
+      const details = summary(current, selections);
+      note = current.notes.enabled ? note.trim() : "";
+      const stored = [
+        details,
+        note
+          ? (details || current.notes.label !== "Observação"
+              ? current.notes.label + ": "
+              : "") + note
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" | ");
+      if (stored.length > 300) return null;
+      return {
+        id: current.id,
+        nome: current.nome,
+        preco: price(current, selections),
+        quantidade: count,
+        quantidade_sabores: pizza ? flavorCount : undefined,
+        observacao: note,
+        opcoes: selections,
+        opcoes_versao: current.version,
+        resumo: details,
+      };
+    }
+    const items = pizza
+      ? units.map((u) => makeItem(unitSelections(u), u.note, 1))
+      : [makeItem(selected, notes.value, quantity)];
+    if (items.some((i) => !i)) {
+      if (pizza) selectUnit(items.findIndex((i) => !i));
       error.textContent =
-        "Resuma os textos: opções e observações podem somar até 300 caracteres.";
+        "Resuma os textos: opções e observações de cada pizza podem somar até 300 caracteres.";
       error.hidden = false;
       return;
     }
-    callback({
-      id: current.id,
-      nome: current.nome,
-      preco: price(current, selected),
-      quantidade: quantity,
-      quantidade_sabores: pizza ? flavorCount : undefined,
-      observacao: note,
-      opcoes: selected,
-      opcoes_versao: current.version,
-      resumo: details,
-    });
+    if (callback(pizza ? items : items[0]) === false) return;
     dialog.close();
   });
   document.querySelector("#picker-back").onclick = () => {
+    captureUnit();
     stage = 1;
     update();
     error.hidden = true;
@@ -330,6 +428,7 @@ window.ProductPicker = (() => {
   };
   document.querySelector("#pizza-flavor-count").onchange = (e) => {
     flavorCount = Number(e.target.value);
+    units.forEach((u) => (u.flavors = []));
     groups
       .querySelector(`[data-group="${pizza.flavors.id}"]`)
       .querySelectorAll("input")
@@ -443,5 +542,11 @@ window.ProductPicker = (() => {
   function line(i, k) {
     return `<div class="cart-item"><b>${safe(i.nome)}</b>${i.resumo ? `<p class="cart-options-summary">${safe(i.resumo)}</p>` : ""}${i.observacao ? `<p class="cart-options-summary">${safe(products.get(i.id)?.notes.label || "Observação")}: ${safe(i.observacao)}</p>` : ""}<div class="quantity"><button data-change="-1" data-index="${k}" aria-label="Diminuir ${safe(i.nome)}">−</button><span>${i.quantidade}</span><button data-change="1" data-index="${k}" aria-label="Aumentar ${safe(i.nome)}">+</button><strong>${money(i.preco * i.quantidade)}</strong></div><button type="button" class="cart-edit-options" data-edit="${k}">Editar opções e observação</button></div>`;
   }
-  return { bind, restore, line, edit: (i, done) => open(i.id, i, done) };
+  return {
+    bind,
+    restore,
+    line,
+    isPizza: (i) => !!pizzaGroups(products.get(i.id)),
+    edit: (i, done) => open(i.id, i, done),
+  };
 })();
