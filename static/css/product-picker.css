@@ -511,3 +511,6 @@ body.product-picker-open {
     width: 100%;
   }
 }
+.catalog-product .add {
+  display: none;
+}
