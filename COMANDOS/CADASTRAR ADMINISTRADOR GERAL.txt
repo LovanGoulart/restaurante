@@ -1,0 +1,6 @@
+CADASTRAR ADMINISTRADOR GERAL
+
+python -m pip install -r requirements.txt
+python setup_geral.py
+
+python run.py

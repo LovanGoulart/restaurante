@@ -25,6 +25,7 @@ from flask import (
     session,
     url_for,
     jsonify,
+    send_from_directory,
 )
 from werkzeug.exceptions import NotFound
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -465,6 +466,48 @@ def create_platform(factory, root=None):
         response.headers["Cache-Control"] = "no-store"
         return response
 
+    @app.get("/geral/manifest.webmanifest")
+    def owner_manifest():
+        scope = url_for("owner_panel")
+        response = jsonify(
+            id=scope,
+            name="Manager · Administração Geral",
+            short_name="Manager Geral",
+            description="Painel exclusivo do proprietário para gerenciar restaurantes e planos.",
+            lang="pt-BR",
+            start_url=scope,
+            scope=scope,
+            display="standalone",
+            background_color="#eff3f8",
+            theme_color="#101c32",
+            icons=[
+                dict(
+                    src=url_for("owner_pwa_asset", name=f"icon-{size}.png"),
+                    sizes=f"{size}x{size}",
+                    type="image/png",
+                    purpose="any maskable",
+                )
+                for size in (192, 512)
+            ],
+        )
+        response.mimetype = "application/manifest+json"
+        return response
+
+    @app.get("/geral/sw.js")
+    def owner_worker():
+        response = send_from_directory(
+            BASE / "static" / "geral-pwa", "sw.js",
+            mimetype="application/javascript",
+        )
+        response.headers["Service-Worker-Allowed"] = url_for("owner_panel")
+        return response
+
+    @app.get("/geral/pwa/<name>")
+    def owner_pwa_asset(name):
+        if name not in {"install.js", "offline.html", "icon-192.png", "icon-512.png"}:
+            abort(404)
+        return send_from_directory(BASE / "static" / "geral-pwa", name)
+
     @app.route("/geral/login", methods=["GET", "POST"])
     def owner_login():
         if g.owner:
@@ -521,6 +564,7 @@ def create_platform(factory, root=None):
         return redirect(url_for("owner_login"))
 
     @app.get("/geral")
+    @app.get("/geral/")
     @owner_only
     def owner_panel():
         sites = registry.sites()

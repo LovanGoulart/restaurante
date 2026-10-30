@@ -2,6 +2,7 @@
 (() => {
   const root = document.querySelector("#delivery-orders"),
     date = document.querySelector("#delivery-date"),
+    search = document.querySelector("#delivery-search"),
     error = document.querySelector("#delivery-error"),
     dialog = document.querySelector("#delivery-confirm-dialog");
   const confirmation = document.querySelector("#delivery-confirm-check");
@@ -32,9 +33,29 @@
     Number(new URLSearchParams(location.search).get("pedido")) || null;
   let requestedOrder =
     Number(new URLSearchParams(location.search).get("pedido")) || null;
+  function normalize(value) {
+    return String(value ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase("pt-BR")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  function matchesSearch(p) {
+    const query = normalize(search?.value);
+    if (!query) return true;
+    const number = /^(?:pedido\s*)?#?\s*(\d+)$/.exec(query);
+    if (number) return String(p.id) === number[1].replace(/^0+(?=\d)/, "");
+    const address = p.endereco || {};
+    const text = normalize(
+      [p.cliente, address.endereco, address.numero, address.bairro].join(" "),
+    );
+    return query.split(" ").every((word) => text.includes(word));
+  }
   function render() {
     root.innerHTML =
       items
+        .filter(matchesSearch)
         .map((p) => {
           const r = p.recebimento,
             a = p.endereco;
@@ -48,7 +69,9 @@
                   <small>TELE-ENTREGA</small>
                   <strong class="online-title">Pedido #${p.id}</strong>
                 </div>
-                <span class="pill">${r.entregue_em ? "Entregue" : "Em entrega"}</span>
+                <span class="pill"
+                  >${r.entregue_em ? "Entregue" : "Em entrega"}</span
+                >
               </div>
               <div class="order-body">
                 <h3>${escapeHTML(p.cliente)}</h3>
@@ -112,7 +135,9 @@
           `;
         })
         .join("") ||
-      '<section class="panel empty"><h3>Nenhuma entrega neste momento.</h3><p>As tele-entregas atribuídas pelo administrador aparecerão aqui.</p></section>';
+      (search?.value.trim()
+        ? '<section class="panel empty"><h3>Nenhuma entrega encontrada.</h3><p>Confira a busca e a data selecionada. Os pedidos em andamento também entram na pesquisa.</p></section>'
+        : '<section class="panel empty"><h3>Nenhuma entrega neste momento.</h3><p>As tele-entregas atribuídas pelo administrador aparecerão aqui.</p></section>');
   }
   async function refresh() {
     if (busy || loading) {
@@ -128,7 +153,9 @@
       );
       items = data.items;
       if (dialog.open && selected) {
-        const fresh = items.find((p) => p.recebimento.id === selected.recebimento.id);
+        const fresh = items.find(
+          (p) => p.recebimento.id === selected.recebimento.id,
+        );
         if (!fresh || fresh.recebimento.entregue_em) {
           dialog.close();
           selected = null;
@@ -141,7 +168,9 @@
       }
       render();
       if (requestedOrder) {
-        const card = root.querySelector('[data-order-id="' + requestedOrder + '"]');
+        const card = root.querySelector(
+          '[data-order-id="' + requestedOrder + '"]',
+        );
         if (card) {
           card.classList.add("notification-target");
           card.scrollIntoView({ block: "center" });
@@ -193,7 +222,9 @@
         confirmado: true,
       });
       dialog.close();
-      toast("Entrega registrada. O recebimento ficará disponível para conferência.");
+      toast(
+        "Entrega registrada. O recebimento ficará disponível para conferência.",
+      );
     } catch (err) {
       toast(err.message);
     } finally {
@@ -203,6 +234,7 @@
     }
   };
   syncConfirmation();
+  if (search) search.addEventListener("input", render);
   date.onchange = refresh;
   document.querySelector("#delivery-refresh").onclick = refresh;
   window.addEventListener("orders-updated", refresh);

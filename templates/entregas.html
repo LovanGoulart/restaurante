@@ -1,6 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <style>
+    .orders-toolbar.delivery-search-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 12px 18px;
+      align-items: end;
+      max-width: 920px;
+    }
+    .delivery-search-toolbar > label {
+      width: auto;
+      min-width: 0;
+      max-width: none;
+    }
+    .delivery-search-toolbar input { width: 100%; min-width: 0; }
+    .delivery-search-toolbar > .muted { grid-column: 1 / -1; }
+    @media (max-width: 600px) {
+      .orders-toolbar.delivery-search-toolbar { grid-template-columns: minmax(0, 1fr); }
+    }
+  </style>
   <div class="section-head">
     <div>
       <div class="eyebrow">SUAS TELE-ENTREGAS</div>
@@ -9,7 +28,13 @@
     </div>
     <button hidden id="delivery-refresh" class="secondary">↻ Atualizar</button>
   </div>
-  <div class="orders-toolbar">
+  <div class="orders-toolbar delivery-search-toolbar">
+    <label for="delivery-search">
+      Buscar pedido
+      <input type="search" id="delivery-search" maxlength="180"
+        placeholder="Número, cliente, endereço ou bairro"
+        autocomplete="off" aria-label="Buscar por número do pedido, nome do cliente, endereço ou bairro">
+    </label>
     <label>
       Entregas concluídas no dia
       <input type="date" id="delivery-date" />

@@ -4,8 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Manager · Administração geral</title>
+<meta name="theme-color" content="#101c32">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Manager Geral">
+<link rel="manifest" href="{{ url_for('owner_manifest') }}">
+<link rel="icon" type="image/png" href="{{ url_for('owner_pwa_asset',name='icon-192.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('owner_pwa_asset',name='icon-192.png') }}">
 <link rel="stylesheet" href="{{ url_for('static',filename='css/platform.css') }}">
-<script defer src="{{ url_for('static',filename='js/platform.js') }}"></script></head>
+<script defer src="{{ url_for('static',filename='js/platform.js') }}"></script>
+<script defer src="{{ url_for('owner_pwa_asset',name='install.js') }}"></script>
+<style>
+  [hidden] { display: none !important; }
+  .owner-install { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; padding: 16px 20px; background: #e5f2f1; border: 1px solid #bcdcd7; border-left: 4px solid #127a70; border-radius: 12px; }
+  .owner-install strong { color: #155f59; }
+  .owner-install p { margin: 4px 0 0; font-size: 12px; }
+  .owner-install button { background: #127a70; flex-shrink: 0; }
+  .owner-install #owner-install-status { flex-basis: 100%; }
+</style>
+</head>
 <body>
 <header>
 <a class="brand" href="{{ url_for('owner_panel') }}">Restaurante <strong>Manager</strong>
@@ -17,6 +33,14 @@
 <button class="outline">Sair</button>
 </form>
 </div>{% endif %}</header>
-<main>{% if request.args.get('saved') %}<p class="success" role="status">Alterações salvas.</p>{% endif %}{% block content %}{% endblock %}</main>
+<main>
+{% if owner %}
+<section class="owner-install" id="owner-install" hidden aria-label="Instalar administração geral">
+  <div><strong>Seu painel geral no computador.</strong><p>Instale o Manager Geral para abrir a administração dos restaurantes em uma janela própria.</p></div>
+  <button type="button" id="owner-install-button" hidden>Instalar Manager Geral</button>
+  <p id="owner-install-status" role="status" hidden></p>
+</section>
+{% endif %}
+{% if request.args.get('saved') %}<p class="success" role="status">Alterações salvas.</p>{% endif %}{% block content %}{% endblock %}</main>
 </body>
 </html>
