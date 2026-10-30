@@ -124,12 +124,14 @@ def clean_config(data):
             abort(400, "Identificador de grupo inválido ou repetido.")
         used.add(gid)
         kind = source.get("type")
-        if kind not in ("single", "multiple", "text"):
+        if kind not in ("single", "multiple", "text", "sizes", "flavors"):
             abort(400, "Tipo de opção inválido.")
         required = boolean(source.get("required"))
         choices = source.get("choices")
-        if not isinstance(choices, list) or len(choices) > 20:
-            abort(400, "Use até vinte escolhas por grupo.")
+        if not isinstance(choices, list) or len(choices) > (
+            100 if kind == "flavors" else 20
+        ):
+            abort(400, "Use até 100 sabores ou vinte escolhas nos demais grupos.")
         group = dict(
             id=gid,
             title=text(source.get("title"), "o título do grupo"),
@@ -161,8 +163,20 @@ def clean_config(data):
                     label=text(choice.get("label"), "o nome da escolha", 60),
                     price=price,
                     enabled=boolean(choice.get("enabled")),
+                    max_flavors=choice.get("max_flavors", 1) if kind == "sizes" else 1,
                 )
             )
+        if kind == "sizes":
+            for choice in group["choices"]:
+                if (
+                    type(choice["max_flavors"]) is not int
+                    or not 1 <= choice["max_flavors"] <= 20
+                ):
+                    abort(400, "Defina de 1 a 20 sabores por tamanho de pizza.")
+        if kind in ("sizes", "flavors"):
+            group["required"] = True
+        if kind == "flavors":
+            group["max"] = 20
         enabled = sum(c["enabled"] for c in group["choices"])
         if kind != "text" and group["enabled"] and not enabled:
             abort(400, "Cada grupo exibido precisa ter pelo menos uma escolha visível.")
@@ -172,6 +186,18 @@ def clean_config(data):
                 abort(400, "O limite de escolhas deve estar entre 1 e 20.")
             group["max"] = maximum
         result["groups"].append(group)
+    active_sizes = [
+        g for g in result["groups"] if g["enabled"] and g["type"] == "sizes"
+    ]
+    active_flavors = [
+        g for g in result["groups"] if g["enabled"] and g["type"] == "flavors"
+    ]
+    if active_sizes or active_flavors:
+        if len(active_sizes) != 1 or len(active_flavors) != 1:
+            abort(
+                400,
+                "Para montar pizzas, exiba exatamente um grupo Tamanhos de pizza e um grupo Sabores da pizza (média).",
+            )
     return result
 
 
@@ -187,6 +213,22 @@ def resolve_item(product, item):
         g["id"] for g in config["groups"]
     }:
         abort(400, "Opções inválidas para este produto.")
+    size_group = next((g for g in config["groups"] if g["type"] == "sizes"), None)
+    flavor_group = next((g for g in config["groups"] if g["type"] == "flavors"), None)
+    flavor_count = item.get("quantidade_sabores")
+    if size_group and flavor_group:
+        size_ids = selected.get(size_group["id"], [])
+        if not isinstance(size_ids, list) or len(size_ids) != 1:
+            abort(400, "Escolha o tamanho da pizza.")
+        size = next((c for c in size_group["choices"] if c["id"] == size_ids[0]), None)
+        if (
+            not size
+            or type(flavor_count) is not int
+            or not 1
+            <= flavor_count
+            <= min(size.get("max_flavors", 1), len(flavor_group["choices"]))
+        ):
+            abort(400, "A quantidade de sabores não é permitida para este tamanho.")
     price, parts = product.preco, []
     for group in config["groups"]:
         value = selected.get(group["id"], "" if group["type"] == "text" else [])
@@ -211,9 +253,19 @@ def resolve_item(product, item):
         if set(value) - set(choices):
             abort(400, "Uma escolha não está mais disponível.")
         chosen = [c for c in group["choices"] if c["id"] in value]
-        price += sum(c["price"] for c in chosen)
+        if group["type"] == "flavors":
+            if len(chosen) != flavor_count:
+                abort(400, f"Escolha exatamente {flavor_count} sabores diferentes.")
+            total = sum(c["price"] for c in chosen)
+            # Média em centavos, com arredondamento de meio centavo para cima.
+            price += (2 * total + flavor_count) // (2 * flavor_count) - product.preco
+        else:
+            price += sum(c["price"] for c in chosen)
         if chosen:
-            parts.append(group["title"] + ": " + ", ".join(c["label"] for c in chosen))
+            title = group["title"] + (
+                f" ({len(chosen)})" if group["type"] == "flavors" else ""
+            )
+            parts.append(title + ": " + ", ".join(c["label"] for c in chosen))
     note = item.get("observacao", "")
     if not isinstance(note, str) or len(note) > 300:
         abort(400, "Observação inválida.")

@@ -511,6 +511,41 @@ body.product-picker-open {
     width: 100%;
   }
 }
+
 .catalog-product .add {
   display: none;
+}
+.pizza-progress {
+  background: var(--orange-soft);
+  color: var(--orange);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 750;
+}
+#pizza-count-label {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+}
+#pizza-count-label select {
+  margin-top: 8px;
+  background: white;
+}
+#pizza-count-help {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.options-choice-editor.options-size-editor {
+  grid-template-columns: minmax(0, 1fr) 125px 100px 80px 40px;
+}
+@media (max-width: 750px) {
+  .options-choice-editor.options-size-editor {
+    grid-template-columns: minmax(0, 1fr) 110px;
+  }
 }

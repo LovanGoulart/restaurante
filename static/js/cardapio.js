@@ -23,12 +23,20 @@ function save() {
       storageKey,
       JSON.stringify({
         itens: cart.map(
-          ({ id, quantidade, observacao, opcoes, opcoes_versao }) => ({
+          ({
             id,
             quantidade,
             observacao,
             opcoes,
             opcoes_versao,
+            quantidade_sabores,
+          }) => ({
+            id,
+            quantidade,
+            observacao,
+            opcoes,
+            opcoes_versao,
+            quantidade_sabores,
           }),
         ),
         modalidade: mode.value,
@@ -241,12 +249,20 @@ if (send)
             : "",
         total_previsto: totals(),
         itens: cart.map(
-          ({ id, quantidade, observacao, opcoes, opcoes_versao }) => ({
+          ({
             id,
             quantidade,
             observacao,
             opcoes,
             opcoes_versao,
+            quantidade_sabores,
+          }) => ({
+            id,
+            quantidade,
+            observacao,
+            opcoes,
+            opcoes_versao,
+            quantidade_sabores,
           }),
         ),
       };

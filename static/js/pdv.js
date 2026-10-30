@@ -128,12 +128,20 @@ send.onclick = async () => {
       numero_mesa,
       chave: pendingKey,
       itens: cart.map(
-        ({ id, quantidade, observacao, opcoes, opcoes_versao }) => ({
+        ({
           id,
           quantidade,
           observacao,
           opcoes,
           opcoes_versao,
+          quantidade_sabores,
+        }) => ({
+          id,
+          quantidade,
+          observacao,
+          opcoes,
+          opcoes_versao,
+          quantidade_sabores,
         }),
       ),
     });

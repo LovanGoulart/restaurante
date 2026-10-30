@@ -50,6 +50,8 @@
               ["single", "Uma escolha"],
               ["multiple", "Várias escolhas"],
               ["text", "Texto curto"],
+              ["sizes", "Tamanhos de pizza"],
+              ["flavors", "Sabores da pizza (média)"],
             ]
               .map(
                 ([v, t]) =>
@@ -57,7 +59,7 @@
               )
               .join(
                 "",
-              )}</select></label>${g.type === "multiple" ? `<label>Máximo de escolhas<input type="number" data-field="max" min="1" max="20" value="${g.max}" required></label>` : ""}</div>${g.type === "text" ? '<p class="muted">Campo de texto com até 60 caracteres. Não altera o preço.</p>' : `<p class="muted">Acréscimo por unidade. Use 0,00 para uma escolha sem custo adicional.</p><div class="options-choice-list">${g.choices.map((c) => `<div class="options-choice-editor" data-choice="${c.id}"><label>Escolha<input data-choice-field="label" value="${safe(c.label)}" maxlength="60" required></label><label>Acréscimo (R$)<input data-choice-field="amount" inputmode="decimal" value="${safe(c.amount ?? "0,00")}" placeholder="0,00" required></label><label class="check"><input data-choice-field="enabled" type="checkbox" ${check(c.enabled)}> Exibir</label><button type="button" class="secondary" data-remove-choice="${c.id}" aria-label="Remover escolha">×</button></div>`).join("")}</div><button type="button" class="secondary" data-add-choice="${g.id}">+ Adicionar escolha</button>`}</fieldset>`,
+              )}</select></label>${g.type === "multiple" ? `<label>Máximo de escolhas<input type="number" data-field="max" min="1" max="20" value="${g.max}" required></label>` : ""}</div>${g.type === "text" ? '<p class="muted">Campo de texto com até 60 caracteres. Não altera o preço.</p>' : `${g.type === "flavors" ? '<p class="muted">Preço integral de cada sabor, no tamanho de referência. A pizza usa a média dos sabores escolhidos, sem somar novamente o preço base.</p>' : '<p class="muted">Acréscimo por unidade. Use 0,00 para uma escolha sem custo adicional.</p>'}<div class="options-choice-list">${g.choices.map((c) => `<div class="options-choice-editor ${g.type === "sizes" ? "options-size-editor" : ""}" data-choice="${c.id}"><label>Escolha<input data-choice-field="label" value="${safe(c.label)}" maxlength="60" required></label><label>${g.type === "flavors" ? "Preço da pizza (R$)" : "Acréscimo (R$)"}<input data-choice-field="amount" inputmode="decimal" value="${safe(c.amount ?? "0,00")}" placeholder="0,00" required></label>${g.type === "sizes" ? `<label>Máx. sabores<input type="number" data-choice-field="max_flavors" min="1" max="20" value="${c.max_flavors || 1}" required></label>` : ""}<label class="check"><input data-choice-field="enabled" type="checkbox" ${check(c.enabled)}> Exibir</label><button type="button" class="secondary" data-remove-choice="${c.id}" aria-label="Remover escolha">×</button></div>`).join("")}</div><button type="button" class="secondary" data-add-choice="${g.id}">+ Adicionar escolha</button>`}</fieldset>`,
         )
         .join("") ||
       '<p class="empty">Nenhum grupo configurado. O produto poderá ser adicionado com sua observação livre, se permitida.</p>';
@@ -89,6 +91,7 @@
       );
       g.type = e.target.value;
       if (g.type !== "text" && !g.choices.length) g.choices.push(choice());
+      if (["sizes", "flavors"].includes(g.type)) g.required = true;
       render();
     }
   });
@@ -99,8 +102,8 @@
       g = groups.find((g) => g.id === gid);
     if (b.dataset.removeGroup) groups.splice(groups.indexOf(g), 1);
     if (b.dataset.addChoice) {
-      if (g.choices.length >= 20) {
-        show("Use até vinte escolhas no grupo.", true);
+      if (g.choices.length >= (g.type === "flavors" ? 100 : 20)) {
+        show("Use até 100 sabores ou vinte escolhas nos demais grupos.", true);
         return;
       }
       g.choices.push(choice());
@@ -118,12 +121,53 @@
           return;
         }
         const presets = {
-          pizza: () =>
-            group("Tamanho e fatias", [
+          pizza: () => {
+            const g = group("Tamanho e fatias", [
               "Broto · 4 fatias",
               "Média · 8 fatias",
               "Grande · 12 fatias",
-            ]),
+              "Família · 16 fatias",
+            ]);
+            g.type = "sizes";
+            g.choices.forEach((c, i) => (c.max_flavors = [1, 2, 4, 6][i]));
+            return g;
+          },
+          flavors: () => {
+            const sizes = groups.find(
+              (g) =>
+                g.type === "sizes" ||
+                (g.type === "single" && /tamanho|fatias/i.test(g.title)),
+            );
+            if (sizes) {
+              sizes.type = "sizes";
+              sizes.required = true;
+              sizes.choices.forEach(
+                (c) =>
+                  (c.max_flavors ||= /fam[ií]lia/i.test(c.label)
+                    ? 6
+                    : /grande/i.test(c.label)
+                      ? 4
+                      : /m[eé]dia/i.test(c.label)
+                        ? 2
+                        : 1),
+              );
+            }
+            const g = group("Sabores", [
+              "Margherita",
+              "Calabresa",
+              "Portuguesa",
+              "Quatro queijos",
+              "Frango",
+              "Chocolate",
+            ]);
+            g.type = "flavors";
+            g.max = 20;
+            g.choices.forEach((c) => {
+              c.price = data.price || 0;
+              c.amount = (c.price / 100).toFixed(2).replace(".", ",");
+            });
+            return g;
+          },
           border: () => group("Borda", ["Sem borda", "Requeijão", "Chocolate"]),
           meat: () =>
             group("Ponto da carne", ["Mal passado", "Ao ponto", "Bem passado"]),
@@ -163,6 +207,7 @@
                     id: c.id,
                     label: c.label,
                     enabled: c.enabled,
+                    max_flavors: Number(c.max_flavors || 1),
                     price:
                       Number(whole) * 100 + Number(fraction.padEnd(2, "0")),
                   };

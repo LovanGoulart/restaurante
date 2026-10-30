@@ -5,13 +5,14 @@
 <form id="options-config" class="options-config panel" data-url="{{ url_for('product_options.configure', id=product.id) }}">
   <p class="notice">Estas opções aparecem no PDV do administrador, do garçom, no cardápio do cliente e no pedido pelo QR Code. Para ocultar o produto inteiro, desmarque “Ativo” em seu cadastro.</p>
   <h2>Monte as opções do produto</h2>
+  <p class="notice">Para pizzas com vários sabores, use os tipos <strong>Tamanhos de pizza</strong> e <strong>Sabores da pizza (média)</strong>. Em cada tamanho, informe o limite de sabores. No grupo de sabores, cadastre o preço integral de cada pizza no tamanho de referência. O valor final será a média desses preços, mais o acréscimo do tamanho escolhido e dos complementos. Exemplo: sabores de R$ 50,00 e R$ 70,00 resultam em R$ 60,00 antes dos acréscimos.</p>
   <p>Use modelos para começar e depois ajuste os nomes, as escolhas e os valores. Tamanho e fatias podem ficar juntos, por exemplo: “Grande · 12 fatias”. Ocultar uma escolha não altera pedidos já enviados.</p>
-  <div class="options-presets"><button type="button" data-preset="pizza" class="secondary">+ Tamanhos de pizza</button><button type="button" data-preset="border" class="secondary">+ Bordas</button><button type="button" data-preset="meat" class="secondary">+ Ponto da carne</button><button type="button" data-preset="custom">+ Grupo personalizado</button></div>
+  <div class="options-presets"><button type="button" data-preset="pizza" class="secondary">+ Tamanhos de pizza</button><button type="button" data-preset="flavors" class="secondary">+ Sabores da pizza (média)</button><button type="button" data-preset="border" class="secondary">+ Bordas</button><button type="button" data-preset="meat" class="secondary">+ Ponto da carne</button><button type="button" data-preset="custom">+ Grupo personalizado</button></div>
   <div id="options-groups"></div>
   <fieldset class="options-notes"><legend>Observação livre</legend><label class="check"><input id="notes-enabled" type="checkbox"> Permitir que o usuário escreva uma observação</label><div class="form-grid"><label>Nome do campo<input id="notes-label" maxlength="48" required></label><label>Dica para preencher<input id="notes-placeholder" maxlength="100"></label></div></fieldset>
   <p id="options-message" role="status" hidden></p>
   <button type="submit" id="options-save">Salvar opções do produto</button>
 </form>
-<script type="application/json" id="options-config-data">{{ {'config':config, 'version':version}|tojson }}</script>
+<script type="application/json" id="options-config-data">{{ {'config':config, 'version':version, 'price':product.preco}|tojson }}</script>
 {% endblock %}
 {% block scripts %}<script defer src="{{ url_for('static', filename='js/product-options-admin.js') }}"></script>{% endblock %}

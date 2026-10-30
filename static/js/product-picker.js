@@ -12,7 +12,13 @@ window.ProductPicker = (() => {
     quantity = 1,
     callback,
     previous,
-    adapter;
+    adapter,
+    stage = 1,
+    flavorCount = 1,
+    lastSize = null,
+    pizza = null,
+    editing = false;
+  form.noValidate = true;
   const safe = escapeHTML;
   const normal = (s) =>
     String(s)
@@ -30,20 +36,28 @@ window.ProductPicker = (() => {
     }
     return selections;
   }
+  function pizzaGroups(product) {
+    const sizes = product.groups.find((g) => g.type === "sizes"),
+      flavors = product.groups.find((g) => g.type === "flavors");
+    return sizes && flavors ? { sizes, flavors } : null;
+  }
   function price(product, selected) {
-    return (
-      product.preco +
-      product.groups.reduce(
-        (sum, g) =>
-          sum +
-          (g.type === "text"
-            ? 0
-            : g.choices
-                .filter((c) => (selected[g.id] || []).includes(c.id))
-                .reduce((n, c) => n + c.price, 0)),
-        0,
-      )
-    );
+    let base = product.preco,
+      extra = 0;
+    for (const g of product.groups) {
+      if (g.type === "text") continue;
+      const chosen = g.choices.filter((c) =>
+        (selected[g.id] || []).includes(c.id),
+      );
+      if (g.type === "flavors") {
+        if (chosen.length) {
+          const sum = chosen.reduce((n, c) => n + c.price, 0),
+            count = chosen.length;
+          base = Math.floor((2 * sum + count) / (2 * count));
+        } else base = Math.min(...g.choices.map((c) => c.price));
+      } else extra += chosen.reduce((n, c) => n + c.price, 0);
+    }
+    return base + extra;
   }
   function summary(product, selected) {
     return product.groups
@@ -56,24 +70,87 @@ window.ProductPicker = (() => {
                 .filter((c) => (v || []).includes(c.id))
                 .map((c) => c.label)
                 .join(", ");
-        return text ? g.title + ": " + text : "";
+        return text
+          ? g.title +
+              (g.type === "flavors" ? " (" + v.length + ")" : "") +
+              ": " +
+              text
+          : "";
       })
       .filter(Boolean)
       .join(" | ");
   }
   function choicePrice(group, choice) {
-    // Nos tamanhos, mostra o preço da pizza (base + acréscimo do tamanho).
-    // Bordas e outros complementos continuam mostrando seu próprio acréscimo.
-    const isSize = /tamanho|fatias/.test(normal(group.title));
-    if (isSize) return `<small>${money(current.preco + choice.price)}</small>`;
+    const info = pizzaGroups(current);
+    if (group.type === "flavors") {
+      const ids = [];
+      const extra =
+        info.sizes.choices.find((c) => ids.includes(c.id))?.price || 0;
+      return `<small>${money(choice.price + extra)} · pizza inteira</small>`;
+    }
+    if (group.type === "sizes")
+      return `<small>A partir de ${money(Math.min(...info.flavors.choices.map((c) => c.price)) + choice.price)} · Até ${choice.max_flavors || 1} sabores</small>`;
+    if (/tamanho|fatias/.test(normal(group.title)))
+      return `<small>${money(current.preco + choice.price)}</small>`;
     return choice.price ? `<small>+ ${money(choice.price)}</small>` : "";
   }
   function update() {
-    const selected = read();
+    let selected = read();
+    if (pizza) {
+      const size = pizza.sizes.choices.find((c) =>
+        (selected[pizza.sizes.id] || []).includes(c.id),
+      );
+      if ((size?.id || null) !== lastSize) {
+        lastSize = size?.id || null;
+        groups
+          .querySelector(`[data-group="${pizza.flavors.id}"]`)
+          .querySelectorAll("input")
+          .forEach((i) => (i.checked = false));
+        selected = read();
+      }
+      const max = size
+        ? Math.min(size.max_flavors || 1, pizza.flavors.choices.length)
+        : 1;
+      flavorCount = Math.min(max, Math.max(1, flavorCount));
+      const count = document.querySelector("#pizza-flavor-count");
+      count.innerHTML = Array.from(
+        { length: max },
+        (_, i) =>
+          `<option value="${i + 1}">${i + 1} ${i ? "sabores" : "sabor"}</option>`,
+      ).join("");
+      count.value = String(flavorCount);
+      count.disabled = !size;
+      document.querySelector("#pizza-count-help").textContent = size
+        ? `Este tamanho permite até ${max} sabores diferentes.`
+        : "Selecione o tamanho da pizza primeiro.";
+      document.querySelector("#pizza-progress").textContent =
+        stage === 1
+          ? "1. Tamanho e quantidade de sabores"
+          : `2. Escolha exatamente ${flavorCount} ${flavorCount === 1 ? "sabor" : "sabores"}`;
+      for (const g of current.groups)
+        groups.querySelector(`[data-group="${g.id}"]`).hidden =
+          stage === 1 ? g.type === "flavors" : g.type !== "flavors";
+    }
+    document.querySelector("#pizza-progress").hidden = !pizza;
+    document.querySelector("#pizza-count-label").hidden = !pizza || stage !== 1;
+    document.querySelector("#picker-back").hidden = !pizza || stage !== 2;
+    document.querySelector("#picker-photo").hidden = !!pizza && stage === 2;
+    document.querySelector("#picker-note-label").hidden =
+      !current.notes.enabled || (!!pizza && stage === 1);
+    document.querySelector("#picker-submit").firstChild.textContent =
+      pizza && stage === 1
+        ? "Próximo · "
+        : editing
+          ? "Salvar · "
+          : "Adicionar · ";
     document.querySelector("#picker-quantity").textContent = quantity;
     document.querySelector("#picker-unit-price").textContent = money(
       price(current, selected),
     );
+    document.querySelector(".picker-unit-line > span").textContent =
+      pizza && !(selected[pizza.flavors.id] || []).length
+        ? "A partir de, por unidade"
+        : "Valor por unidade";
     document.querySelector("#picker-total").textContent = money(
       price(current, selected) * quantity,
     );
@@ -83,7 +160,7 @@ window.ProductPicker = (() => {
       const field = groups.querySelector(`[data-group="${g.id}"]`);
       if (g.type !== "text")
         field.querySelector(".picker-count").textContent =
-          `${selected[g.id].length} / ${g.max}`;
+          `${selected[g.id].length} / ${g.type === "flavors" ? flavorCount : g.max}`;
     }
   }
   function open(id, item, done) {
@@ -91,6 +168,10 @@ window.ProductPicker = (() => {
     current = products.get(id);
     if (!current) return;
     callback = done;
+    pizza = pizzaGroups(current);
+    stage = 1;
+    editing = !!item;
+    flavorCount = item?.quantidade_sabores || 1;
     previous = document.activeElement;
     quantity = item?.quantidade || 1;
     document.querySelector("#picker-name").textContent = current.nome;
@@ -105,7 +186,7 @@ window.ProductPicker = (() => {
     groups.innerHTML = current.groups
       .map(
         (g) =>
-          `<fieldset class="picker-group" data-group="${g.id}"><legend>${safe(g.title)} <span class="picker-count">${g.type === "text" ? "Texto" : "0 / " + g.max}</span></legend><small>${g.required ? "Obrigatório" : "Opcional"}${g.type === "multiple" ? " · Até " + g.max + " escolhas" : ""}</small>${g.type === "text" ? `<input type="text" maxlength="60" aria-label="${safe(g.title)}" ${g.required ? "required" : ""}>` : g.choices.map((c) => `<label class="picker-choice"><span>${safe(c.label)}${choicePrice(g, c)}</span><input type="${g.type === "single" ? "radio" : "checkbox"}" name="${g.id}" value="${c.id}"></label>`).join("") + (!g.required && g.type === "single" ? `<button type="button" class="picker-clear" data-clear="${g.id}">Limpar escolha</button>` : "")}</fieldset>`,
+          `<fieldset class="picker-group" data-group="${g.id}"><legend>${safe(g.title)} <span class="picker-count">${g.type === "text" ? "Texto" : "0 / " + g.max}</span></legend><small>${g.required ? "Obrigatório" : "Opcional"}${g.type === "multiple" ? " · Até " + g.max + " escolhas" : ""}</small>${g.type === "text" ? `<input type="text" maxlength="60" aria-label="${safe(g.title)}" ${g.required ? "required" : ""}>` : g.choices.map((c) => `<label class="picker-choice"><span>${safe(c.label)}${choicePrice(g, c)}</span><input type="${["single", "sizes"].includes(g.type) ? "radio" : "checkbox"}" name="${g.id}" value="${c.id}"></label>`).join("") + (!g.required && g.type === "single" ? `<button type="button" class="picker-clear" data-clear="${g.id}">Limpar escolha</button>` : "")}</fieldset>`,
       )
       .join("");
     for (const g of current.groups) {
@@ -129,7 +210,9 @@ window.ProductPicker = (() => {
     document.querySelector("#picker-submit").firstChild.textContent = item
       ? "Salvar · "
       : "Adicionar · ";
+    lastSize = pizza ? read()[pizza.sizes.id][0] || null : null;
     update();
+    document.querySelector(".picker-body").scrollTop = 0;
     document.body.classList.add("product-picker-open");
     dialog.showModal();
   }
@@ -150,11 +233,12 @@ window.ProductPicker = (() => {
     const field = e.target.closest("[data-group]");
     const g = current.groups.find((g) => g.id === field.dataset.group);
     if (
-      g.type === "multiple" &&
-      field.querySelectorAll("input:checked").length > g.max
+      ["multiple", "flavors"].includes(g.type) &&
+      field.querySelectorAll("input:checked").length >
+        (g.type === "flavors" ? flavorCount : g.max)
     ) {
       e.target.checked = false;
-      error.textContent = `Escolha no máximo ${g.max} em ${g.title}.`;
+      error.textContent = `Escolha no máximo ${g.type === "flavors" ? flavorCount : g.max} em ${g.title}.`;
       error.hidden = false;
     } else error.hidden = true;
     update();
@@ -173,12 +257,39 @@ window.ProductPicker = (() => {
     if (!adapter.canEdit()) return;
     const selected = read();
     for (const g of current.groups) {
+      if (pizza && stage === 1 && g.type === "flavors") continue;
       if (g.required && !selected[g.id].length) {
         error.textContent = "Preencha " + g.title + ".";
         error.hidden = false;
         groups.querySelector(`[data-group="${g.id}"] input`).focus();
         return;
       }
+    }
+    if (pizza && stage === 1) {
+      stage = 2;
+      // Exibe cada sabor com o valor integral no tamanho selecionado.
+      const size = pizza.sizes.choices.find((c) =>
+        (selected[pizza.sizes.id] || []).includes(c.id),
+      );
+      const field = groups.querySelector(`[data-group="${pizza.flavors.id}"]`);
+      field.querySelectorAll(".picker-choice").forEach((label) => {
+        const choice = pizza.flavors.choices.find(
+          (c) => c.id === label.querySelector("input").value,
+        );
+        label.querySelector("small").textContent =
+          `${money(choice.price + size.price)} · pizza inteira`;
+      });
+      update();
+      error.hidden = true;
+      document.querySelector(".picker-body").scrollTop = 0;
+      field.querySelector("input")?.focus();
+      return;
+    }
+    if (pizza && selected[pizza.flavors.id].length !== flavorCount) {
+      error.textContent = `Escolha exatamente ${flavorCount} sabores diferentes.`;
+      error.hidden = false;
+      groups.querySelector(`[data-group="${pizza.flavors.id}"] input`).focus();
+      return;
     }
     const details = summary(current, selected),
       note = current.notes.enabled ? notes.value.trim() : "";
@@ -203,6 +314,7 @@ window.ProductPicker = (() => {
       nome: current.nome,
       preco: price(current, selected),
       quantidade: quantity,
+      quantidade_sabores: pizza ? flavorCount : undefined,
       observacao: note,
       opcoes: selected,
       opcoes_versao: current.version,
@@ -210,6 +322,20 @@ window.ProductPicker = (() => {
     });
     dialog.close();
   });
+  document.querySelector("#picker-back").onclick = () => {
+    stage = 1;
+    update();
+    error.hidden = true;
+    document.querySelector(".picker-body").scrollTop = 0;
+  };
+  document.querySelector("#pizza-flavor-count").onchange = (e) => {
+    flavorCount = Number(e.target.value);
+    groups
+      .querySelector(`[data-group="${pizza.flavors.id}"]`)
+      .querySelectorAll("input")
+      .forEach((i) => (i.checked = false));
+    update();
+  };
   function restore(item) {
     const p = products.get(item.id);
     if (
@@ -242,6 +368,20 @@ window.ProductPicker = (() => {
         new Set(value).size !== value.length ||
         (g.required && !value.length) ||
         value.some((id) => !g.choices.some((c) => c.id === id))
+      )
+        return null;
+    }
+    const info = pizzaGroups(p);
+    if (info) {
+      const size = info.sizes.choices.find((c) =>
+        (selected[info.sizes.id] || []).includes(c.id),
+      );
+      if (
+        !size ||
+        !Number.isInteger(item.quantidade_sabores) ||
+        item.quantidade_sabores < 1 ||
+        item.quantidade_sabores > size.max_flavors ||
+        selected[info.flavors.id].length !== item.quantidade_sabores
       )
         return null;
     }
