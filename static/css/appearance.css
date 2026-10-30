@@ -465,29 +465,29 @@
 }
 
 /* Meus pedidos: esconder os contadores de cada status */
-body:has(#orders[data-role="cliente"]) #status-summary {
+body:has(#orders:is([data-role="cliente"], [data-role="visitante"])) #status-summary {
   display: none;
 }
 
 /* Esconder o filtro, mantendo o horário da atualização */
-body:has(#orders[data-role="cliente"])
+body:has(#orders:is([data-role="cliente"], [data-role="visitante"]))
 .orders-toolbar > label:has(#status-filter) {
   display: none;
 }
 
 /* Um pedido por linha */
-#orders[data-role="cliente"] {
+#orders:is([data-role="cliente"], [data-role="visitante"]) {
   grid-template-columns: minmax(0, 1fr);
   max-width: 760px;
   margin-inline: auto;
   gap: 16px;
 }
 
-#orders[data-role="cliente"] .order {
+#orders:is([data-role="cliente"], [data-role="visitante"]) .order {
   margin-bottom: 0;
 }
 
-#orders[data-role="cliente"] .pill {
+#orders:is([data-role="cliente"], [data-role="visitante"]) .pill {
   font-size: 14px;
   padding: 8px 12px;
 }
@@ -535,7 +535,7 @@ body:has(#orders[data-role="cliente"])
 
 /* Meus pedidos: cards lado a lado no desktop */
 @media (min-width: 851px) {
-  #orders[data-role="cliente"] {
+  #orders:is([data-role="cliente"], [data-role="visitante"]) {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     max-width: none;
@@ -546,21 +546,21 @@ body:has(#orders[data-role="cliente"])
 
 /* Cards menores no desktop */
 @media (min-width: 851px) {
-  #orders[data-role="cliente"] {
+  #orders:is([data-role="cliente"], [data-role="visitante"]) {
     grid-template-columns: repeat(auto-fill, minmax(260px, 320px));
     justify-content: start;
     gap: 14px;
   }
 
-  #orders[data-role="cliente"] .order-head {
+  #orders:is([data-role="cliente"], [data-role="visitante"]) .order-head {
     padding: 12px;
   }
 
-  #orders[data-role="cliente"] .order-body {
+  #orders:is([data-role="cliente"], [data-role="visitante"]) .order-body {
     padding: 12px;
   }
 
-  #orders[data-role="cliente"] .order li {
+  #orders:is([data-role="cliente"], [data-role="visitante"]) .order li {
     padding-block: 8px;
   }
 }
@@ -572,7 +572,7 @@ body:has(#orders[data-role="cliente"])
 
 /* Meus pedidos: aproveitar melhor o espaço no desktop */
 @media (min-width: 851px) {
-  #orders[data-role="cliente"] {
+  #orders:is([data-role="cliente"], [data-role="visitante"]) {
     display: block;
     width: 100%;
     max-width: none;
@@ -582,7 +582,7 @@ body:has(#orders[data-role="cliente"])
     column-gap: 16px;
   }
 
-  #orders[data-role="cliente"] .order {
+  #orders:is([data-role="cliente"], [data-role="visitante"]) .order {
     display: inline-block;
     width: 100%;
     margin: 0 0 16px;
@@ -594,7 +594,7 @@ body:has(#orders[data-role="cliente"])
 
 /* Meus pedidos: preencher a largura no desktop */
 @media (min-width: 851px) {
-  #main #orders[data-role="cliente"] {
+  #main #orders:is([data-role="cliente"], [data-role="visitante"]) {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     width: 100%;
@@ -608,7 +608,7 @@ body:has(#orders[data-role="cliente"])
     column-width: auto;
   }
 
-  #main #orders[data-role="cliente"] .order {
+  #main #orders:is([data-role="cliente"], [data-role="visitante"]) .order {
     display: block;
     width: 100%;
     min-width: 0;
@@ -619,7 +619,7 @@ body:has(#orders[data-role="cliente"])
 
 /* Dois cards por linha em computadores menores */
 @media (min-width: 851px) and (max-width: 1100px) {
-  #main #orders[data-role="cliente"] {
+  #main #orders:is([data-role="cliente"], [data-role="visitante"]) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

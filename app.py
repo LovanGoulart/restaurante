@@ -20,14 +20,14 @@ from flask import (
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import update, case
 from models import db, Usuario, Categoria, Produto, Pedido, Item, Caixa, Movimento
-from config import Config
+from config import Config, data_dir
 from notifications import bp as notifications_bp, emit_order
 from models import Notificacao, PushSubscription
 from customers import bp as customers_bp
 from orders_service import serialize_order, add_items
 from customer_security import throttle
 from couriers import bp as couriers_bp
-from models import Entrega
+from models import Entrega, PedidoQR, EnvioPedido
 
 
 def create_app(overrides=None):
@@ -45,6 +45,11 @@ def create_app(overrides=None):
     app.register_blueprint(leads_export_bp)
     app.register_blueprint(sales_reports_bp)
     app.register_blueprint(couriers_bp)
+    from management_access import bp as management_bp
+    from salon_qr import bp as salon_qr_bp
+
+    app.register_blueprint(management_bp)
+    app.register_blueprint(salon_qr_bp)
 
     @app.template_filter("data_br")
     def data_br(value):
@@ -64,18 +69,54 @@ def create_app(overrides=None):
 
     @app.before_request
     def load():
+        g.user = None
+        if request.endpoint == "static":
+            return
+        if "csrf" not in session:
+            session["csrf"] = secrets.token_hex(32)
+        check = app.config.get("ACCESS_CHECK")
+        if check and not check():
+            abort(403, "Acesso inativo. Solicite a renovação ao administrador geral.")
         g.user = (
             db.session.get(Usuario, session.get("uid")) if session.get("uid") else None
         )
         if g.user and not g.user.ativo:
             session.clear()
             g.user = None
-        session.setdefault("csrf", secrets.token_hex(32))
+        if (
+            g.user
+            and g.user.perfil == "admin"
+            and app.config.get("ADMIN_VERSION")
+            and session.get("admin_version") != app.config["ADMIN_VERSION"](g.user.id)
+        ):
+            session.clear()
+            session["csrf"] = secrets.token_hex(32)
+            g.user = None
+            abort(
+                403,
+                "Sua sessão foi encerrada pelo administrador geral. Entre novamente.",
+            )
+        if (
+            g.user
+            and g.user.perfil == "admin"
+            and app.config.get("ADMIN_CHECK")
+            and not app.config["ADMIN_CHECK"](g.user.id)
+        ):
+            session.clear()
+            session["csrf"] = secrets.token_hex(32)
+            g.user = None
+            abort(403, "Cadastro de e-mail pendente. Contate o administrador geral.")
+        if "csrf" not in session:
+            session["csrf"] = secrets.token_hex(32)
         if request.method == "POST" and not secrets.compare_digest(
             str(session["csrf"]),
             str(request.headers.get("X-CSRF-Token") or request.form.get("csrf", "")),
         ):
             abort(400, "Sessão expirada. Atualize a página.")
+
+    from management_access import guard
+
+    app.before_request(guard)
 
     @app.context_processor
     def context():
@@ -104,17 +145,26 @@ def create_app(overrides=None):
         response = send_from_directory(
             app.static_folder, "sw.js", mimetype="application/javascript"
         )
-        response.headers["Service-Worker-Allowed"] = "/"
+        response.headers["Service-Worker-Allowed"] = (request.script_root or "") + "/"
         response.headers["Cache-Control"] = "no-cache"
         return response
 
     @app.get("/manifest.webmanifest")
     def manifest():
-        return send_from_directory(
-            app.static_folder,
-            "manifest.webmanifest",
-            mimetype="application/manifest+json",
+        import json
+        from pathlib import Path
+
+        manifest = json.loads(
+            (Path(app.static_folder) / "manifest.webmanifest").read_text()
         )
+        prefix = request.script_root
+        manifest.update(id=prefix + "/", start_url=prefix + "/", scope=prefix + "/")
+        for icon in manifest.get("icons", []):
+            if icon.get("src", "").startswith("/"):
+                icon["src"] = prefix + icon["src"]
+        response = jsonify(manifest)
+        response.mimetype = "application/manifest+json"
+        return response
 
     def access(*roles):
         def deco(fn):
@@ -160,6 +210,10 @@ def create_app(overrides=None):
     def own(p):
         if g.user.perfil == "garcom" and p.online:
             abort(403)
+        if g.user.perfil == "visitante" and not any(
+            q.usuario_id == g.user.id for q in p.qr
+        ):
+            abort(403)
 
     @app.errorhandler(400)
     @app.errorhandler(403)
@@ -178,12 +232,47 @@ def create_app(overrides=None):
         if request.method == "POST":
             throttle("login", 50, 900)
             throttle("login-user:" + request.form.get("login", "")[:80], 10, 900)
-            u = db.session.scalar(
-                db.select(Usuario).where(
-                    Usuario.login == request.form.get("login"), Usuario.ativo.is_(True)
+            value = request.form.get("login", "").strip()
+            lookup = app.config.get("ADMIN_LOOKUP")
+            admin_id = lookup(value.lower()) if lookup else None
+            u = (
+                db.session.get(Usuario, admin_id)
+                if admin_id
+                else db.session.scalar(
+                    db.select(Usuario).where(
+                        Usuario.login == value, Usuario.ativo.is_(True)
+                    )
                 )
             )
+            if u and (not u.ativo or u.perfil == "visitante"):
+                u = None
+            if u and u.perfil == "admin":
+                from platform_admin import valid_email
+
+                try:
+                    normalized = valid_email(value)
+                except ValueError:
+                    normalized = ""
+                # Nenhum administrador entra por nome/login antigo.
+                if (
+                    not normalized
+                    or (lookup and not admin_id)
+                    or (not lookup and u.login.lower() != normalized)
+                ):
+                    u = None
             if u and check_password_hash(u.senha, request.form.get("senha", "")):
+                if (
+                    u.perfil == "admin"
+                    and app.config.get("ADMIN_CHECK")
+                    and not app.config["ADMIN_CHECK"](u.id)
+                ):
+                    return (
+                        render_template(
+                            "login.html",
+                            error="Cadastre seu e-mail com o administrador geral antes de acessar.",
+                        ),
+                        403,
+                    )
                 previous_endpoint = (
                     session.get("push_endpoint")
                     if g.user and g.user.id == u.id
@@ -201,18 +290,25 @@ def create_app(overrides=None):
                     db.session.commit()
                 session.clear()
                 session["uid"] = u.id
+                if u.perfil == "admin" and app.config.get("ADMIN_VERSION"):
+                    session["admin_version"] = app.config["ADMIN_VERSION"](u.id)
                 if previous_endpoint:
                     session["push_endpoint"] = previous_endpoint
                 return redirect(
                     url_for("customers.menu")
                     if u.perfil == "cliente"
-                    else url_for("home")
+                    else (
+                        url_for("salon_qr.menu")
+                        if u.perfil == "visitante"
+                        else url_for("home")
+                    )
                 )
             error = "Usuário ou senha incorretos."
         return render_template("login.html", error=error)
 
     @app.post("/logout")
     def logout():
+        was_guest = bool(g.user and g.user.perfil == "visitante")
         if g.user and session.get("push_endpoint"):
             db.session.execute(
                 update(PushSubscription)
@@ -224,12 +320,14 @@ def create_app(overrides=None):
             )
             db.session.commit()
         session.clear()
-        return redirect(url_for("login"))
+        return redirect(url_for("salon_qr.enter") if was_guest else url_for("login"))
 
     @app.get("/")
     def home():
         if g.user and g.user.perfil == "admin":
             return redirect(url_for("pedidos"))
+        if g.user and g.user.perfil == "visitante":
+            return redirect(url_for("salon_qr.menu"))
         if not g.user or g.user.perfil == "cliente":
             return redirect(url_for("customers.menu"))
         if g.user.perfil == "entregador":
@@ -269,9 +367,8 @@ def create_app(overrides=None):
             )
 
             # Tele-entregas prontas aguardando encaminhamento ficam no topo.
-            tele_entrega_pronta = (
-                (Pedido.status == "pronto")
-                & Pedido.online.has(modalidade="entrega")
+            tele_entrega_pronta = (Pedido.status == "pronto") & Pedido.online.has(
+                modalidade="entrega"
             )
 
             q = q.order_by(
@@ -295,8 +392,7 @@ def create_app(overrides=None):
                 db.select(Pedido)
                 .where(
                     # Somente pedidos registrados no PDV do salão.
-                    Pedido.online.has(),
-
+                    ~Pedido.online.has(),
                     # Entregues ficam fora da lista do garçom.
                     Pedido.status.in_(["aberto", "em_preparo", "pronto"]),
                 )
@@ -319,7 +415,7 @@ def create_app(overrides=None):
         return jsonify([serialize_order(p, g.user) for p in db.session.scalars(q)])
 
     @app.get("/api/pedidos/<int:id>/detalhes")
-    @access("admin", "garcom", "cozinha", "cliente")
+    @access("admin", "garcom", "cozinha", "cliente", "visitante")
     def order_details(id):
         p = db.get_or_404(Pedido, id)
         own(p)
@@ -333,16 +429,81 @@ def create_app(overrides=None):
         d = request.get_json(silent=True)
         if not isinstance(d, dict):
             abort(400, "Pedido inválido.")
-        mesa = d.get("mesa", "")
-        if not isinstance(mesa, str) or not mesa.strip() or len(mesa) > 40:
-            abort(400, "Informe a mesa.")
-        p = Pedido(mesa=mesa.strip(), usuario_id=g.user.id)
-        add_items(p, d.get("itens"))
-        db.session.add(p)
+        from salon_qr import salon_identifiers, append_to_order
+
+        comanda, mesa = salon_identifiers(d)
+        uid = g.user.id
+        import hashlib, json, re
+
+        key = d.get("chave")
+        fingerprint = hashlib.sha256(
+            json.dumps(d, sort_keys=True, ensure_ascii=False).encode()
+        ).hexdigest()
+        if key is not None and (
+            not isinstance(key, str) or not re.fullmatch(r"[A-Za-z0-9_-]{16,80}", key)
+        ):
+            abort(400, "Identificador de envio inválido.")
+        db.session.rollback()
+        db.session.execute(db.text("BEGIN IMMEDIATE"))
+        if key:
+            old = db.session.scalar(
+                db.select(EnvioPedido).where(
+                    EnvioPedido.usuario_id == uid, EnvioPedido.chave == key
+                )
+            )
+            if old:
+                if old.conteudo_hash != fingerprint:
+                    abort(409, "Este envio já foi utilizado. Confira os pedidos.")
+                return jsonify(id=old.pedido_id, repetido=True)
+        p = db.session.scalar(
+            db.select(Pedido).where(
+                db.func.ltrim(Pedido.mesa, "0") == comanda.lstrip("0"),
+                Pedido.mesa != "",
+                Pedido.pago.is_(False),
+                ~Pedido.online.has(),
+            )
+        )
+        reused = bool(p)
+        if p:
+            if p.numero_mesa and p.numero_mesa != mesa:
+                abort(
+                    409,
+                    "Esta comanda já está vinculada à mesa "
+                    + p.numero_mesa
+                    + ". Use outra comanda.",
+                )
+            if not p.numero_mesa:
+                p.numero_mesa = mesa
+            append_to_order(p, d.get("itens"))
+        else:
+            p = Pedido(mesa=comanda, numero_mesa=mesa, usuario_id=uid)
+            add_items(p, d.get("itens"))
+            db.session.add(p)
         db.session.flush()
+        if key:
+            db.session.add(
+                EnvioPedido(
+                    usuario_id=uid, chave=key, conteudo_hash=fingerprint, pedido_id=p.id
+                )
+            )
         emit_order(p, "novo")
         db.session.commit()
-        return jsonify(id=p.id), 201
+        return jsonify(id=p.id, adicionado=reused), 200 if reused else 201
+
+    @app.post("/api/pedidos/<int:id>/itens")
+    @access("admin", "garcom")
+    def append_items(id):
+        from salon_qr import append_to_order
+
+        db.session.rollback()
+        db.session.execute(db.text("BEGIN IMMEDIATE"))
+        p = db.get_or_404(Pedido, id)
+        if p.online:
+            abort(403, "Use o fluxo de pedidos online.")
+        append_to_order(p, (request.get_json(silent=True) or {}).get("itens"))
+        emit_order(p, "novo")
+        db.session.commit()
+        return jsonify(id=p.id)
 
     @app.post("/api/pedidos/<int:id>/status")
     @access("admin", "garcom", "cozinha")
@@ -350,15 +511,10 @@ def create_app(overrides=None):
         p = db.get_or_404(Pedido, id)
         own(p)
         target = (request.get_json(silent=True) or {}).get("status")
-        if (
-            target == "entregue"
-            and p.online
-            and p.online.modalidade == "entrega"
-        ):
-            abort(
-                409,
-                "A tele-entrega deve ser confirmada pelo entregador."
-            )
+        if target == "entregue" and p.qr and not p.mesa:
+            abort(409, "Defina a comanda e a mesa antes de registrar a entrega.")
+        if target == "entregue" and p.online and p.online.modalidade == "entrega":
+            abort(409, "A tele-entrega deve ser confirmada pelo entregador.")
         allowed = {
             "aberto": "em_preparo",
             "em_preparo": "pronto",
@@ -385,6 +541,15 @@ def create_app(overrides=None):
         )
         if result.rowcount != 1:
             abort(409, "Pedido atualizado por outra pessoa.")
+        previous = {
+            "em_preparo": "aberto",
+            "pronto": "em_preparo",
+            "entregue": "pronto",
+        }.get(target)
+        if previous:
+            for item in p.itens:
+                if item.etapa == previous:
+                    item.etapa = target
         emit_order(p, target)
         db.session.commit()
         return jsonify(ok=True)
@@ -401,6 +566,8 @@ def create_app(overrides=None):
             abort(409, "Abra o caixa antes de receber.")
         if forma not in ["dinheiro", "pix", "credito", "debito"]:
             abort(400, "Forma inválida.")
+        if p.qr and not p.mesa:
+            abort(409, "Defina a comanda e a mesa antes de receber.")
         if p.pago:
             abort(409, "Pedido já pago.")
         if p.entrega and p.entrega.entregue_em and not p.entrega.acertado_em:
@@ -436,7 +603,7 @@ def create_app(overrides=None):
         if request.method == "POST":
             id = request.form.get("id")
             obj = db.get_or_404(cls, int(id)) if id and id.isdigit() else cls()
-            if kind == "usuarios" and obj.id and obj.perfil == "cliente":
+            if kind == "usuarios" and obj.id and obj.perfil in ["cliente", "admin"]:
                 abort(403)
             obj.nome = text("nome", 80)
             if kind == "produtos":
@@ -451,7 +618,7 @@ def create_app(overrides=None):
             if kind == "usuarios":
                 obj.login = text("login", 80)
                 perfil = request.form.get("perfil")
-                if perfil not in ["admin", "garcom", "cozinha", "entregador"]:
+                if perfil not in ["garcom", "cozinha", "entregador"]:
                     abort(400, "Perfil inválido.")
                 if obj.id == g.user.id and (
                     perfil != "admin" or request.form.get("ativo") != "on"
@@ -500,7 +667,7 @@ def create_app(overrides=None):
         if (
             kind == "usuarios"
             and edit
-            and db.get_or_404(Usuario, edit).perfil == "cliente"
+            and db.get_or_404(Usuario, edit).perfil in ["cliente", "admin"]
         ):
             abort(403)
         return render_template(
@@ -508,7 +675,7 @@ def create_app(overrides=None):
             kind=kind,
             rows=db.session.scalars(
                 db.select(cls).where(
-                    Usuario.perfil.in_(["admin", "garcom", "cozinha", "entregador"])
+                    Usuario.perfil.in_(["garcom", "cozinha", "entregador"])
                 )
                 if kind == "usuarios"
                 else db.select(cls).order_by(cls.id)
@@ -624,6 +791,8 @@ def create_app(overrides=None):
     return app
 
 
-app = create_app()
+from platform_admin import create_platform
+
+app = create_platform(create_app)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=False)

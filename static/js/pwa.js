@@ -7,7 +7,10 @@ const standalone = () =>
   navigator.standalone === true;
 function installedMarker() {
   try {
-    return localStorage.getItem("restaurant-installed") === "yes";
+    return (
+      localStorage.getItem(restaurantURL("/") + "restaurant-installed") ===
+      "yes"
+    );
   } catch {
     return false;
   }
@@ -15,7 +18,7 @@ function installedMarker() {
 function updateInstall() {
   if (standalone()) {
     try {
-      localStorage.setItem("restaurant-installed", "yes");
+      localStorage.setItem(restaurantURL("/") + "restaurant-installed", "yes");
     } catch {}
   }
   installButtons.forEach((b) => (b.hidden = standalone() || installedMarker()));
@@ -26,14 +29,14 @@ window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredInstall = e;
   try {
-    localStorage.removeItem("restaurant-installed");
+    localStorage.removeItem(restaurantURL("/") + "restaurant-installed");
   } catch {}
   updateInstall();
 });
 window.addEventListener("appinstalled", () => {
   deferredInstall = null;
   try {
-    localStorage.setItem("restaurant-installed", "yes");
+    localStorage.setItem(restaurantURL("/") + "restaurant-installed", "yes");
   } catch {}
   installButtons.forEach((b) => (b.hidden = true));
   updateInstall();
@@ -55,18 +58,19 @@ installButtons.forEach(
       const ios =
         /iPad|iPhone|iPod/.test(navigator.userAgent) ||
         (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-      document.querySelector("#install-help").textContent = !window.isSecureContext
-        ? "Para instalar, acesse o sistema por um endereço HTTPS. O endereço HTTP da rede local não permite instalar o PWA."
-        : ios
-          ? "No Safari, toque em Compartilhar e escolha “Adicionar à Tela de Início”. Depois, abra o Manager pelo ícone instalado."
-          : "No menu do Chrome ou Edge, procure “Instalar aplicativo” ou “Adicionar à tela inicial”. Se a opção ainda não aparecer, o navegador pode não oferecer instalação ou o aplicativo já pode estar instalado.";
+      document.querySelector("#install-help").textContent =
+        !window.isSecureContext
+          ? "Para instalar, acesse o sistema por um endereço HTTPS. O endereço HTTP da rede local não permite instalar o PWA."
+          : ios
+            ? "No Safari, toque em Compartilhar e escolha “Adicionar à Tela de Início”. Depois, abra o Manager pelo ícone instalado."
+            : "No menu do Chrome ou Edge, procure “Instalar aplicativo” ou “Adicionar à tela inicial”. Se a opção ainda não aparecer, o navegador pode não oferecer instalação ou o aplicativo já pode estar instalado.";
       document.querySelector("#install-dialog").showModal();
     }),
 );
 updateInstall();
 if ("serviceWorker" in navigator && window.isSecureContext) {
   swReady = navigator.serviceWorker
-    .register("/sw.js", { scope: "/" })
+    .register(restaurantURL("/sw.js"), { scope: restaurantURL("/") })
     .then(() => navigator.serviceWorker.ready)
     .catch((e) => {
       console.warn("Service worker indisponível:", e.name);
@@ -135,7 +139,8 @@ if (pushButton) {
           );
       }
       const reg = await swReady;
-      if (!reg) throw Error("Não foi possível ativar o aplicativo neste navegador.");
+      if (!reg)
+        throw Error("Não foi possível ativar o aplicativo neste navegador.");
       let sub = await reg.pushManager.getSubscription();
       if (subscribed && sub) {
         await api("/api/push/unsubscribe", { endpoint: sub.endpoint });

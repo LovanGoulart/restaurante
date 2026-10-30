@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="pt-BR">
   <head>
+    <meta name="restaurant-root" content="{{ request.script_root }}">
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -11,11 +12,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Manager" />
-    <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="icon" type="image/png" href="/static/icons/icon-192.png" />
-    <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
+    <link rel="manifest" href="{{ request.script_root }}/manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="{{ request.script_root }}/static/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="{{ request.script_root }}/static/icons/icon-192.png" />
     <title>Restaurante Manager</title>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" />
+    <script defer src="{{ url_for('static',filename='js/restaurant_scope.js') }}"></script>
     <script defer src="{{url_for('static',filename='js/sound.js')}}"></script>
     <script defer src="{{url_for('static',filename='js/app.js')}}"></script>
     <script defer src="{{url_for('static',filename='js/pwa.js')}}"></script>
@@ -28,8 +30,8 @@
     <a class="skip-link" href="#main">Ir ao conteúdo</a>
     <header class="app-header">
       <div class="header-inner">
-        <a class="brand" href="/">
-          <img src="/static/icons/icon-192.png" alt="" width="40" height="40" />
+        <a class="brand" href="{{ request.script_root }}/">
+          <img src="{{ request.script_root }}/static/icons/icon-192.png" alt="" width="40" height="40" />
           <span>
             {{ restaurant_name }}
           </span>
@@ -41,29 +43,29 @@
 
 {% if user.perfil=='entregador' %}
 
-              <a href="/entregas" class="selected">Minhas entregas</a>
+              <a href="{{ request.script_root }}/entregas" class="selected">Minhas entregas</a>
 
-{% elif user.perfil=='cliente' %}
+{% elif user.perfil in ['cliente','visitante'] %}
 
               <a
-                href="/cardapio"
+                href="{{ url_for('salon_qr.menu') if user.perfil=='visitante' else url_for('customers.menu') }}"
                 class="{{ 'selected' if request.endpoint=='customers.menu' else '' }}"
               >
                 Cardápio
               </a>
               <a
-                href="/meus-pedidos"
+                href="{{ url_for('salon_qr.my_orders') if user.perfil=='visitante' else url_for('customers.my_orders') }}"
                 class="{{ 'selected' if request.endpoint=='customers.my_orders' else '' }}"
               >
                 Meus pedidos
               </a>
-              <a href="/minha-conta">Minha conta</a>
+              {% if user.perfil=='cliente' %}<a href="{{ request.script_root }}/minha-conta">Minha conta</a>{% endif %}
 
 {% else %}
 
 <a
   class="{{ 'selected' if request.endpoint == 'pedidos' else '' }}"
-  href="/pedidos"
+  href="{{ request.script_root }}/pedidos"
 >
   Pedidos
 </a>
@@ -71,7 +73,7 @@
 {% if user.perfil in ['admin', 'garcom'] %}
   <a
     class="{{ 'selected' if request.endpoint == 'pdv' else '' }}"
-    href="/pdv"
+    href="{{ request.script_root }}/pdv"
   >
     PDV
   </a>
@@ -80,27 +82,27 @@
 {% if user.perfil=='admin' %}
 
                 <a
-                  href="/dashboard"
+                  href="{{ request.script_root }}/dashboard"
                   class="{{ 'selected' if request.endpoint == 'dashboard' else '' }}"
                 >
                   Dashboard
                 </a>
 
                 <a
-                  href="/caixa"
+                  href="{{ request.script_root }}/caixa"
                   class="{{ 'selected' if request.endpoint == 'caixa' else '' }}"
                 >
                   Caixa
                 </a>
 
                 <a
-                  href="/acerto-entregadores"
+                  href="{{ request.script_root }}/acerto-entregadores"
                   class="{{ 'selected' if request.endpoint == 'couriers.settlement' else '' }}"
                 >
                   Saldo Delivery
                 </a>
                 <a
-                  href="{{ url_for('sales_reports.pagina') }}"
+                  href="{{ url_for('management_access.unlock',destino=request.script_root+'/relatorios-vendas') }}"
                   class="{{ 'selected' if request.endpoint in ['sales_reports.pagina', 'sales_reports.exportar'] else '' }}"
                 >
                   Relatórios
@@ -115,7 +117,7 @@
 
           </nav>
           <div class="header-tools">
-            <form class="desktop-logout" method="post" action="/logout">
+            <form class="desktop-logout" method="post" action="{{ request.script_root }}/logout">
               <input type="hidden" name="csrf" value="{{ csrf }}">
               <button type="submit" class="secondary">Sair</button>
             </form>
@@ -126,6 +128,7 @@
                   'garcom': 'Atendimento no salão',
                   'cozinha': 'Operação da cozinha',
                   'cliente': 'Sua conta',
+                  'visitante': 'Cliente no salão',
                   'entregador': 'Tele-entregas'
                 }[user.perfil] }}
               </span>
@@ -164,9 +167,9 @@
 {% else %}
 
           <nav class="guest-nav" aria-label="Menu do cliente">
-            <a href="/cardapio">Cardápio</a>
-            <a href="/login">Entrar</a>
-            <a href="/cadastro" class="guest-signup">Criar conta</a>
+            <a href="{{ request.script_root }}/cardapio">Cardápio</a>
+            <a href="{{ request.script_root }}/login">Entrar</a>
+            <a href="{{ request.script_root }}/cadastro" class="guest-signup">Criar conta</a>
           </nav>
 
 {% endif %}
@@ -212,22 +215,22 @@
 
 {% if user.perfil=='entregador' %}
 
-          <a href="/entregas" class="selected">
+          <a href="{{ request.script_root }}/entregas" class="selected">
             <span>▤</span>
             Entregas
           </a>
 
-{% elif user.perfil=='cliente' %}
+{% elif user.perfil in ['cliente','visitante'] %}
 
           <a
-            href="/cardapio"
+            href="{{ url_for('salon_qr.menu') if user.perfil=='visitante' else url_for('customers.menu') }}"
             class="{{ 'selected' if request.endpoint=='customers.menu' else '' }}"
           >
             <span>▦</span>
             Cardápio
           </a>
           <a
-            href="/meus-pedidos"
+            href="{{ url_for('salon_qr.my_orders') if user.perfil=='visitante' else url_for('customers.my_orders') }}"
             class="{{ 'selected' if request.endpoint=='customers.my_orders' else '' }}"
           >
             <span>▤</span>
@@ -238,7 +241,7 @@
 
 {% if user.perfil in ['admin','garcom'] %}
 
-            <a href="/pdv" class="{{ 'selected' if request.endpoint=='pdv' else '' }}">
+            <a href="{{ request.script_root }}/pdv" class="{{ 'selected' if request.endpoint=='pdv' else '' }}">
               <span>▦</span>
               PDV
             </a>
@@ -246,7 +249,7 @@
 {% endif %}
 
           <a
-            href="/pedidos"
+            href="{{ request.script_root }}/pedidos"
             class="{{ 'selected' if request.endpoint=='pedidos' else '' }}"
           >
             <span>▤</span>
@@ -255,10 +258,8 @@
 
 {% if user.perfil=='admin' %}
 
-            <a href="/caixa">
-              <span>▣</span>
-              Caixa
-            </a>
+            <a href="{{ request.script_root }}/caixa"><span>▣</span>Caixa</a>
+            <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/relatorios-vendas') }}"><span>▥</span>Relatórios</a>
 
 {% endif %}
 
@@ -278,53 +279,22 @@
           <button class="icon-button" data-close aria-label="Fechar menu">×</button>
         </div>
         <div class="menu-links">
-{% if user.perfil == 'admin' %}
-            <a href="{{ url_for('sales_reports.pagina') }}">Relatórios de vendas</a>
-{% endif %}
-{% if user.perfil == "admin" %}
-            <a href="/personalizacao">🎨 Personalização e fotos</a>
-{% endif %}
-
 {% if user.perfil=='admin' %}
-
-            <a href="/dashboard">
-              📊 Dashboard
-              <span>→</span>
-            </a>
-            <a href="/cadastros/produtos">
-              🍔 Produtos
-              <span>→</span>
-            </a>
-            <a href="/cadastros/categorias">
-              ▦ Categorias
-              <span>→</span>
-            </a>
-            <a href="/cadastros/usuarios">
-              👥 Equipe
-              <span>→</span>
-            </a>
-            <a href="/acerto-entregadores">
-              ▣ Saldo delivery
-              <span>→</span>
-            </a>
-            <a href="/clientes">
-              👤 Clientes
-              <span>→</span>
-            </a>
-            <a href="/loja">
-              ⚙ Loja e entregas
-              <span>→</span>
-            </a>
-            <a href="/cardapio">
-              ↗ Ver cardápio público
-              <span>→</span>
-            </a>
-
+  <a href="{{ request.script_root }}/personalizacao">🎨 Personalização e fotos</a>
+  <p class="muted">🔒 Gestão protegida — confirme sua senha</p>
+  <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/loja') }}">🔒 Loja e entregas →</a>
+  <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/categorias') }}">🔒 Categorias →</a>
+  <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/produtos') }}">🔒 Produtos →</a>
+  <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/usuarios') }}">🔒 Equipe →</a>
+  <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/clientes') }}">🔒 Clientes →</a>
+  <a href="{{ request.script_root }}/cardapio">↗ Ver cardápio público →</a>
+  <a href="{{ url_for('salon_qr.qr_page') }}">▦ QR Code para pedidos no salão →</a>
+  <form method="post" action="{{ url_for('management_access.lock') }}"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="secondary">Bloquear áreas de gestão</button></form>
 {% endif %}
 
 {% if user.perfil=='cliente' %}
 
-            <a href="/minha-conta">
+            <a href="{{ request.script_root }}/minha-conta">
               👤 Minha conta e endereço
               <span>→</span>
             </a>
@@ -343,7 +313,7 @@
           <p id="push-help" class="muted">
             Avisos visuais funcionam com o sistema aberto.
           </p>
-          <form method="post" action="/logout" id="logout-form">
+          <form method="post" action="{{ request.script_root }}/logout" id="logout-form">
             <input type="hidden" name="csrf" value="{{ csrf }}" />
             <button class="danger secondary">Sair da conta</button>
           </form>

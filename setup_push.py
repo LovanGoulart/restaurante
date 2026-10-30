@@ -3,11 +3,11 @@
 import base64, json, os
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import serialization
-from config import DATA
+from config import DATA, data_dir
 
 
 def setup(email):
-    path = DATA / "vapid.json"
+    path = data_dir(DATA) / "vapid.json"
     if path.exists():
         print("Push já configurado. As chaves existentes foram preservadas.")
         return

@@ -30,7 +30,7 @@
         
 {% if kind=='produtos' %}
 
-          <p><a href="/personalizacao">📷 Gerenciar fotos dos produtos</a></p>
+          <p><a href="{{ request.script_root }}/personalizacao">📷 Gerenciar fotos dos produtos</a></p>
           <label>
             Descrição
             <textarea name="descricao" maxlength="500">
@@ -118,7 +118,7 @@
             Perfil
             <select name="perfil">
               
-{% for r in ['admin','garcom','cozinha','entregador'] %}
+{% for r in ['garcom','cozinha','entregador'] %}
 
                 <option {{ 'selected' if edit and edit.perfil==r else '' }}>
                   {{ r }}
@@ -150,7 +150,7 @@
         
 {% if edit %}
 
-          <a href="/cadastros/{{ kind }}">Cancelar edição</a>
+          <a href="{{ request.script_root }}/cadastros/{{ kind }}">Cancelar edição</a>
         
 {% endif %}
 

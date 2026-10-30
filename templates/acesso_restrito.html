@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="panel login">
+  <div class="eyebrow">ÁREA RESTRITA</div>
+  <h1>Confirme sua senha</h1>
+  <p>Esta área contém informações de gestão. Informe a senha de {{ user.nome }} para continuar.</p>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <input type="hidden" name="destino" value="{{ destination }}">
+    <label>Senha do administrador<input type="password" name="senha" autocomplete="current-password" required autofocus maxlength="256"></label>
+    <button>Liberar esta área</button>
+  </form>
+  <p class="muted">A liberação desta área dura 5 minutos. Cada novo acesso pelo menu pede a senha novamente.</p>
+  <a href="{{ url_for('pedidos') }}">Voltar aos pedidos</a>
+</section>
+{% endblock %}

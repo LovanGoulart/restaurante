@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manager · Administração geral</title>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/platform.css') }}">
+<script defer src="{{ url_for('static',filename='js/platform.js') }}"></script></head>
+<body>
+<header>
+<a class="brand" href="{{ url_for('owner_panel') }}">Restaurante <strong>Manager</strong>
+<small>ADMINISTRAÇÃO GERAL</small>
+</a>{% if owner %}<div class="account">
+<span>{{ owner.name }}</span>
+<form method="post" action="{{ url_for('owner_logout') }}">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<button class="outline">Sair</button>
+</form>
+</div>{% endif %}</header>
+<main>{% if request.args.get('saved') %}<p class="success" role="status">Alterações salvas.</p>{% endif %}{% block content %}{% endblock %}</main>
+</body>
+</html>

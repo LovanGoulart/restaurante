@@ -1,0 +1,5 @@
+{% extends 'geral_base.html' %}{% block content %}<section class="panel">
+<h1>Não foi possível concluir</h1>
+<p role="alert">{{ message }}</p>
+<a href="{{ url_for('owner_panel') }}">Voltar ao painel</a>
+</section>{% endblock %}

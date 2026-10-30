@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="panel login">
+  <div class="eyebrow">PEDIDO NA MESA</div>
+  <h1>Peça pelo celular</h1>
+  {% if staff %}
+    <p>Este acesso é para clientes no salão. Para testar, abra o QR Code em outro navegador ou saia da conta atual.</p>
+  {% else %}
+    <p>Informe seu nome e a mesa onde está sentado. Assim, o garçom saberá onde levar seu pedido e completará o atendimento com o número da comanda.</p>
+    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    <form method="post">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <label for="qr-nome">Seu nome</label>
+      <input id="qr-nome" name="nome" value="{{ values.nome }}" maxlength="100" autocomplete="given-name" placeholder="Ex.: João" required>
+      <label for="qr-mesa">Número da sua mesa</label>
+      <input id="qr-mesa" name="numero_mesa" value="{{ values.numero_mesa }}" inputmode="numeric" pattern="[0-9]{1,12}" maxlength="12" autocomplete="off" placeholder="Ex.: 8" aria-describedby="qr-mesa-help" required>
+      <p id="qr-mesa-help" class="muted">Confira o número indicado na mesa. A comanda será informada pelo garçom.</p>
+      <button>Ver cardápio e fazer pedido</button>
+    </form>
+    <p class="muted">Sem senha. Seus pedidos ficam disponíveis apenas neste navegador. Ao sair ou limpar os dados do navegador, o acesso a esse histórico é perdido.</p>
+  {% endif %}
+</section>
+{% endblock %}

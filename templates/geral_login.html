@@ -1,0 +1,18 @@
+{% extends 'geral_base.html' %}{% block content %}
+<section class="login panel">
+<div class="eyebrow">ACESSO DO PROPRIETÁRIO</div>
+<h1>Seu painel de controle.</h1>
+<p>Gerencie restaurantes, administradores e a validade dos planos.</p>
+{% if not configured %}<div class="notice">Configure sua conta pelo terminal do servidor:<br>
+<code>python setup_geral.py</code>
+<p>Não existe cadastro público de administrador geral.</p>
+</div>{% else %}
+{% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}<form method="post">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<label>E-mail de acesso<input type="email" name="email" maxlength="254" autocomplete="username" placeholder="seuemail@exemplo.com" required>
+</label>
+<label>Senha<input type="password" name="senha" maxlength="256" autocomplete="current-password" required>
+</label>
+<button>Entrar no painel geral</button>
+</form>{% endif %}</section>
+{% endblock %}

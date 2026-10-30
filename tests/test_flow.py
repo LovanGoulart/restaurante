@@ -20,7 +20,7 @@ class Flow(unittest.TestCase):
             db.session.add(
                 Usuario(
                     nome=role,
-                    login=role,
+                    login="admin@example.com" if role == "admin" else role,
                     senha=generate_password_hash("test-password"),
                     perfil=role,
                 )
@@ -42,9 +42,30 @@ class Flow(unittest.TestCase):
         with self.client.session_transaction() as s:
             token = s["csrf"]
         self.client.post(
-            "/login", data={"login": role, "senha": "test-password", "csrf": token}
+            "/login",
+            data={
+                "login": "admin@example.com" if role == "admin" else role,
+                "senha": "test-password",
+                "csrf": token,
+            },
         )
         self.client.get("/")
+
+        if role == "admin":
+            import time
+
+            with self.client.session_transaction() as session:
+                session["management_grants"] = {
+                    key: time.time() + 300
+                    for key in [
+                        "produtos",
+                        "categorias",
+                        "usuarios",
+                        "clientes",
+                        "loja",
+                        "relatorios",
+                    ]
+                }
 
     def post(self, path, data=None, json=None):
         with self.client.session_transaction() as s:
@@ -63,6 +84,7 @@ class Flow(unittest.TestCase):
             "/api/pedidos",
             json={
                 "mesa": "08",
+                "numero_mesa": "08",
                 "itens": [{"id": 1, "quantidade": 2, "observacao": "Sem sal"}],
             },
         )
@@ -134,7 +156,11 @@ class Flow(unittest.TestCase):
         self.assertEqual(
             self.post(
                 "/api/pedidos",
-                json={"mesa": "1", "itens": [{"id": 1, "quantidade": -1}]},
+                json={
+                    "mesa": "1",
+                    "numero_mesa": "1",
+                    "itens": [{"id": 1, "quantidade": -1}],
+                },
             ).status_code,
             400,
         )

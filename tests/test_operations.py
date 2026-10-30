@@ -51,7 +51,7 @@ class Operations(unittest.TestCase):
             403,
         )
 
-    def test_waiter_completed_paid_last(self):
+    def test_waiter_delivered_orders_are_hidden(self):
         self.salon.status = "entregue"
         self.salon.pago = True
         paid_id = self.salon.id
@@ -64,10 +64,10 @@ class Operations(unittest.TestCase):
         db.session.commit()
         self.login("garcom")
         rows = self.client.get("/api/pedidos").json
-        self.assertEqual(rows[-1]["id"], paid_id)
+        self.assertNotIn(paid_id, [p["id"] for p in rows])
         self.assertEqual(
-            [p["status"] for p in rows[:-1]],
-            ["pronto", "em_preparo", "aberto", "entregue"],
+            [p["status"] for p in rows],
+            ["pronto", "em_preparo", "aberto"],
         )
 
     def test_explicit_confirmation_required(self):

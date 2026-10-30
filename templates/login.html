@@ -8,15 +8,15 @@
       <br />
       Todo mundo conectado.
     </h1>
-    <p>Entre na sua conta para continuar.</p>
+    <p>Administradores: entre com seu e-mail cadastrado e senha. Equipe: use seu usuário e senha.</p>
     {% if error %}
       <p class="error">{{ error }}</p>
     {% endif %}
     <form method="post">
       <input type="hidden" name="csrf" value="{{ csrf }}" />
       <label>
-        Usuário
-        <input name="login" autocomplete="username" required maxlength="80" />
+        E-mail do administrador ou usuário da equipe
+        <input name="login" autocomplete="username" required maxlength="254" />
       </label>
       <label>
         Senha
@@ -26,9 +26,9 @@
     </form>
     <p class="muted">
       Quer pedir de casa?
-      <a href="/cadastro">Crie sua conta de cliente</a>
+      <a href="{{ request.script_root }}/cadastro">Crie sua conta de cliente</a>
       ou
-      <a href="/cardapio">veja o cardápio</a>
+      <a href="{{ request.script_root }}/cardapio">veja o cardápio</a>
       .
     </p>
   </section>

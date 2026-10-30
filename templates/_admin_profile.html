@@ -1,0 +1,25 @@
+<label>Nome completo do administrador
+  <input name="admin_nome" value="{{ person.nome if person else '' }}" maxlength="100" placeholder="Ex.: Maria da Silva" autocomplete="name" required>
+  <small>Nome da pessoa responsável pelo caixa. O acesso será feito pelo e-mail abaixo.</small>
+</label>
+<label>E-mail de acesso
+  <input type="email" name="email" value="{{ person.email if person else '' }}" maxlength="254" placeholder="Ex.: maria@restaurante.com.br" autocomplete="email" required>
+  <small>Use um endereço de e-mail válido e exclusivo neste restaurante.</small>
+</label>
+<label>CPF do administrador
+  <input name="cpf" value="{{ person.cpf if person else '' }}" inputmode="numeric" maxlength="14" placeholder="000.000.000-00" data-cpf required>
+  <small>11 dígitos. O sistema confere os dígitos verificadores.</small>
+</label>
+<label>Data de nascimento
+  <input type="date" lang="pt-BR" name="nascimento" value="{{ person.nascimento if person else '' }}" min="1900-01-01" required>
+  <small>Dia/mês/ano. Selecione pelo calendário do dispositivo.</small>
+</label>
+<label>Endereço do administrador
+  <input name="endereco" value="{{ person.endereco if person else '' }}" maxlength="160" placeholder="Ex.: Rua das Flores" autocomplete="street-address" required>
+</label>
+<label>Número
+  <input name="numero" value="{{ person.numero if person else '' }}" maxlength="20" placeholder="Ex.: 120 ou s/n" required>
+</label>
+<label>Bairro
+  <input name="bairro" value="{{ person.bairro if person else '' }}" maxlength="100" placeholder="Ex.: Centro" required>
+</label>

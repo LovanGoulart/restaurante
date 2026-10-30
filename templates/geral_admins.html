@@ -1,0 +1,41 @@
+{% extends 'geral_base.html' %}{% block content %}<a href="{{ url_for('owner_panel') }}">← Restaurantes</a>
+<h1>Administradores</h1>
+<p>{{ site.name }} · Plano até {{ site.expires|plan_date }}. A conta só acessa quando o plano do restaurante e o usuário estão ativos.</p>
+<div class="site-grid">{% for user in users %}<section class="panel">
+<h2>{{ user.nome }}</h2>
+<p>Acesso por e-mail: <b>{{ user.email or 'Pendente' }}</b> · {{ 'Conta ativa' if user.ativo else 'Conta desativada' }}</p>
+<form method="post">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<input type="hidden" name="id" value="{{ user.id }}">
+<input type="hidden" name="acao" value="{{ 'desativar' if user.ativo else 'ativar' }}">
+<button class="outline">{{ 'Desativar conta' if user.ativo else 'Ativar conta' }}</button>
+</form>
+<form method="post">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<input type="hidden" name="id" value="{{ user.id }}">
+<input type="hidden" name="acao" value="perfil">
+<div class="form-grid">{% set person=user %}{% include '_admin_profile.html' %}</div>
+<button>Salvar dados do administrador</button>
+</form>
+<form method="post">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<input type="hidden" name="id" value="{{ user.id }}">
+<input type="hidden" name="acao" value="senha">
+<label>Nova senha<input name="senha" type="password" minlength="10" maxlength="256" autocomplete="new-password" required>
+</label>
+<button>Redefinir senha</button>
+</form>
+</section>{% endfor %}</div>
+<section class="panel">
+<h2>Adicionar administrador neste restaurante</h2>
+<form method="post" class="form-grid">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<input type="hidden" name="acao" value="criar">
+{% set person = none %}{% include '_admin_profile.html' %}
+<label>Senha<input type="password" name="senha" minlength="10" maxlength="256" autocomplete="new-password" required>
+</label>
+<div class="submit-cell">
+<button>Cadastrar administrador</button>
+</div>
+</form>
+</section>{% endblock %}

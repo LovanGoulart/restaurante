@@ -1,5 +1,7 @@
 import getpass
-from app import app
+from app import create_app
+
+app = create_app()
 from models import db, Usuario, Categoria, Produto
 from werkzeug.security import generate_password_hash
 

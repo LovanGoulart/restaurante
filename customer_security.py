@@ -5,7 +5,7 @@ from datetime import date, datetime, timezone, timedelta
 from cryptography.fernet import Fernet
 from flask import abort, request
 from models import db, TentativaAcesso
-from config import DATA
+from config import DATA, data_dir
 
 
 def cpf_valido(value):
@@ -36,7 +36,7 @@ def data_nascimento(value):
 
 
 def data_key():
-    path = DATA / "customer-data.key"
+    path = data_dir(DATA) / "customer-data.key"
     if not path.exists():
         # Se já há clientes, a ausência da chave deve ser recuperada do backup.
         from models import Cliente

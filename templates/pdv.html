@@ -74,7 +74,7 @@
         Nenhum produto encontrado. Tente outra palavra ou categoria.
       </p>
     </section>
-    <aside class="panel bag" id="bag">
+    <aside class="panel bag" id="bag" data-qr="{{ 'yes' if qr_customer else 'no' }}">
 <div class="bag-heading">
   <div class="bag-title">
     <div class="eyebrow">REVISE E ENVIE</div>
@@ -85,17 +85,20 @@
     </h2>
   </div>
 
+  {% if not qr_customer %}
   <label class="table-input">
-    <span>Digite o código da comanda:</span>
+    <span>Número da comanda:</span>
 
     <input
-      id="mesa"
-      maxlength="40"
+      id="comanda"
+      maxlength="12"
       placeholder=""
       autocomplete="off"
-      inputmode="text"
+      inputmode="numeric"
     />
   </label>
+  <label class="table-input"><span>Número da mesa:</span><input id="numero-mesa" maxlength="12" inputmode="numeric" placeholder="Ex.: 8" autocomplete="off"></label>
+  {% else %}<div><strong>Mesa {{ session.get('qr_numero_mesa', '') }}</strong><p class="muted">O garçom informará sua comanda ao servir.</p><a href="{{ url_for('salon_qr.enter',editar=1) }}">Corrigir nome ou mesa para os próximos pedidos</a></div>{% endif %}
 
   <button
     class="bag-close icon-button"
@@ -118,7 +121,7 @@
           <strong id="total">R$ 0,00</strong>
         </div>
         <button id="send" disabled>Enviar para a cozinha →</button>
-        <small>Confira os itens antes de enviar.</small>
+        <small>{{ 'Confira os itens. O garçom definirá a comanda no atendimento.' if qr_customer else 'Mesma comanda e mesma mesa: os novos itens são adicionados à conta aberta.' }}</small>
       </div>
     </aside>
   </div>

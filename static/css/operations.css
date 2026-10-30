@@ -346,4 +346,7 @@ body:has([data-role="admin"])
 
 .excel-export-button svg {
   flex-shrink: 0;
-}
+}.bag-heading {flex-wrap:wrap;}
+.bag-heading .table-input {flex:1 1 130px;min-width:110px;}
+.qr-assignment {padding:12px;background:#fff6e4;border:1px solid #e6d6b2;border-radius:12px;display:grid;gap:10px;margin-bottom:12px;}
+.qr-assignment input {width:100%;}

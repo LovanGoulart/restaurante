@@ -155,19 +155,20 @@ document.querySelectorAll(".chip").forEach(
       filter();
     }),
 );
+let pendingKey=crypto.randomUUID().replaceAll("-", "");
 send.onclick = async () => {
   if (sending) return;
-  const mesa = document.querySelector("#mesa").value.trim();
-  if (!mesa) {
-    toast("Informe a mesa antes de enviar.");
-    document.querySelector("#mesa").focus();
-    return;
+  const qr=bag.dataset.qr === "yes";
+  const comanda=document.querySelector("#comanda")?.value.trim();
+  const numero_mesa=document.querySelector("#numero-mesa")?.value.trim();
+  if(!qr && (!/^\d{1,12}$/.test(comanda || "") || !/^\d{1,12}$/.test(numero_mesa || ""))){
+    toast("Informe os números da comanda e da mesa."); return;
   }
   sending = true;
   updateTotals();
   try {
-    const p = await api("/api/pedidos", {
-      mesa,
+    const p = await api(qr ? "/api/salao/pedidos" : "/api/pedidos", {
+      comanda, numero_mesa, chave: pendingKey,
       itens: cart.map(({ id, quantidade, observacao }) => ({
         id,
         quantidade,
@@ -175,10 +176,11 @@ send.onclick = async () => {
       })),
     });
     cart = [];
-    document.querySelector("#mesa").value = "";
+    pendingKey=crypto.randomUUID().replaceAll("-", "");
     draw();
     if (document.body.classList.contains("bag-open")) setBag(false);
-    toast("✓ Pedido #" + p.id + " enviado para a cozinha.\nMesa " + mesa);
+    toast(qr ? "Pedido enviado! Acompanhe em Meus pedidos." : (p.adicionado ? "Itens adicionados à comanda " : "Pedido enviado. Comanda ")+comanda+" · Mesa "+numero_mesa);
+    if(qr) location.assign(restaurantURL("/salao/meus-pedidos"));
   } catch (e) {
     toast(e.message + " Se houve falha de conexão, confira Pedidos antes de reenviar.");
   } finally {
@@ -189,3 +191,10 @@ send.onclick = async () => {
 window.addEventListener("offline", updateTotals);
 window.addEventListener("online", updateTotals);
 draw();
+
+const existing=new URLSearchParams(location.search).get('pedido');
+if(existing && bag.dataset.qr!=='yes') api('/api/pedidos/'+Number(existing)+'/detalhes').then(p=>{
+ if(p.canal!=='salao'||p.pago) throw new Error('Comanda indisponível para adicionar itens.');
+ document.querySelector('#comanda').value=p.comanda; document.querySelector('#numero-mesa').value=p.numero_mesa;
+ toast('Adicionando itens à comanda '+p.comanda);
+}).catch(e=>toast(e.message));

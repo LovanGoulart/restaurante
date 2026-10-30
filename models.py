@@ -11,7 +11,7 @@ def now():
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    login = db.Column(db.String(80), unique=True, nullable=False)
+    login = db.Column(db.String(254), unique=True, nullable=False)
     senha = db.Column(db.String(256), nullable=False)
     perfil = db.Column(db.String(20), nullable=False)
     ativo = db.Column(db.Boolean, default=True, nullable=False)
@@ -36,8 +36,12 @@ class Produto(db.Model):
 class Pedido(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mesa = db.Column(db.String(40), nullable=False)
+    numero_mesa = db.Column(db.String(40), nullable=False, default="")
     usuario_id = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
     usuario = db.relationship(Usuario)
+    qr = db.relationship(
+        "PedidoQR", back_populates="pedido", cascade="all, delete-orphan"
+    )
     status = db.Column(db.String(20), default="aberto", nullable=False)
     pago = db.Column(db.Boolean, default=False, nullable=False)
     criado = db.Column(db.DateTime, default=now)
@@ -55,6 +59,8 @@ class Pedido(db.Model):
 
 
 class Item(db.Model):
+    visitante_id = db.Column(db.Integer, db.ForeignKey("usuario.id"))
+    etapa = db.Column(db.String(20), nullable=False, default="aberto")
     id = db.Column(db.Integer, primary_key=True)
     pedido_id = db.Column(db.Integer, db.ForeignKey("pedido.id"), nullable=False)
     nome = db.Column(db.String(120), nullable=False)
@@ -201,3 +207,14 @@ class Entrega(db.Model):
     acertado_em = db.Column(db.DateTime)
     acertado_por_id = db.Column(db.Integer, db.ForeignKey("usuario.id"))
     movimento_id = db.Column(db.Integer, db.ForeignKey("movimento.id"), unique=True)
+
+
+class PedidoQR(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    pedido_id = db.Column(
+        db.Integer, db.ForeignKey("pedido.id"), nullable=False, index=True
+    )
+    pedido = db.relationship(Pedido, back_populates="qr")
+    usuario_id = db.Column(
+        db.Integer, db.ForeignKey("usuario.id"), nullable=False, index=True
+    )

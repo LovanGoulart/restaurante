@@ -157,6 +157,10 @@ class AppearanceTest(unittest.TestCase):
         self.assertEqual(positions, sorted(positions))
 
     def test_icon_picker_and_br_assets(self):
+        self.client.post(
+            "/acesso-restrito?destino=/cadastros/produtos",
+            data={"csrf": "test", "senha": "test-password"},
+        )
         response = self.client.get("/cadastros/produtos")
         self.assertIn(b"data-product-icon", response.data)
         self.assertIn(b"br-fields.js", response.data)

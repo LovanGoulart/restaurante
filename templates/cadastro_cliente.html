@@ -103,12 +103,12 @@
       <button>Criar conta e ver cardápio →</button>
       <p>
         Já tem conta?
-        <a href="/login">Entrar</a>
+        <a href="{{ request.script_root }}/login">Entrar</a>
       </p>
     </form>
   </section>
 {% endblock %}
 
 {% block scripts %}
-  <script defer src="/static/js/customer_forms.js"></script>
+  <script defer src="{{ request.script_root }}/static/js/customer_forms.js"></script>
 {% endblock %}

@@ -75,7 +75,7 @@
     id="orders"
     class="orders"
     data-role="{{ user.perfil }}"
-    data-api="{{ '/api/cliente/pedidos' if customer else '/api/pedidos' }}"
+    data-api="{{ request.script_root }}{{ '/api/salao/pedidos' if user.perfil=='visitante' else '/api/cliente/pedidos' if customer else '/api/pedidos' }}"
   >
     <div class="panel">Carregando pedidos…</div>
   </div>

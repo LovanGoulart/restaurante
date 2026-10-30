@@ -48,14 +48,14 @@ class Couriers(unittest.TestCase):
             db.session.add(
                 Usuario(
                     nome=name,
-                    login=name,
+                    login="admin@example.com" if role == "admin" else name,
                     perfil=role,
                     senha=generate_password_hash("test-password"),
                     ativo=True,
                 )
             )
         db.session.flush()
-        self.ids = {u.login: u.id for u in db.session.scalars(db.select(Usuario))}
+        self.ids = {u.nome: u.id for u in db.session.scalars(db.select(Usuario))}
         self.customer = Cliente(
             usuario_id=self.ids["cliente"],
             cpf_cifrado="fixture",
@@ -100,10 +100,31 @@ class Couriers(unittest.TestCase):
         with self.client.session_transaction() as s:
             token = s["csrf"]
         r = self.client.post(
-            "/login", data={"csrf": token, "login": name, "senha": "test-password"}
+            "/login",
+            data={
+                "csrf": token,
+                "login": "admin@example.com" if name == "admin" else name,
+                "senha": "test-password",
+            },
         )
         self.assertEqual(r.status_code, 302)
         self.client.get("/")
+
+        if name == "admin":
+            import time
+
+            with self.client.session_transaction() as session:
+                session["management_grants"] = {
+                    key: time.time() + 300
+                    for key in [
+                        "produtos",
+                        "categorias",
+                        "usuarios",
+                        "clientes",
+                        "loja",
+                        "relatorios",
+                    ]
+                }
 
     def post(self, path, data):
         with self.client.session_transaction() as s:

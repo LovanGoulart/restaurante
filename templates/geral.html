@@ -1,0 +1,96 @@
+{% extends 'geral_base.html' %}{% block content %}
+<div class="page-head">
+<div>
+<div class="eyebrow">CONTROLE DA PLATAFORMA</div>
+<h1>Seus restaurantes.</h1>
+<p>Você controla quem acessa, por quanto tempo e quando renovar.</p>
+</div>
+<a class="button" href="#novo">+ Cadastrar restaurante</a>
+</div>
+<div class="metrics">
+<div>
+<span>Restaurantes</span>
+<strong>{{ sites|length }}</strong>
+</div>
+<div>
+<span>Com acesso ativo</span>
+<strong>{{ active_count }}</strong>
+</div>
+<div>
+<span>Inativos ou sem plano</span>
+<strong>{{ sites|length - active_count }}</strong>
+</div>
+</div>
+<section class="panel">
+<h2>Acessos e planos</h2>
+<div class="site-grid">{% for site in sites %}<article class="site-card">
+<div class="card-heading">
+<h3>{{ site.name }}</h3>
+<span class="badge {{ 'active' if is_active(site) else 'inactive' }}">{{ 'Ativo' if is_active(site) else 'Inativo' }}</span>
+</div>
+<p class="expiry">Válido até <b>{{ site.expires|plan_date }}</b>
+</p>
+<p class="muted">{% if not site.enabled %}Suspenso ou aguardando ativação.{% elif not is_active(site) %}Plano vencido. Renove para liberar o acesso.{% else %}Acesso liberado para este restaurante.{% endif %}</p>
+<label>Link do restaurante<input readonly value="{{ request.host_url.rstrip('/') }}/r/{{ site.slug }}/">
+</label>
+<div class="links">
+<a href="/r/{{ site.slug }}/login" target="_blank" rel="noopener">Abrir login ↗</a>
+<a href="/r/{{ site.slug }}/cardapio" target="_blank" rel="noopener">Cardápio público ↗</a>
+<a href="{{ url_for('admins',id=site.id) }}">Administradores →</a>
+</div>
+<form class="renew" method="post" action="{{ url_for('plan',id=site.id) }}">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<input type="hidden" name="acao" value="renovar">
+<label>Renovar por<select name="meses">{% for m, label in plans.items() %}<option value="{{ m }}">{{ label }}</option>{% endfor %}</select>
+</label>
+<button>Renovar e ativar</button>
+</form>
+<form method="post" action="{{ url_for('plan',id=site.id) }}">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<input type="hidden" name="acao" value="{{ 'suspender' if site.enabled else 'ativar' }}">
+<button class="outline">{{ 'Suspender acesso' if site.enabled else 'Reativar plano vigente' }}</button>
+</form>
+</article>{% else %}<p>Cadastre seu primeiro restaurante abaixo.</p>{% endfor %}</div>
+</section>
+<section id="novo" class="panel">
+<div class="eyebrow">NOVO ACESSO</div>
+<h2>Cadastrar restaurante e administrador</h2>
+<p>Preencha o nome e o link do restaurante, depois os dados pessoais do administrador. Todos os campos são obrigatórios. Cada restaurante mantém seus dados separados.</p>
+<form method="post" action="{{ url_for('create_restaurant') }}" class="form-grid">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<label>Nome do restaurante<input name="nome" maxlength="100" required>
+</label>
+<label>Link do restaurante (identificador)<input name="slug" placeholder="ex.: sabor-da-casa" pattern="[a-z0-9][a-z0-9\-]{1,48}[a-z0-9]" minlength="3" maxlength="50" required>
+<small>Apenas o final do link. Ex.: sabor-da-casa gera /r/sabor-da-casa/. Não digite rua, www ou https. O endereço residencial é informado abaixo.</small>
+</label>
+{% set person = none %}{% include '_admin_profile.html' %}
+<label>Senha inicial<input type="password" name="senha" minlength="10" maxlength="256" autocomplete="new-password" required>
+</label>
+<label>Período de acesso<select name="meses">{% for m, label in plans.items() %}<option value="{{ m }}">{{ label }}</option>{% endfor %}</select>
+</label>
+<div class="submit-cell">
+<button>Cadastrar e liberar acesso</button>
+</div>
+</form>
+</section>
+<details class="panel">
+<summary>Últimas alterações de acesso</summary>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Data · Brasília</th>
+<th>Restaurante</th>
+<th>Ação</th>
+</tr>
+</thead>
+<tbody>{% for row in audit %}<tr>
+<td>{{ row.created|plan_date }}</td>
+<td>{{ row.name or 'Plataforma' }}</td>
+<td>{{ row.action }}{% if row.details %}<small>{{ row.details }}</small>{% endif %}</td>
+</tr>{% endfor %}</tbody>
+</table>
+</div>
+</details>
+<p class="muted">Planos são controlados manualmente. Não há cobrança ou renovação automática. A renovação de um plano vigente soma o período ao vencimento atual; se vencido, conta a partir de agora.</p>
+{% endblock %}

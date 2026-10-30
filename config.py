@@ -24,3 +24,14 @@ class Config:
     SESSION_COOKIE_SAMESITE = "Lax"
     SESSION_COOKIE_SECURE = os.environ.get("COOKIE_SECURE") == "1"
     MAX_CONTENT_LENGTH = 1024 * 1024
+
+
+def data_dir(default=DATA):
+    """Pasta privada da aplicação atual; preserva o padrão em scripts legados."""
+    from flask import current_app, has_app_context
+
+    return (
+        Path(current_app.config.get("DATA_DIR") or default)
+        if has_app_context()
+        else Path(default)
+    )

@@ -3,7 +3,7 @@
 (() => {
   const user = document.body.dataset.user;
   if (!user) return;
-  const key = "restaurant-sound-" + user,
+  const key = restaurantURL("/") + "restaurant-sound-" + user,
     toggle = document.querySelector("#sound-toggle"),
     test = document.querySelector("#sound-test"),
     status = document.querySelector("#sound-status"),

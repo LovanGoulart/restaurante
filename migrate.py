@@ -4,7 +4,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 import sqlite3
 from sqlalchemy import inspect
-from app import app
+from app import create_app
+
+app = create_app()
 from models import (
     db,
     Notificacao,

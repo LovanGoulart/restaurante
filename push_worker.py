@@ -2,12 +2,16 @@ import json
 import time
 from datetime import datetime, timedelta, timezone
 from app import app
+from flask import current_app
 from models import db, Notificacao, PushSubscription, PushDelivery, Usuario, Pedido
 from notifications import push_config
-from config import DATA
+from config import DATA, data_dir
 
 
 def process_pending(send=None):
+    check = current_app.config.get("ACCESS_CHECK")
+    if check and not check():
+        return 0
     if send is None:
         from pywebpush import webpush
 
@@ -26,7 +30,9 @@ def process_pending(send=None):
     ).all()
     count = 0
     for id in ids:
-        (DATA / "push-worker.heartbeat").touch()
+        if check and not check():
+            return count
+        (data_dir(DATA) / "push-worker.heartbeat").touch()
         task = db.session.get(PushDelivery, id)
         n = db.session.get(Notificacao, task.notificacao_id)
         sub = db.session.get(PushSubscription, task.subscription_id)
@@ -77,12 +83,21 @@ def process_pending(send=None):
                 "title": n.titulo,
                 "body": n.mensagem,
                 "url": (
-                    "/entregas"
-                    if u.perfil == "entregador"
-                    else "/meus-pedidos" if u.perfil == "cliente" else "/pedidos"
-                )
-                + "?pedido="
-                + str(n.pedido_id),
+                    current_app.config.get("APPLICATION_ROOT", "/").rstrip("/")
+                    + (
+                        "/entregas"
+                        if u.perfil == "entregador"
+                        else (
+                            "/salao/meus-pedidos"
+                            if u.perfil == "visitante"
+                            else (
+                                "/meus-pedidos" if u.perfil == "cliente" else "/pedidos"
+                            )
+                        )
+                    )
+                    + "?pedido="
+                    + str(n.pedido_id)
+                ),
             },
             ensure_ascii=False,
         )
@@ -137,9 +152,18 @@ def run():
     print("Worker de notificações iniciado.", flush=True)
     while True:
         try:
-            with app.app_context():
-                (DATA / "push-worker.heartbeat").touch()
-                process_pending()
+            dispatcher = app.extensions["restaurant_platform"]
+            for site in dispatcher.registry.sites():
+                if not dispatcher.registry.site(id=site["id"]):
+                    continue
+                from platform_admin import active
+
+                if not active(site):
+                    continue
+                tenant = dispatcher.application(site)
+                with tenant.app_context():
+                    (data_dir(DATA) / "push-worker.heartbeat").touch()
+                    process_pending()
         except Exception as exc:
             print("Worker aguardando recuperação: " + type(exc).__name__, flush=True)
         time.sleep(2)

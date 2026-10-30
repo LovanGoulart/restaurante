@@ -26,7 +26,7 @@ from sqlalchemy import update
 
 from models import db, Notificacao, PushSubscription, PushDelivery, Usuario
 
-from config import DATA
+from config import DATA, data_dir
 
 bp = Blueprint("notifications", __name__)
 
@@ -38,6 +38,7 @@ def emit_order(pedido, tipo):
     titles = {
         "atribuida": "Nova entrega atribuída",
         "novo": "Novo pedido na cozinha",
+        "vinculado": "Comanda definida pelo atendimento",
         "em_preparo": "Preparo iniciado",
         "pronto": "Pedido pronto para retirar",
         "entregue": "Pedido entregue",
@@ -76,7 +77,7 @@ def emit_order(pedido, tipo):
             continue
 
         alerta_cliente = (
-            u.perfil == "cliente"
+            u.perfil in {"cliente", "visitante"}
             and u.id == pedido.usuario_id
             and tipo
             in [
@@ -104,12 +105,20 @@ def emit_order(pedido, tipo):
                 else "Retirada no caixa"
             )
             if pedido.online
-            else "Mesa " + pedido.mesa
+            else (
+                ("Mesa " + pedido.numero_mesa + " · Comanda " + pedido.mesa)
+                if pedido.mesa
+                else (
+                    ("Mesa " + pedido.numero_mesa + " · Aguardando comanda")
+                    if pedido.numero_mesa
+                    else "Salão · Aguardando comanda"
+                )
+            )
         )
 
         title = "Pedido pronto" if pedido.online and tipo == "pronto" else titles[tipo]
 
-        if u.perfil == "cliente":
+        if u.perfil in {"cliente", "visitante"}:
             title = {
                 "novo": "Seu pedido foi recebido!",
                 "em_preparo": "Seu pedido está em preparo!",
@@ -157,11 +166,16 @@ def as_dict(n):
         lida=n.lida,
         pedido_id=n.pedido_id,
         criado=n.criado.isoformat() + "Z",
-        url=(
+        url=request.script_root
+        + (
             (
                 "/entregas"
                 if g.user.perfil == "entregador"
-                else "/meus-pedidos" if g.user.perfil == "cliente" else "/pedidos"
+                else (
+                    "/salao/meus-pedidos"
+                    if g.user.perfil == "visitante"
+                    else "/meus-pedidos" if g.user.perfil == "cliente" else "/pedidos"
+                )
             )
             + "?pedido="
             + str(n.pedido_id)
@@ -252,8 +266,17 @@ def events():
 
                 user = db.session.get(Usuario, uid)
 
-                if not user or not user.ativo:
+                check = current_app.config.get("ACCESS_CHECK")
+                if (check and not check()) or not user or not user.ativo:
 
+                    return
+
+                version = current_app.config.get("ADMIN_VERSION")
+                if (
+                    user.perfil == "admin"
+                    and version
+                    and session.get("admin_version") != version(user.id)
+                ):
                     return
 
                 rows = db.session.scalars(
@@ -290,7 +313,7 @@ def events():
 
 def push_config():
 
-    path = DATA / "vapid.json"
+    path = data_dir(DATA) / "vapid.json"
 
     if not path.exists():
 
@@ -309,7 +332,10 @@ def worker_online():
 
     try:
 
-        return time.time() - (DATA / "push-worker.heartbeat").stat().st_mtime < 90
+        return (
+            time.time() - (data_dir(DATA) / "push-worker.heartbeat").stat().st_mtime
+            < 90
+        )
 
     except OSError:
 

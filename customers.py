@@ -109,6 +109,8 @@ def money(value):
 
 @bp.get("/cardapio")
 def menu():
+    if g.user and g.user.perfil == "visitante":
+        return redirect(url_for("salon_qr.menu"))
     if g.user and g.user.perfil == "entregador":
         return redirect(url_for("couriers.deliveries"))
     if g.user and g.user.perfil in ["garcom", "cozinha"]:

@@ -50,7 +50,7 @@ class Online(unittest.TestCase):
             db.session.add(
                 Usuario(
                     nome=role,
-                    login=role,
+                    login="admin@example.com" if role == "admin" else role,
                     senha=generate_password_hash("test-password"),
                     perfil=role,
                 )
@@ -92,8 +92,30 @@ class Online(unittest.TestCase):
         self.post_form("/logout", {})
 
     def login(self, name):
-        r = self.post_form("/login", {"login": name, "senha": "test-password"})
+        r = self.post_form(
+            "/login",
+            {
+                "login": "admin@example.com" if name == "admin" else name,
+                "senha": "test-password",
+            },
+        )
         self.assertEqual(r.status_code, 302)
+
+        if name == "admin":
+            import time
+
+            with self.client.session_transaction() as session:
+                session["management_grants"] = {
+                    key: time.time() + 300
+                    for key in [
+                        "produtos",
+                        "categorias",
+                        "usuarios",
+                        "clientes",
+                        "loja",
+                        "relatorios",
+                    ]
+                }
 
     def register(self, name="cliente1", base="987654320", **extra):
         self.logout()
@@ -187,7 +209,12 @@ class Online(unittest.TestCase):
             self.assertEqual(self.client.get(url).status_code, 403, url)
         self.assertEqual(
             self.post(
-                "/api/pedidos", {"mesa": "1", "itens": [{"id": 1, "quantidade": 1}]}
+                "/api/pedidos",
+                {
+                    "mesa": "1",
+                    "numero_mesa": "1",
+                    "itens": [{"id": 1, "quantidade": 1}],
+                },
             ).status_code,
             403,
         )
@@ -295,7 +322,8 @@ class Online(unittest.TestCase):
         ).json["id"]
         self.login("garcom")
         salon = self.post(
-            "/api/pedidos", {"mesa": "08", "itens": [{"id": 1, "quantidade": 1}]}
+            "/api/pedidos",
+            {"mesa": "08", "numero_mesa": "08", "itens": [{"id": 1, "quantidade": 1}]},
         ).json["id"]
         self.assertEqual(
             [p["id"] for p in self.client.get("/api/pedidos").json], [salon]
@@ -383,11 +411,34 @@ class Online(unittest.TestCase):
             403,
         )
         self.login("admin")
-        for state in ["saiu_entrega", "entregue"]:
-            self.assertEqual(
-                self.post(f"/api/pedidos/{id}/status", {"status": state}).status_code,
-                200,
-            )
+        driver = Usuario(
+            nome="Entregador",
+            login="driver-test",
+            perfil="entregador",
+            senha=generate_password_hash("test-password"),
+            ativo=True,
+        )
+        db.session.add(driver)
+        db.session.commit()
+        self.assertEqual(
+            self.post(
+                f"/api/pedidos/{id}/entregador", {"entregador_id": driver.id}
+            ).status_code,
+            200,
+        )
+        self.assertEqual(
+            self.post(f"/api/pedidos/{id}/status", {"status": "entregue"}).status_code,
+            409,
+        )
+        self.login("driver-test")
+        delivery = self.client.get("/api/entregas").json["items"][0]
+        self.assertEqual(
+            self.post(
+                f"/api/entregas/{delivery['recebimento']['id']}/concluir",
+                {"confirmado": True, "forma_pagamento": "pix"},
+            ).status_code,
+            200,
+        )
         self.login("cliente1")
         items = self.client.get("/api/cliente/pedidos").json
         self.assertEqual(items[0]["status"], "entregue")

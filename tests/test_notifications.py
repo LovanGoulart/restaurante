@@ -45,7 +45,7 @@ class Notifications(unittest.TestCase):
             db.session.add(
                 Usuario(
                     nome=name,
-                    login=name,
+                    login="admin@example.com" if role == "admin" else name,
                     senha=generate_password_hash("test-password"),
                     perfil=role,
                 )
@@ -67,9 +67,30 @@ class Notifications(unittest.TestCase):
         with self.client.session_transaction() as s:
             csrf = s["csrf"]
         self.client.post(
-            "/login", data={"login": name, "senha": "test-password", "csrf": csrf}
+            "/login",
+            data={
+                "login": "admin@example.com" if name == "admin" else name,
+                "senha": "test-password",
+                "csrf": csrf,
+            },
         )
         self.client.get("/")
+
+        if name == "admin":
+            import time
+
+            with self.client.session_transaction() as session:
+                session["management_grants"] = {
+                    key: time.time() + 300
+                    for key in [
+                        "produtos",
+                        "categorias",
+                        "usuarios",
+                        "clientes",
+                        "loja",
+                        "relatorios",
+                    ]
+                }
 
     def post(self, path, data):
         with self.client.session_transaction() as s:
@@ -79,7 +100,8 @@ class Notifications(unittest.TestCase):
     def order(self):
         self.login("garcom")
         r = self.post(
-            "/api/pedidos", {"mesa": "08", "itens": [{"id": 1, "quantidade": 2}]}
+            "/api/pedidos",
+            {"mesa": "08", "numero_mesa": "08", "itens": [{"id": 1, "quantidade": 2}]},
         )
         self.assertEqual(r.status_code, 201)
         return r.json["id"]
@@ -177,7 +199,8 @@ class Notifications(unittest.TestCase):
             self.assertEqual(self.post("/api/push/subscribe", bad).status_code, 400)
         self.assertEqual(self.subscribe().status_code, 200)
         id = self.post(
-            "/api/pedidos", {"mesa": "08", "itens": [{"id": 1, "quantidade": 1}]}
+            "/api/pedidos",
+            {"mesa": "08", "numero_mesa": "08", "itens": [{"id": 1, "quantidade": 1}]},
         ).json["id"]
         self.ready(id)
         self.assertEqual(
@@ -191,14 +214,15 @@ class Notifications(unittest.TestCase):
             self.assertEqual(process_pending(send=lambda **kw: calls.append(kw)), 1)
         payload = json.loads(calls[0]["data"])
         self.assertEqual(payload["title"], "Pedido pronto para retirar")
-        self.assertIn("08", payload["body"])
+        self.assertIn("Mesa 8 · Comanda 8", payload["body"])
         self.assertEqual(db.session.scalar(db.select(PushDelivery)).estado, "enviado")
 
     def test_push_stale_and_retry(self):
         self.login("garcom")
         self.assertEqual(self.subscribe().status_code, 200)
         id = self.post(
-            "/api/pedidos", {"mesa": "09", "itens": [{"id": 1, "quantidade": 1}]}
+            "/api/pedidos",
+            {"mesa": "09", "numero_mesa": "09", "itens": [{"id": 1, "quantidade": 1}]},
         ).json["id"]
         self.ready(id)
 

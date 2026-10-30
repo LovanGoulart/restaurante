@@ -9,8 +9,8 @@ let cart = [],
   sending = false,
   pending = null,
   category = "all";
-const storageKey = "restaurant-online-cart",
-  tokenKey = "restaurant-online-attempt";
+const storageKey = restaurantURL("/") + "restaurant-online-cart",
+  tokenKey = restaurantURL("/") + "restaurant-online-attempt";
 const catalog = new Map(
   [...document.querySelectorAll(".add")].map((b) => [
     +b.dataset.id,
@@ -76,7 +76,8 @@ mobileCart.onclick = () => setBag(true);
 document.querySelector(".bag-close").onclick = () => setBag(false);
 document.querySelector("#bag-backdrop").onclick = () => setBag(false);
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && document.body.classList.contains("bag-open")) setBag(false);
+  if (e.key === "Escape" && document.body.classList.contains("bag-open"))
+    setBag(false);
   if (e.key === "Tab" && document.body.classList.contains("bag-open")) {
     const nodes = [
       ...bag.querySelectorAll(
@@ -112,7 +113,10 @@ function totals() {
   document.querySelector("#cart-count").textContent = count;
   if (send) {
     send.disabled =
-      !cart.length || sending || !navigator.onLine || bag.dataset.active !== "yes";
+      !cart.length ||
+      sending ||
+      !navigator.onLine ||
+      bag.dataset.active !== "yes";
     send.textContent = sending
       ? "Enviando pedido…"
       : pending
@@ -182,7 +186,12 @@ document.querySelectorAll(".add").forEach(
       }
       const item = cart.find((i) => i.id === +b.dataset.id);
       if (item) item.quantidade = Math.min(99, item.quantidade + 1);
-      else cart.push({ ...catalog.get(+b.dataset.id), quantidade: 1, observacao: "" });
+      else
+        cart.push({
+          ...catalog.get(+b.dataset.id),
+          quantidade: 1,
+          observacao: "",
+        });
       draw();
       b.textContent = "✓";
       setTimeout(() => (b.textContent = "+"), 600);
@@ -209,7 +218,9 @@ function checkout() {
   fields.hidden = !delivery;
   fields
     .querySelectorAll("input")
-    .forEach((input) => (input.required = delivery && input.name !== "telefone"));
+    .forEach(
+      (input) => (input.required = delivery && input.name !== "telefone"),
+    );
   document.querySelector("#change-label").hidden = payment.value !== "dinheiro";
   totals();
   save();
@@ -261,14 +272,14 @@ function done(id) {
     sessionStorage.removeItem(tokenKey);
   } catch {}
   toast("Pedido #" + id + " recebido!");
-  window.location.assign("/meus-pedidos");
+  window.location.assign(restaurantURL("/meus-pedidos"));
 }
 if (send)
   send.onclick = async () => {
     if (sending) return;
     if (bag.dataset.customer !== "yes") {
       save();
-      window.location.assign("/login");
+      window.location.assign(restaurantURL("/login"));
       return;
     }
     if (!pending) {
@@ -288,7 +299,9 @@ if (send)
         })),
       };
       if (mode.value === "entrega") {
-        const fields = [...document.querySelectorAll("#checkout-address input")];
+        const fields = [
+          ...document.querySelectorAll("#checkout-address input"),
+        ];
         for (const input of fields) {
           if (!input.checkValidity()) {
             input.reportValidity();

@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% block content %}
+<section class="panel"><h1>QR Code para pedidos no salão</h1><p>Imprima e coloque nas mesas. O cliente escolhe os produtos sem senha e o garçom vincula a comanda ao atender.</p>
+<img src="{{ url_for('salon_qr.qr_image') }}" width="280" height="280" style="max-width:100%;height:auto" alt="QR Code do cardápio para clientes do salão">
+<label>Link do cardápio no salão<input readonly value="{{ link }}"></label>
+<a href="{{ url_for('salon_qr.qr_image') }}" download="qr-code-salao.svg" class="button-link">Baixar QR Code para impressão</a>
+<p class="muted">O código usa o endereço pelo qual você acessou o sistema. Gere na URL pública com HTTPS para funcionar nos celulares dos clientes.</p></section>
+{% endblock %}

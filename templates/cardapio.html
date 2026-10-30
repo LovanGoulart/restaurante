@@ -162,7 +162,7 @@
           <strong id="total">R$ 0,00</strong>
         </div>
         {% if user and user.perfil!='cliente' %}
-          <a class="button-link" href="/pdv">Usar PDV do salão</a>
+          <a class="button-link" href="{{ request.script_root }}/pdv">Usar PDV do salão</a>
         {% else %}
           <button id="send" disabled>
             {{ 'Confirmar meu pedido →' if cliente else 'Entrar para fazer o pedido →' }}
@@ -170,7 +170,7 @@
           {% if not cliente %}
             <small>
               Primeira vez?
-              <a href="/cadastro">Crie sua conta</a>
+              <a href="{{ request.script_root }}/cadastro">Crie sua conta</a>
               . Sua sacola será mantida neste navegador.
             </small>
           {% endif %}
@@ -195,5 +195,5 @@
 {% endblock %}
 
 {% block scripts %}
-  <script defer src="/static/js/cardapio.js"></script>
+  <script defer src="{{ request.script_root }}/static/js/cardapio.js"></script>
 {% endblock %}

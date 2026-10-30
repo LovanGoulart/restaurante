@@ -29,6 +29,10 @@ def add_items(pedido, itens):
 
 def serialize_order(p, user):
     online = p.online
+    guest = user.perfil == "visitante"
+    if guest and not any(q.usuario_id == user.id for q in p.qr):
+        abort(403)
+    items = [i for i in p.itens if not guest or i.visitante_id == user.id]
     if user.perfil == "entregador" and (
         not online
         or online.modalidade != "entrega"
@@ -41,12 +45,16 @@ def serialize_order(p, user):
         canal="online" if online else "salao",
         modalidade=online.modalidade if online else "salao",
         mesa=p.mesa if not online else "",
+        comanda=p.mesa if not online else "",
+        numero_mesa=p.numero_mesa if not online else "",
+        pedido_qr=bool(p.qr),
+        aguardando_comanda=bool(p.qr and not p.mesa),
         status=p.status,
         pago=p.pago,
-        subtotal=p.subtotal,
+        subtotal=sum(i.preco * i.quantidade for i in items) if guest else p.subtotal,
         taxa_entrega=online.taxa_entrega if online else 0,
-        total=p.total,
-        garcom=p.usuario.nome if not online else "",
+        total=sum(i.preco * i.quantidade for i in items) if guest else p.total,
+        garcom=(user.nome if guest else p.usuario.nome) if not online else "",
         cliente=online.destinatario if online else "",
         criado=p.criado.isoformat(),
         itens=[
@@ -55,8 +63,9 @@ def serialize_order(p, user):
                 quantidade=i.quantidade,
                 preco=i.preco,
                 observacao=i.observacao,
+                etapa=i.etapa,
             )
-            for i in p.itens
+            for i in items
         ],
     )
     # Cozinha recebe somente nome/modalidade/itens; garçom não recebe pedidos online.

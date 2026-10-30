@@ -15,7 +15,7 @@ from flask import (
     send_from_directory,
 )
 from PIL import Image, ImageOps, UnidentifiedImageError
-from config import DATA
+from config import DATA, data_dir
 from models import db, Produto, Pedido
 from customers import role, store
 
@@ -33,7 +33,7 @@ DEFAULTS = {
 
 
 def settings():
-    path = DATA / "appearance.json"
+    path = data_dir(DATA) / "appearance.json"
     return (
         {**DEFAULTS, **json.loads(path.read_text())}
         if path.exists()
@@ -42,10 +42,10 @@ def settings():
 
 
 def save(data):
-    path = DATA / ("appearance-" + secrets.token_hex(8) + ".tmp")
+    path = data_dir(DATA) / ("appearance-" + secrets.token_hex(8) + ".tmp")
     try:
         path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-        os.replace(path, DATA / "appearance.json")
+        os.replace(path, data_dir(DATA) / "appearance.json")
     finally:
         path.unlink(missing_ok=True)
 
@@ -68,7 +68,7 @@ def upload(field):
             image.thumbnail((1920, 1920))
     except (UnidentifiedImageError, OSError, ValueError, Image.DecompressionBombError):
         abort(400, "Envie uma imagem JPG, PNG ou WebP válida, com até 20 megapixels.")
-    folder = DATA / "media"
+    folder = data_dir(DATA) / "media"
     folder.mkdir(exist_ok=True)
     name = secrets.token_hex(16) + ".jpg"
     image.save(folder / name, "JPEG", quality=88)
@@ -79,7 +79,7 @@ def upload(field):
 def media(name):
     if not re.fullmatch(r"[0-9a-f]{32}\.jpg", name):
         abort(404)
-    return send_from_directory(DATA / "media", name)
+    return send_from_directory(data_dir(DATA) / "media", name)
 
 
 @bp.app_context_processor

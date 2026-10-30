@@ -1,3 +1,7 @@
+> **Atualização mais recente:** leia [ATUALIZACAO_ACESSOS_E_COMANDAS.md](ATUALIZACAO_ACESSOS_E_COMANDAS.md) antes de instalar. Ela modifica o acesso administrativo para e-mail, acrescenta dados pessoais, protege áreas de gestão e inclui comandas e pedidos por QR Code.
+
+> **Nova versão com administrador geral e restaurantes separados.** Antes de iniciar ou atualizar, siga [LEIA_PRIMEIRO_ADMINISTRACAO_GERAL.md](LEIA_PRIMEIRO_ADMINISTRACAO_GERAL.md). Crie sua conta com `python setup_geral.py`. Preserve a pasta `instance`; não use `init_db.py` para atualizar uma instalação existente.
+
 # 🍽️ Restaurante Manager — Pedidos, Cozinha, Entregas e Caixa
 
 Aplicação web desenvolvida com **Python e Flask** para organizar a operação de restaurantes, conectando o atendimento no salão, os pedidos online, a cozinha, os entregadores e a administração.
