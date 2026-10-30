@@ -16,8 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     .querySelectorAll(
       'input[type="date"]:not(#delivery-date),input[type="number"][step="0.01"]')
     .forEach((original) => {
+      if (original.hasAttribute("data-native-date")) return;
       const date = original.type === "date",
-        display = document.createElement("input");
+      display = document.createElement("input");
       display.type = "text";
       display.inputMode = date ? "numeric" : "decimal";
       display.placeholder = date ? "dd/mm/aaaa" : "0,00";

@@ -32,7 +32,13 @@
     <form method="get" class="sales-filters">
       <input type="hidden" name="periodo" value="{{ f.periodo }}"><input type="hidden" name="aba" id="sales-tab-value" value="{{ aba }}">
       <label>Data de referência
-        <input type="date" name="referencia" value="{{ f.referencia.isoformat() }}" required>
+        <input
+          type="date"
+          name="referencia"
+          value="{{ f.referencia.isoformat() }}"
+          data-native-date
+          required
+        >
       </label>
       <label>Pedidos incluídos
         <select name="situacao">
