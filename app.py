@@ -53,6 +53,9 @@ def create_app(overrides=None):
     from product_options import bp as product_options_bp
 
     app.register_blueprint(product_options_bp)
+    from fiscal import bp as fiscal_bp
+
+    app.register_blueprint(fiscal_bp)
 
     @app.template_filter("data_br")
     def data_br(value):
@@ -623,6 +626,9 @@ def create_app(overrides=None):
                 descricao=f"Pedido #{id}",
             )
         )
+        from fiscal_service import enqueue
+
+        enqueue(p, forma)
         emit_order(p, "pago")
         db.session.commit()
         return jsonify(ok=True)

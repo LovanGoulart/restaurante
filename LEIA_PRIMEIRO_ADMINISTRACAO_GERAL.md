@@ -1,3 +1,5 @@
+> **Atualização fiscal:** consulte [MODULO_FISCAL.md](MODULO_FISCAL.md) para instalar as tabelas, configurar a Focus NFe e iniciar o processador. Produção permanece bloqueada por padrão.
+
 > **Cardápio e opções de produtos:** para esta atualização, leia primeiro [ATUALIZACAO_CARDAPIO_OPCOES.md](ATUALIZACAO_CARDAPIO_OPCOES.md). Não é necessária alteração no banco para a nova tela de opções.
 
 > **Instruções atualizadas:** consulte primeiro [ATUALIZACAO_ACESSOS_E_COMANDAS.md](ATUALIZACAO_ACESSOS_E_COMANDAS.md). Nesta versão o login geral e o login dos administradores do caixa usam e-mail, e a atualização de bancos requer `python atualizar_sistema.py`.

@@ -338,6 +338,9 @@ def settle():
             db.session.add(m)
             db.session.flush()
             e.movimento_id = m.id
+            from fiscal_service import enqueue
+
+            enqueue(p, e.forma_pagamento)
             emit_order(p, "pago")
         e.acertado_em = at
         e.acertado_por_id = g.user.id

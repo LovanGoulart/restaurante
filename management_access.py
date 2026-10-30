@@ -24,6 +24,8 @@ TTL = 300
 
 
 def scope_for(path):
+    if path == "/fiscal" or path.startswith("/fiscal/"):
+        return "fiscal"
     if path.startswith("/relatorios"):
         return "relatorios"
     if path.startswith("/loja"):
@@ -55,6 +57,7 @@ def safe_destination(value):
     allowed = {
         "/relatorios-vendas",
         "/loja",
+        "/fiscal",
         "/clientes",
         "/cadastros/produtos",
         "/cadastros/categorias",
@@ -78,6 +81,8 @@ def guard():
         ):
             abort(403, "Confirme a senha do administrador para acessar esta área.")
         path = request.path
+        if scope == "fiscal":
+            path = "/fiscal"
         if scope == "produtos":
             path = "/cadastros/produtos"
         if scope == "relatorios":

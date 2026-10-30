@@ -24,6 +24,7 @@ class Config:
     SESSION_COOKIE_SAMESITE = "Lax"
     SESSION_COOKIE_SECURE = os.environ.get("COOKIE_SECURE") == "1"
     MAX_CONTENT_LENGTH = 1024 * 1024
+    FISCAL_PRODUCTION_ENABLED = os.environ.get("FISCAL_PRODUCTION_ENABLED") == "1"
 
 
 def data_dir(default=DATA):
