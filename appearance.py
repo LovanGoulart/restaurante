@@ -113,8 +113,8 @@ def customize():
                 data[key] = value
             for key in ("title", "subtitle"):
                 value = request.form.get(key, "").strip()
-                if not value or len(value) > 180:
-                    abort(400, "Preencha os textos da capa (até 180 caracteres).")
+                if len(value) > 180:
+                    abort(400, "Os textos da capa devem ter até 180 caracteres.")
                 data[key] = value
             cover = upload("cover")
             if request.form.get("remove_cover"):
