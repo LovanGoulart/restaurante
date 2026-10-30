@@ -99,7 +99,7 @@
                   href="{{ request.script_root }}/acerto-entregadores"
                   class="{{ 'selected' if request.endpoint == 'couriers.settlement' else '' }}"
                 >
-                  Saldo Delivery
+                  Entregadores
                 </a>
                 <a
                   href="{{ url_for('management_access.unlock',destino=request.script_root+'/relatorios-vendas') }}"
@@ -108,7 +108,7 @@
                   Relatórios
                 </a>
                 <button class="nav-more" data-open="more-dialog">
-                  Gerenciar ▾
+                  Painel de controle ▾
                 </button>
 
 {% endif %}
