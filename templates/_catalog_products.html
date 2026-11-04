@@ -10,16 +10,28 @@
 </div>
 <div class="catalog-sections">
 {% for c in categorias %}
-  {% set category_products = produtos|selectattr('categoria_id', 'equalto', c.id)|list %}
+  {% set category_products = catalog_products(produtos|selectattr('categoria_id', 'equalto', c.id)|list) %}
   {% if category_products %}
+  {% set card_count = namespace(value=0) %}
+  {% for product in category_products %}{% set card_count.value = card_count.value + (pizza_size_cards(product)|length or 1) %}{% endfor %}
   <section class="catalog-category" data-category-section="{{ c.id }}">
-    <h2 class="category-title">{{ c.nome }} <small>{{ category_products|length }} {{ 'opção' if category_products|length == 1 else 'opções' }}</small></h2>
+    <h2 class="category-title">{{ c.nome }} <small>{{ card_count.value }} {{ 'opção' if card_count.value == 1 else 'opções' }}</small></h2>
     <div class="products">
     {% for p in category_products %}
+      {% set sizes = pizza_size_cards(p) %}
+      {% if sizes %}
+        {% for size in sizes %}
+        <article class="product catalog-product pizza-size-product" data-product="{{ p.id }}" data-size="{{ size.id }}" data-category="{{ p.categoria_id }}" data-name="{{ (p.nome ~ ' ' ~ size.label ~ ' ' ~ c.nome ~ ' ' ~ pizza_search_terms(p))|lower }}" role="button" tabindex="0" aria-label="Personalizar pizza {{ size.label }}" aria-haspopup="dialog">
+          <div class="product-content"><h3>{{ size.label }}</h3><p>Até {{ size.limit }} {{ 'sabor' if size.limit==1 else 'sabores' }}</p><div class="price"><b>A partir de {{ size.from_price|brl }}</b><span class="add" data-id="{{ p.id }}" data-name="{{ p.nome }}" data-price="{{ p.preco }}" hidden></span></div></div>
+          <div class="food" aria-hidden="true">🍕</div>
+        </article>
+        {% endfor %}
+      {% else %}
       <article class="product catalog-product" data-product="{{ p.id }}" data-category="{{ p.categoria_id }}" data-name="{{ (p.nome ~ ' ' ~ p.descricao ~ ' ' ~ c.nome)|lower }}" role="button" tabindex="0" aria-label="Escolher opções de {{ p.nome }}" aria-haspopup="dialog">
         <div class="product-content"><h3>{{ p.nome }}</h3><p>{{ p.descricao }}</p><div class="price"><b>{{ p.preco|brl }}{% if product_catalog([p])[0].groups %}<small> · Personalizar</small>{% endif %}</b><span class="add" data-id="{{ p.id }}" data-name="{{ p.nome }}" data-price="{{ p.preco }}" aria-label="Personalizar {{ p.nome }}" aria-hidden="true">+</span></div></div>
         <div class="food">{% set photo = appearance.photos.get(p.id|string) %}{% if photo %}<img src="{{ url_for('appearance.media', name=photo) }}" alt="{{ p.nome }}" loading="lazy">{% else %}{{ p.emoji }}{% endif %}</div>
       </article>
+      {% endif %}
     {% endfor %}
     </div>
   </section>
@@ -31,7 +43,7 @@
 <dialog id="product-picker" aria-labelledby="picker-name">
   <form id="picker-form">
     <header class="picker-heading"><h2 id="picker-name"></h2><button type="button" id="picker-close" class="icon-button" aria-label="Fechar opções">×</button></header>
-    <div class="picker-body"><div id="picker-photo"></div><p id="picker-description"></p><p class="picker-unit-line"><span>Valor por unidade</span><strong id="picker-unit-price"></strong></p><p id="pizza-progress" class="pizza-progress" hidden></p><button type="button" id="picker-back" class="picker-clear" hidden>← Voltar ao tamanho</button><div id="picker-groups"></div><label id="pizza-count-label" hidden>Quantidade de sabores<select id="pizza-flavor-count"></select><small id="pizza-count-help"></small></label>
+    <div class="picker-body"><div id="picker-photo"></div><p id="picker-description"></p><p class="picker-unit-line"><span>Valor por unidade</span><strong id="picker-unit-price"></strong></p><p id="pizza-progress" class="pizza-progress" hidden></p><nav id="pizza-step-dots" aria-label="Etapas da pizza" hidden></nav><input id="picker-choice-search" type="search" placeholder="Buscar opções…" aria-label="Buscar opções desta etapa" hidden><button type="button" id="picker-back" class="picker-clear" hidden>← Voltar ao tamanho</button><div id="picker-groups"></div><label id="pizza-count-label" hidden>Quantidade de sabores<select id="pizza-flavor-count"></select><small id="pizza-count-help"></small></label>
       <label id="picker-note-label"><span id="picker-note-title">Observação</span><textarea id="picker-note" maxlength="300" rows="2"></textarea></label>
       <p id="picker-error" role="alert" hidden></p>
     </div>

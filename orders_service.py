@@ -1,6 +1,6 @@
 from flask import abort
 from models import db, Produto, Item
-from product_options import resolve_item
+from product_options import resolve_item, ordering_settings
 
 
 def add_items(pedido, itens):
@@ -16,12 +16,25 @@ def add_items(pedido, itens):
             abort(400, "Item ou quantidade inválida.")
         prod = db.session.get(Produto, item["id"])
         obs = item.get("observacao", "")
-        if not isinstance(obs, str) or len(obs) > 300 or not prod or not prod.ativo:
+        if (
+            not isinstance(obs, str)
+            or len(obs) > 300
+            or not prod
+            or not prod.ativo
+            or prod.excluido
+        ):
             abort(400, "Produto indisponível ou observação inválida.")
         price, obs = resolve_item(prod, item)
+        config = ordering_settings(prod)
+        name = prod.nome
+        if any(g["id"] == "pizzasize" for g in config["groups"]):
+            size_group = next(g for g in config["groups"] if g["id"] == "pizzasize")
+            selected = item.get("opcoes", {}).get("pizzasize", [])
+            choice = next(c for c in size_group["choices"] if c["id"] in selected)
+            name = "Pizza · " + choice["label"]
         pedido.itens.append(
             Item(
-                nome=prod.nome,
+                nome=name,
                 preco=price,
                 quantidade=item["quantidade"],
                 observacao=obs.strip(),

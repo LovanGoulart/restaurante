@@ -4,9 +4,12 @@ import hashlib
 import json
 import os
 import secrets
+import re
+import unicodedata
 from pathlib import Path
 from flask import (
     Blueprint,
+    current_app,
     abort,
     g,
     jsonify,
@@ -15,10 +18,24 @@ from flask import (
     request,
     url_for,
 )
+from werkzeug.exceptions import HTTPException
 from config import DATA, data_dir
-from models import db, Produto
+from models import db, Produto, Categoria
 
 bp = Blueprint("product_options", __name__)
+
+
+@bp.errorhandler(HTTPException)
+def configure_error(exc):
+    # As rotas de página também recebem POST JSON; não devolver HTML ao editor.
+    if request.is_json:
+        db.session.rollback()
+        return jsonify(error=exc.description), exc.code
+    return render_template("error.html", message=exc.description), exc.code
+
+
+for _code in (400, 401, 403, 404, 409, 429, 503):
+    bp.register_error_handler(_code, configure_error)
 
 
 def path_for(id):
@@ -48,8 +65,31 @@ def revision(product, config):
     return hashlib.sha256(value.encode()).hexdigest()[:24]
 
 
+def plain(text):
+    return "".join(c for c in unicodedata.normalize("NFKD", text.casefold()) if not unicodedata.combining(c)).strip()
+
+
+def ordering_settings(product):
+    from pizza_menu import applies, effective
+    return effective(product) if applies(product) else settings(product.id)
+
+
+def catalog_products(products):
+    from pizza_menu import applies, settings as pizza_settings
+    seen, result = set(), []
+    for product in products:
+        if applies(product):
+            if product.categoria_id in seen:
+                continue
+            seen.add(product.categoria_id)
+            if not any(size['enabled'] for size in pizza_settings(product.categoria_id)['sizes']):
+                continue
+        result.append(product)
+    return result
+
+
 def public_product(product):
-    config = settings(product.id)
+    config = ordering_settings(product)
     groups = []
     for group in config["groups"]:
         if group["enabled"]:
@@ -58,7 +98,9 @@ def public_product(product):
             )
     return dict(
         id=product.id,
-        nome=product.nome,
+        nome="Pizza" if config.get("pizza_menu") else product.nome,
+        pizza_menu=bool(config.get("pizza_menu")),
+        pricing_mode=config.get("pricing_mode", "average"),
         descricao=product.descricao or "",
         preco=product.preco,
         emoji=product.emoji,
@@ -68,9 +110,39 @@ def public_product(product):
     )
 
 
+def size_cards(product):
+    config = public_product(product)
+    sizes = next((g for g in config["groups"] if g["type"] == "sizes"), None)
+    flavors = next((g for g in config["groups"] if g["type"] == "flavors"), None)
+    if not sizes or not flavors:
+        return []
+    extra = sum(
+        min(c["price"] for c in g["choices"])
+        for g in config["groups"]
+        if g["type"] not in {"sizes", "flavors", "text"}
+        and g["required"]
+        and g["choices"]
+    )
+    base = 0 if config.get("pricing_mode") == "fixed" else min(c["price"] for c in flavors["choices"])
+    return [
+        {
+            **choice,
+            "from_price": base + choice["price"] + extra,
+            "limit": choice.get("max_flavors", 1),
+            "available_flavors": len(flavors["choices"]),
+        }
+        for choice in sizes["choices"]
+    ]
+
+
 @bp.app_context_processor
 def inject():
-    return {"product_catalog": lambda products: [public_product(p) for p in products]}
+    return {
+        "product_catalog": lambda products: [public_product(p) for p in catalog_products(products)],
+        "pizza_size_cards": size_cards,
+        "catalog_products": catalog_products,
+        "pizza_search_terms": lambda p: " ".join(c["label"] for g in public_product(p)["groups"] for c in g["choices"]),
+    }
 
 
 def clean_config(data):
@@ -157,10 +229,14 @@ def clean_config(data):
             ids.add(cid)
             if type(price) is not int or not 0 <= price <= 100000000:
                 abort(400, "Informe um acréscimo válido, sem valor negativo.")
+            description = choice.get("description", "")
+            if not isinstance(description, str) or len(description.strip()) > 400:
+                abort(400, "Use até 400 caracteres na descrição dos ingredientes da opção.")
             group["choices"].append(
                 dict(
                     id=cid,
                     label=text(choice.get("label"), "o nome da escolha", 60),
+                    description=description.strip(),
                     price=price,
                     enabled=boolean(choice.get("enabled")),
                     max_flavors=choice.get("max_flavors", 1) if kind == "sizes" else 1,
@@ -258,7 +334,7 @@ def resolve_item(product, item):
                 abort(400, f"Escolha exatamente {flavor_count} sabores diferentes.")
             total = sum(c["price"] for c in chosen)
             # Média em centavos, com arredondamento de meio centavo para cima.
-            price += (2 * total + flavor_count) // (2 * flavor_count) - product.preco
+            price += (0 if config.get("pricing_mode") == "fixed" else (2 * total + flavor_count) // (2 * flavor_count)) - product.preco
         else:
             price += sum(c["price"] for c in chosen)
         if chosen:
@@ -282,22 +358,35 @@ def resolve_item(product, item):
             + note
         )
     result = " | ".join(parts)
-    if len(result) > 300:
-        abort(
-            400,
-            "As opções e observações devem somar até 300 caracteres. Resuma os textos.",
-        )
+    summary_limit = 2000 if config.get("pizza_menu") else 300
+    if len(result) > summary_limit:
+        abort(400, f"As opções e observações devem somar até {summary_limit} caracteres. Resuma os textos.")
     return price, result
 
 
 @bp.route("/cadastros/produtos/<int:id>/opcoes", methods=["GET", "POST"])
 def configure(id):
     if not g.user:
+        if request.is_json:
+            return jsonify(error="Sua sessão terminou. Entre novamente."), 401
         return redirect(url_for("login"))
     if g.user.perfil != "admin":
         abort(403)
     product = db.get_or_404(Produto, id)
-    config = settings(id)
+    if product.excluido:
+        abort(404, "Produto excluído do cadastro.")
+    from pizza_menu import applies
+    if applies(product):
+        if request.method == "POST":
+            abort(409, "Os sabores agora vêm dos produtos. Use Configurar pizzas para tamanhos, massa e borda.")
+        return redirect(url_for("pizza_menu.configure", categoria=product.categoria_id))
+    try:
+        config = ordering_settings(product)
+    except (OSError, ValueError):
+        abort(
+            503,
+            "Não foi possível ler a configuração deste produto. Confira o arquivo e as permissões da pasta product-options do restaurante.",
+        )
     if request.method == "POST":
         data = request.get_json(silent=True)
         if not isinstance(data, dict):
@@ -309,16 +398,27 @@ def configure(id):
             )
         config = clean_config(data)
         path = path_for(id)
-        path.parent.mkdir(parents=True, exist_ok=True)
         temp = path.with_name(path.stem + "-" + secrets.token_hex(8) + ".tmp")
         try:
+            path.parent.mkdir(parents=True, exist_ok=True)
             with temp.open("w", encoding="utf-8") as file:
                 json.dump(config, file, ensure_ascii=False)
                 file.flush()
                 os.fsync(file.fileno())
             os.replace(temp, path)
+        except OSError as exc:
+            current_app.logger.error(
+                "Falha ao salvar opções de produto: %s", type(exc).__name__
+            )
+            abort(
+                503,
+                "Não foi possível gravar as opções. Verifique a permissão de escrita na pasta product-options do restaurante e se o arquivo está em uso.",
+            )
         finally:
-            temp.unlink(missing_ok=True)
+            try:
+                temp.unlink(missing_ok=True)
+            except OSError:
+                pass
         return jsonify(ok=True, version=revision(product, config))
     return render_template(
         "product_options.html",

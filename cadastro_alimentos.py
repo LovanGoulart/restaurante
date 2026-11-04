@@ -68,6 +68,7 @@ def escolher_banco(explicito):
     return path.resolve()
 
 def validar(conn):
+    estrutura = {}
     for tabela, obrigatorias in {
         "categoria": {"id", "nome"},
         "produto": {"id", "nome", "descricao", "preco", "emoji", "ativo", "categoria_id"},
@@ -75,11 +76,13 @@ def validar(conn):
         colunas = {r[1]: r for r in conn.execute(f"PRAGMA table_info({tabela})")}
         if not obrigatorias <= colunas.keys():
             raise ValueError(f"Banco incompatível: confira a tabela {tabela}. Nenhum dado alterado.")
+        estrutura[tabela] = set(colunas)
         for nome, coluna in colunas.items():
-            if nome not in obrigatorias and coluna[3] and coluna[4] is None and not coluna[5]:
+            if nome not in obrigatorias | {"excluido"} and coluna[3] and coluna[4] is None and not coluna[5]:
                 raise ValueError(f"Campo obrigatório desconhecido: {tabela}.{nome}")
     if conn.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
         raise ValueError("O banco apresentou erro de integridade.")
+    return estrutura
 
 def importar(banco, pasta_dados, imagens, simular=False):
     # mode=rw impede criar por engano um banco vazio.
@@ -89,7 +92,7 @@ def importar(banco, pasta_dados, imagens, simular=False):
     alterou_json = False
     temporario = None
     try:
-        validar(conn)
+        estrutura = validar(conn)
         arquivo_json = pasta_dados / "appearance.json"
         original = arquivo_json.read_bytes() if arquivo_json.exists() else None
         visual = json.loads(original.decode("utf-8-sig")) if original else {}
@@ -141,12 +144,18 @@ def importar(banco, pasta_dados, imagens, simular=False):
                 if len(ids) > 1:
                     raise ValueError(f"Categoria ambígua: {categoria}")
                 if not ids:
-                    cid = conn.execute("INSERT INTO categoria(nome) VALUES (?)", (categoria,)).lastrowid
+                    cid = conn.execute(
+                        "INSERT INTO categoria(nome,excluido) VALUES (?,0)"
+                        if "excluido" in estrutura["categoria"]
+                        else "INSERT INTO categoria(nome) VALUES (?)",
+                        (categoria,)).lastrowid
                     categorias[normalizar(categoria)] = [cid]
                 else:
                     cid = ids[0]
                 pid = conn.execute(
-                    "INSERT INTO produto(nome,descricao,preco,emoji,ativo,categoria_id) VALUES(?,?,?,?,1,?)",
+                    "INSERT INTO produto(nome,descricao,preco,emoji,ativo,categoria_id,excluido) VALUES(?,?,?,?,1,?,0)"
+                    if "excluido" in estrutura["produto"]
+                    else "INSERT INTO produto(nome,descricao,preco,emoji,ativo,categoria_id) VALUES(?,?,?,?,1,?)",
                     (nome, descricao, preco, emoji, cid)).lastrowid
                 produtos[normalizar(nome)] = [pid]
                 inseridos += 1

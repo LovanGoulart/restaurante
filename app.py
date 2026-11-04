@@ -53,6 +53,8 @@ def create_app(overrides=None):
     from product_options import bp as product_options_bp
 
     app.register_blueprint(product_options_bp)
+    from pizza_menu import bp as pizza_menu_bp
+    app.register_blueprint(pizza_menu_bp)
     from fiscal import bp as fiscal_bp
 
     app.register_blueprint(fiscal_bp)
@@ -227,9 +229,21 @@ def create_app(overrides=None):
     @app.errorhandler(409)
     @app.errorhandler(429)
     def error(e):
+
         db.session.rollback()
-        if request.path.startswith("/api"):
+
+        if "/opcoes" in request.path:
+            app.logger.warning(
+                "Salvamento de opções recusado: HTTP %s — %s", e.code, e.description
+            )
+        if (
+            request.path.startswith("/api")
+            or request.is_json
+            or request.accept_mimetypes.best == "application/json"
+        ):
+
             return jsonify(error=e.description), e.code
+
         return render_template("error.html", message=e.description), e.code
 
     @app.route("/login", methods=["GET", "POST"])
@@ -347,9 +361,13 @@ def create_app(overrides=None):
     def pdv():
         return render_template(
             "pdv.html",
-            categorias=db.session.scalars(db.select(Categoria)).all(),
+            categorias=db.session.scalars(
+                db.select(Categoria).where(Categoria.excluido.is_(False))
+            ).all(),
             produtos=db.session.scalars(
-                db.select(Produto).where(Produto.ativo.is_(True))
+                db.select(Produto).where(
+                    Produto.ativo.is_(True), Produto.excluido.is_(False)
+                )
             ).all(),
         )
 
@@ -641,17 +659,36 @@ def create_app(overrides=None):
             abort(404)
         cls = classes[kind]
         if request.method == "POST":
+            if kind in {"produtos", "categorias"}:
+                db.session.rollback()
+                db.session.execute(db.text("BEGIN IMMEDIATE"))
             id = request.form.get("id")
             obj = db.get_or_404(cls, int(id)) if id and id.isdigit() else cls()
             if kind == "usuarios" and obj.id and obj.perfil in ["cliente", "admin"]:
                 abort(403)
+            if kind in {"produtos", "categorias"} and obj.id and obj.excluido:
+                abort(404, "Cadastro excluído.")
+            if kind == "categorias" and not id:
+                archived = db.session.scalar(
+                    db.select(Categoria).where(
+                        Categoria.nome == request.form.get("nome", "").strip(),
+                        Categoria.excluido.is_(True),
+                    )
+                )
+                if archived:
+                    obj = archived
+                    obj.excluido = False
             obj.nome = text("nome", 80)
             if kind == "produtos":
                 obj.preco = money(request.form.get("preco"))
                 obj.descricao = request.form.get("descricao", "")[:500]
-                obj.emoji = request.form.get("emoji", "🍽️")[:10]
+                if not obj.id:
+                    obj.emoji = "🍽️"
                 cat = request.form.get("categoria_id", "")
-                if not cat.isdigit() or not db.session.get(Categoria, int(cat)):
+                category = (
+                    db.session.get(Categoria, int(cat)) if cat.isdigit() else None
+                )
+                if not category or category.excluido:
                     abort(400, "Categoria inválida.")
                 obj.categoria_id = int(cat)
                 obj.ativo = request.form.get("ativo") == "on"
@@ -701,7 +738,18 @@ def create_app(overrides=None):
             ):
                 abort(400, "Categoria já cadastrada.")
             db.session.add(obj)
-            db.session.commit()
+            photo_undo = None
+            try:
+                db.session.flush()
+                if kind == "produtos":
+                    from appearance import product_photo_change
+                    photo_undo = product_photo_change(obj.id)
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+                if photo_undo:
+                    photo_undo()
+                raise
             return redirect(url_for("cadastros", kind=kind))
         edit = request.args.get("editar", type=int)
         if (
@@ -710,6 +758,12 @@ def create_app(overrides=None):
             and db.get_or_404(Usuario, edit).perfil in ["cliente", "admin"]
         ):
             abort(403)
+        if (
+            kind in {"produtos", "categorias"}
+            and edit
+            and db.get_or_404(cls, edit).excluido
+        ):
+            abort(404, "Cadastro excluído.")
         return render_template(
             "cadastros.html",
             kind=kind,
@@ -718,11 +772,37 @@ def create_app(overrides=None):
                     Usuario.perfil.in_(["garcom", "cozinha", "entregador"])
                 )
                 if kind == "usuarios"
-                else db.select(cls).order_by(cls.id)
+                else db.select(cls).where(cls.excluido.is_(False)).order_by(cls.id)
             ).all(),
             edit=db.get_or_404(cls, edit) if edit else None,
-            categorias=db.session.scalars(db.select(Categoria)).all(),
+            categorias=db.session.scalars(
+                db.select(Categoria).where(Categoria.excluido.is_(False))
+            ).all(),
         )
+
+    @app.post("/cadastros/<kind>/<int:id>/excluir")
+    @access("admin")
+    def excluir_cadastro(kind, id):
+        if kind not in {"produtos", "categorias"}:
+            abort(404)
+        db.session.rollback()
+        db.session.execute(db.text("BEGIN IMMEDIATE"))
+        model = Produto if kind == "produtos" else Categoria
+        obj = db.get_or_404(model, id)
+        if kind == "categorias" and db.session.scalar(
+            db.select(Produto.id)
+            .where(Produto.categoria_id == id, Produto.excluido.is_(False))
+            .limit(1)
+        ):
+            abort(
+                409,
+                "Esta categoria possui produtos. Mova ou exclua os produtos antes de excluir a categoria.",
+            )
+        obj.excluido = True
+        if kind == "produtos":
+            obj.ativo = False
+        db.session.commit()
+        return redirect(url_for("cadastros", kind=kind))
 
     @app.route("/caixa", methods=["GET", "POST"])
     @access("admin")

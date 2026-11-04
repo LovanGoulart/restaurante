@@ -18,11 +18,13 @@ class Usuario(db.Model):
 
 
 class Categoria(db.Model):
+    excluido = db.Column(db.Boolean, nullable=False, default=False)
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(80), unique=True, nullable=False)
 
 
 class Produto(db.Model):
+    excluido = db.Column(db.Boolean, nullable=False, default=False)
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), nullable=False)
     descricao = db.Column(db.String(500), default="")
@@ -66,7 +68,7 @@ class Item(db.Model):
     nome = db.Column(db.String(120), nullable=False)
     preco = db.Column(db.Integer, nullable=False)
     quantidade = db.Column(db.Integer, nullable=False)
-    observacao = db.Column(db.String(300), default="")
+    observacao = db.Column(db.String(2000), default="")
 
 
 class Caixa(db.Model):
@@ -145,6 +147,7 @@ class Cliente(db.Model):
 
 
 class Loja(db.Model):
+    bloquear_menus = db.Column(db.Boolean, nullable=False, default=True)
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False, default="Restaurante Manager")
     taxa_entrega = db.Column(db.Integer, nullable=False, default=0)

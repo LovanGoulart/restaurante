@@ -149,11 +149,24 @@ def emit_order(pedido, tipo, item=None):
                 "pago": "Pagamento do seu pedido confirmado!",
             }.get(tipo, title)
 
+        customer_message = None
+        if u.perfil in {"cliente", "visitante"} and tipo == "pronto":
+            if pedido.online and pedido.online.modalidade == "entrega":
+                title = "Seu pedido está indo até você."
+                customer_message = title
+            elif pedido.online:
+                title = "Seu pedido está pronto."
+                customer_message = "Seu pedido está pronto. Você pode ficar a vontade para vir retirar!\nVem rapidinho para não esfriar viu!"
+            else:
+                title = "Seu pedido está pronto."
+                customer_message = title
+
         n = Notificacao(
             usuario_id=u.id,
             pedido_id=pedido.id,
             titulo=title,
-            mensagem=(
+            mensagem=customer_message
+            or (
                 f"{label} · Pedido #{pedido.id}"
                 + (f" · {item.quantidade}× {item.nome}" if item else "")
             )[:250],

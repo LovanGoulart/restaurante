@@ -128,9 +128,13 @@ def menu():
     return render_template(
         "pdv.html",
         qr_customer=True,
-        categorias=db.session.scalars(db.select(Categoria)).all(),
+        categorias=db.session.scalars(
+            db.select(Categoria).where(Categoria.excluido.is_(False))
+        ).all(),
         produtos=db.session.scalars(
-            db.select(Produto).where(Produto.ativo.is_(True))
+            db.select(Produto).where(
+                Produto.ativo.is_(True), Produto.excluido.is_(False)
+            )
         ).all(),
     )
 

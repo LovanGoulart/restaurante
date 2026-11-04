@@ -142,6 +142,9 @@ function totals() {
   return subtotal + fee;
 }
 function draw() {
+  document.querySelector(".pizza-continue").hidden = !cart.some((item) =>
+    ProductPicker.isPizza(item),
+  );
   cartEl.innerHTML =
     cart.map((i, k) => ProductPicker.line(i, k)).join("") ||
     '<p class="empty">Sua sacola está vazia.<br>Escolha algo gostoso no cardápio.</p>';
@@ -165,6 +168,10 @@ ProductPicker.bind({
     }
     cart.push(...items);
     draw();
+    if (items.some((item) => ProductPicker.isPizza(item)))
+      setTimeout(() => {
+        if (window.matchMedia("(max-width:850px)").matches) setBag(true);
+      }, 0);
     toast(
       items.length > 1
         ? "Pizzas adicionadas separadamente ao pedido."
@@ -173,7 +180,17 @@ ProductPicker.bind({
     return true;
   },
 });
+document.querySelector(".pizza-continue").onclick = () => {
+  setBag(false);
+  document.querySelector("#search").focus();
+};
 cartEl.onclick = (e) => {
+  const remove = e.target.closest("[data-remove]");
+  if (remove && !sending && !pending) {
+    cart.splice(Number(remove.dataset.remove), 1);
+    draw();
+    return;
+  }
   if (sending || pending) return;
   const edit = e.target.closest("[data-edit]");
   if (edit && !sending && !pending) {

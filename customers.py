@@ -63,6 +63,7 @@ def store():
         taxa_entrega=0,
         entrega_ativa=True,
         pedidos_ativos=True,
+        bloquear_menus=True,
     )
 
 
@@ -122,9 +123,13 @@ def menu():
         "cardapio.html",
         loja=store(),
         cliente=c,
-        categorias=db.session.scalars(db.select(Categoria)).all(),
+        categorias=db.session.scalars(
+            db.select(Categoria).where(Categoria.excluido.is_(False))
+        ).all(),
         produtos=db.session.scalars(
-            db.select(Produto).where(Produto.ativo.is_(True))
+            db.select(Produto).where(
+                Produto.ativo.is_(True), Produto.excluido.is_(False)
+            )
         ).all(),
     )
 

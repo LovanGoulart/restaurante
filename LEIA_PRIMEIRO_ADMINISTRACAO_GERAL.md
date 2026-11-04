@@ -1,3 +1,7 @@
+> **Pizzas — correção mais recente:** leia [PIZZAS_TAMANHO_PRIMEIRO.md](PIZZAS_TAMANHO_PRIMEIRO.md).
+
+> **Atualização atual:** leia [ATUALIZACAO_PIZZAS_E_GESTAO.md](ATUALIZACAO_PIZZAS_E_GESTAO.md). Execute `python atualizar_sistema.py` antes de reiniciar. Esta atualização foi aplicada ao ZIP restaurante.zip enviado nesta solicitação.
+
 > **Atualização fiscal:** consulte [MODULO_FISCAL.md](MODULO_FISCAL.md) para instalar as tabelas, configurar a Focus NFe e iniciar o processador. Produção permanece bloqueada por padrão.
 
 > **Cardápio e opções de produtos:** para esta atualização, leia primeiro [ATUALIZACAO_CARDAPIO_OPCOES.md](ATUALIZACAO_CARDAPIO_OPCOES.md). Não é necessária alteração no banco para a nova tela de opções.

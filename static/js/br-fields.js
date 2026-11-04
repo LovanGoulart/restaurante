@@ -119,18 +119,4 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     true,
   );
-  const emoji = document.querySelector("#product-emoji"),
-    buttons = document.querySelectorAll("[data-product-icon]");
-  const selected = () =>
-    buttons.forEach((b) =>
-      b.setAttribute("aria-pressed", String(b.dataset.productIcon === emoji?.value)),
-    );
-  buttons.forEach((b) =>
-    b.addEventListener("click", () => {
-      emoji.value = b.dataset.productIcon;
-      selected();
-    }),
-  );
-  emoji?.addEventListener("input", selected);
-  selected();
 });

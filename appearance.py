@@ -71,8 +71,50 @@ def upload(field):
     folder = data_dir(DATA) / "media"
     folder.mkdir(exist_ok=True)
     name = secrets.token_hex(16) + ".jpg"
-    image.save(folder / name, "JPEG", quality=88)
+    try:
+        image.save(folder / name, "JPEG", quality=88)
+    except OSError:
+        (folder / name).unlink(missing_ok=True)
+        abort(503, "Não foi possível gravar a imagem. Confira a pasta media do restaurante.")
     return name
+
+
+def product_photo_change(product_id):
+    """Atualiza a foto e devolve compensação caso a transação do cadastro falhe."""
+    file = request.files.get("photo")
+    remove = request.form.get("remove_photo") == "on"
+    if not (file and file.filename) and not remove:
+        return None
+    if remove and file and file.filename:
+        abort(400, "Escolha entre enviar uma nova imagem e remover a atual.")
+    data = settings()
+    data["photos"] = dict(data["photos"])
+    key = str(product_id)
+    previous = data["photos"].get(key)
+    name = upload("photo") if not remove else None
+    if name:
+        data["photos"][key] = name
+    else:
+        data["photos"].pop(key, None)
+    try:
+        save(data)
+    except OSError:
+        if name:
+            (data_dir(DATA) / "media" / name).unlink(missing_ok=True)
+        abort(503, "Não foi possível salvar a foto. Confira as permissões da pasta do restaurante.")
+
+    def undo():
+        current = settings()
+        current["photos"] = dict(current["photos"])
+        if current["photos"].get(key) == name:
+            if previous is None:
+                current["photos"].pop(key, None)
+            else:
+                current["photos"][key] = previous
+            save(current)
+        if name:
+            (data_dir(DATA) / "media" / name).unlink(missing_ok=True)
+    return undo
 
 
 @bp.get("/media/<name>")
@@ -129,7 +171,9 @@ def customize():
         return redirect(url_for("appearance.customize", saved=1))
     return render_template(
         "personalizacao.html",
-        products=db.session.scalars(db.select(Produto).order_by(Produto.nome)).all(),
+        products=db.session.scalars(
+            db.select(Produto).where(Produto.excluido.is_(False)).order_by(Produto.nome)
+        ).all(),
     )
 
 

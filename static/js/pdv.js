@@ -69,6 +69,9 @@ function updateTotals() {
   send.textContent = sending ? "Enviando pedido…" : "Enviar para a cozinha →";
 }
 function draw() {
+  document.querySelector(".pizza-continue").hidden = !cart.some((item) =>
+    ProductPicker.isPizza(item),
+  );
   cartEl.innerHTML =
     cart.map((i, k) => ProductPicker.line(i, k)).join("") ||
     '<div class="empty"><span>🛍️</span><h3>O que vamos servir?</h3><p>Toque em + para adicionar um produto.</p></div>';
@@ -84,6 +87,10 @@ ProductPicker.bind({
     }
     cart.push(...items);
     draw();
+    if (items.some((item) => ProductPicker.isPizza(item)))
+      setTimeout(() => {
+        if (window.matchMedia("(max-width:850px)").matches) setBag(true);
+      }, 0);
     toast(
       items.length > 1
         ? "Pizzas adicionadas separadamente ao pedido."
@@ -92,7 +99,17 @@ ProductPicker.bind({
     return true;
   },
 });
+document.querySelector(".pizza-continue").onclick = () => {
+  setBag(false);
+  document.querySelector("#search").focus();
+};
 cartEl.onclick = (e) => {
+  const remove = e.target.closest("[data-remove]");
+  if (remove && !sending) {
+    cart.splice(Number(remove.dataset.remove), 1);
+    draw();
+    return;
+  }
   const edit = e.target.closest("[data-edit]");
   if (edit && !sending) {
     const index = +edit.dataset.edit;

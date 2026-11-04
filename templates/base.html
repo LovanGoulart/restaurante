@@ -281,7 +281,8 @@
         <div class="menu-links">
 {% if user.perfil=='admin' %}
   <a href="{{ request.script_root }}/personalizacao">🎨 Personalização e fotos</a>
-  <p class="muted">🔒 Gestão protegida — confirme sua senha</p>
+  <a href="{{ url_for('management_access.security') }}">⚙ Segurança dos menus →</a>
+  <p class="muted">Áreas de gestão</p>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/loja') }}">🔒 Loja e entregas →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/categorias') }}">🔒 Categorias →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/produtos') }}">🔒 Produtos →</a>
