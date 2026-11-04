@@ -116,18 +116,11 @@ def size_cards(product):
     flavors = next((g for g in config["groups"] if g["type"] == "flavors"), None)
     if not sizes or not flavors:
         return []
-    extra = sum(
-        min(c["price"] for c in g["choices"])
-        for g in config["groups"]
-        if g["type"] not in {"sizes", "flavors", "text"}
-        and g["required"]
-        and g["choices"]
-    )
     base = 0 if config.get("pricing_mode") == "fixed" else min(c["price"] for c in flavors["choices"])
     return [
         {
             **choice,
-            "from_price": base + choice["price"] + extra,
+            "from_price": base + choice["price"],
             "limit": choice.get("max_flavors", 1),
             "available_flavors": len(flavors["choices"]),
         }

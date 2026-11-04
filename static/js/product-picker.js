@@ -67,14 +67,7 @@ window.ProductPicker = (() => {
           ? Math.floor((2 * sum + count) / (2 * count))
           : Math.min(...g.choices.map((c) => c.price));
       } else
-        extra += chosen.length
-          ? chosen.reduce((n, c) => n + c.price, 0)
-          : pizzaGroups(product) &&
-              g.required &&
-              g.type !== "sizes" &&
-              g.choices.length
-            ? Math.min(...g.choices.map((c) => c.price))
-            : 0;
+        extra += chosen.reduce((n, c) => n + c.price, 0);
     }
     return base + extra;
   }
@@ -341,7 +334,9 @@ window.ProductPicker = (() => {
       (pizza
         ? ` · Até ${Math.min(size.max_flavors || 1, pizza.flavors.choices.length)} sabores neste tamanho`
         : "");
-    const photo = document.querySelector(`[data-product="${id}"] .food`);
+    const photo = document.querySelector(
+      `[data-product="${id}"]${pizza ? `[data-size="${size.id}"]` : ""} .food`,
+    );
     document
       .querySelector("#picker-photo")
       .replaceChildren(

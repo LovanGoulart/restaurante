@@ -695,3 +695,9 @@ body:has([data-role="admin"])
   display: block;
   overflow-wrap: anywhere;
 }
+.delivery-settings {margin:20px 0;padding:20px}
+.delivery-settings>summary {font-size:16px;color:var(--navy)}
+.delivery-settings .management {margin-top:18px;gap:24px}
+.delivery-settings .management>form,.delivery-settings .management>div {min-width:0}
+.delivery-settings a {overflow-wrap:anywhere}
+.delivery-settings .check {display:flex;align-items:center;gap:8px}

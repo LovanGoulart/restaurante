@@ -4,7 +4,7 @@
   <div class="section-head">
     <div>
       <div class="eyebrow">CONTROLE DO ADMINISTRADOR</div>
-      <h1>Acerto dos entregadores</h1>
+      <h1>Tele-Entrega</h1>
       <p class="page-subtitle">
         Confira as entregas e os recebimentos dos entregadores.
       </p>
@@ -14,7 +14,7 @@
   <div class="orders-toolbar settlement-filters">
     <label>
       Dia da entrega
-      <input type="date" id="settlement-date" />
+      <input type="date" id="settlement-date" data-native-date aria-label="Dia da entrega" />
     </label>
     <label>
       Entregador
@@ -23,6 +23,7 @@
       </select>
     </label>
   </div>
+  {% include '_delivery_settings.html' %}
   <p id="settlement-error" class="error" hidden></p>
   <div id="settlement-summary" class="courier-summary"></div>
   <section class="panel">

@@ -23,7 +23,7 @@
         {% for size in sizes %}
         <article class="product catalog-product pizza-size-product" data-product="{{ p.id }}" data-size="{{ size.id }}" data-category="{{ p.categoria_id }}" data-name="{{ (p.nome ~ ' ' ~ size.label ~ ' ' ~ c.nome ~ ' ' ~ pizza_search_terms(p))|lower }}" role="button" tabindex="0" aria-label="Personalizar pizza {{ size.label }}" aria-haspopup="dialog">
           <div class="product-content"><h3>{{ size.label }}</h3><p>Até {{ size.limit }} {{ 'sabor' if size.limit==1 else 'sabores' }}</p><div class="price"><b>A partir de {{ size.from_price|brl }}</b><span class="add" data-id="{{ p.id }}" data-name="{{ p.nome }}" data-price="{{ p.preco }}" hidden></span></div></div>
-          <div class="food" aria-hidden="true">🍕</div>
+          <div class="food pizza-round-food">{{ pizza_wheel(size.slices|default(8)) }}</div>
         </article>
         {% endfor %}
       {% else %}

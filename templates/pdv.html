@@ -41,7 +41,16 @@
     {% endif %}
   </section>-->
   <div class="pdv">
-    <section>
+    <section class="pdv-catalog">
+      {% set ordered = namespace(pizzas=[], others=[]) %}
+      {% for category in categorias %}
+        {% if 'pizza' in category.nome|lower %}
+          {% set ordered.pizzas = ordered.pizzas + [category] %}
+        {% else %}
+          {% set ordered.others = ordered.others + [category] %}
+        {% endif %}
+      {% endfor %}
+      {% set categorias = ordered.pizzas + ordered.others %}
       {% include '_catalog_products.html' %}
     </section>
     <aside class="panel bag" id="bag" data-qr="{{ 'yes' if qr_customer else 'no' }}">

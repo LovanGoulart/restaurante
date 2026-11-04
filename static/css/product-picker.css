@@ -731,3 +731,19 @@ body.product-picker-open {
 
 #product-picker .pizza-flavor-photo {width:68px;height:68px;object-fit:cover;border-radius:9px;float:left;margin:0 12px 8px 0}
 #product-picker .picker-choice-caption {min-width:0;overflow-wrap:anywhere}
+
+@media(min-width:851px){
+ .catalog-controls {flex-direction:column;align-items:stretch;gap:10px}
+ .catalog-controls .catalog-chips {order:1;flex:auto;width:100%;box-sizing:border-box}
+ .catalog-controls>input {order:2;width:100%;max-width:none;box-sizing:border-box}
+}
+.catalog-product.pizza-size-product .pizza-round-food {background:transparent;border-radius:50%;padding:0}
+.pizza-wheel {display:block;width:100%;height:100%;filter:drop-shadow(0 3px 3px #46321515)}
+
+.category-list-row {flex-wrap:wrap}
+.product-row-actions.category-row-actions {flex-wrap:nowrap}
+.category-row-actions .catalog-delete-form button {margin:0;min-height:42px}
+@media(min-width:851px){
+ .pdv-catalog .catalog-controls>input {order:0}
+ .pdv-catalog .catalog-controls .catalog-chips {order:1}
+}

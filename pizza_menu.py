@@ -90,7 +90,7 @@ def effective(product):
     from appearance import settings as appearance_settings
     photos=appearance_settings()['photos']
     flavors=[dict(id='product'+str(p.id),label=p.nome,description=(p.descricao or '')[:400],price=p.preco,enabled=True,photo=photos.get(str(p.id),'')) for p in products_for(product.categoria_id)]
-    return dict(pizza_menu=True,pricing_mode=config['pricing_mode'],notes=config['notes'],groups=[dict(id='pizzasize',title='Tamanho e fatias',type='sizes',enabled=True,required=True,max=1,choices=[dict(id=s['id'],label=f"{s['label']} · {s['slices']} fatias",price=s['amount'],max_flavors=s['max_flavors'],enabled=s['enabled']) for s in config['sizes']]),*config['modifiers'],dict(id='pizzaflavor',title='Sabores',type='flavors',enabled=True,required=True,max=20,choices=flavors)])
+    return dict(pizza_menu=True,pricing_mode=config['pricing_mode'],notes=config['notes'],groups=[dict(id='pizzasize',title='Tamanho e fatias',type='sizes',enabled=True,required=True,max=1,choices=[dict(id=s['id'],label=f"{s['label']} · {s['slices']} fatias",price=s['amount'],slices=s['slices'],max_flavors=s['max_flavors'],enabled=s['enabled']) for s in config['sizes']]),*config['modifiers'],dict(id='pizzaflavor',title='Sabores',type='flavors',enabled=True,required=True,max=20,choices=flavors)])
 
 
 def clean(data):
@@ -168,3 +168,17 @@ def configure():
         finally:temporary.unlink(missing_ok=True)
         return jsonify(ok=True,version=revision(config))
     return render_template('pizza_settings.html',categories=categories,category=category,config=config,version=revision(config) if config else '',flavors=products_for(category.id,False) if category else [],pending=pending_legacy_flavors(category.id) if category else [])
+
+
+@bp.app_context_processor
+def pizza_art_context():
+    return dict(pizza_wheel=pizza_wheel)
+
+
+def pizza_wheel(slices):
+    from math import sin, cos, pi
+    from markupsafe import Markup
+    slices=max(1,min(100,int(slices or 8)))
+    lines=''.join(f'<path d="M50 50 L{50+38*cos(2*pi*i/slices):.2f} {50+38*sin(2*pi*i/slices):.2f}"/>' for i in range(slices))
+    toppings=''.join(f'<circle cx="{x}" cy="{y}" r="4"/>' for x,y in [(35,30),(61,29),(72,47),(60,68),(35,69),(27,48)])
+    return Markup(f'<svg class="pizza-wheel" viewBox="0 0 100 100" role="img" aria-label="Pizza inteira com {slices} fatias"><circle cx="50" cy="50" r="47" fill="#e9ae61"/><circle cx="50" cy="50" r="40" fill="#f8d36d"/><g fill="#cf6041">{toppings}</g><g fill="#80a058"><ellipse cx="45" cy="37" rx="2" ry="4"/><ellipse cx="65" cy="55" rx="2" ry="4"/><ellipse cx="43" cy="76" rx="2" ry="4"/></g><g class="pizza-cuts" fill="none" stroke="#d69c50" stroke-width="1.5">{lines}</g></svg>')

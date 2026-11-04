@@ -30,6 +30,13 @@
     month: "2-digit",
     day: "2-digit",
   }).format(new Date());
+  const requestedDate = new URL(window.location.href).searchParams.get("data");
+  if (requestedDate && /^\d{4}-\d{2}-\d{2}$/.test(requestedDate)) {
+    const today = date.value; date.value = requestedDate; if (!date.value) date.value = today;
+  }
+  document.querySelector(".delivery-settings form")?.addEventListener("submit", event => {
+    event.target.querySelector('[name="data_referencia"]').value = date.value;
+  });
   function chosen() {
     return [...root.querySelectorAll("[data-select]:checked")].map((e) =>
       Number(e.dataset.select),
@@ -201,7 +208,10 @@
     if (pending && !busy) refresh();
   });
   syncConfirmation();
-  date.onchange = refresh;
+  date.onchange = () => {
+    const url = new URL(window.location.href); url.searchParams.set("data",date.value);
+    window.history.replaceState(null,"",url); refresh();
+  };
   driver.onchange = refresh;
   document.querySelector("#settlement-refresh").onclick = refresh;
   window.addEventListener("orders-updated", refresh);

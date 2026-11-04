@@ -4,7 +4,7 @@
 
 
 {% block content %}
-  {% if kind=='produtos' %}
+  {% if kind in ['produtos','categorias'] %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/product-picker.css') }}">
   {% endif %}
 
@@ -105,8 +105,8 @@
               
 {% for r in ['garcom','cozinha','entregador'] %}
 
-                <option {{ 'selected' if edit and edit.perfil==r else '' }}>
-                  {{ r }}
+                <option value="{{ r }}" {{ 'selected' if edit and edit.perfil==r else '' }}>
+                  {{ 'garçom' if r=='garcom' else r }}
                 </option>
               
 {% endfor %}
@@ -146,7 +146,7 @@
       
 {% for r in rows %}
 
-        <div class="list-row">
+        <div class="list-row{{ ' category-list-row' if kind=='categorias' else '' }}">
           <div>
             {% if kind=='produtos' and appearance.photos.get(r.id|string) %}<img class="catalog-photo-thumb" src="{{ url_for('appearance.media',name=appearance.photos.get(r.id|string)) }}" alt="{{ r.nome }}" loading="lazy">{% endif %}
             <b>{{ r.nome }}</b>
@@ -161,14 +161,14 @@
 {% elif kind=='usuarios' %}
 
               <p>
-                {{ r.login }} · {{ r.perfil }} · {{ 'Ativo' if r.ativo else 'Inativo' }}
+                {{ r.login }} · {{ 'garçom' if r.perfil=='garcom' else r.perfil }} · {{ 'Ativo' if r.ativo else 'Inativo' }}
               </p>
             
 {% endif %}
 
           </div>
-          <div{% if kind=='produtos' %} class="product-row-actions"{% endif %}>
-            <a{% if kind=='produtos' %} class="product-row-action"{% endif %} href="?editar={{ r.id }}">Editar →</a>
+          <div{% if kind in ['produtos','categorias'] %} class="product-row-actions{{ ' category-row-actions' if kind=='categorias' else '' }}"{% endif %}>
+            <a{% if kind in ['produtos','categorias'] %} class="product-row-action"{% endif %} href="?editar={{ r.id }}">Editar →</a>
             {% if kind=='produtos' %}<a class="product-row-action" href="{{ url_for('product_options.configure', id=r.id) }}">{{ 'Configurar pizzas' if 'pizza' in (r.categoria.nome|lower) else 'Opções do produto' }} →</a>{% endif %}
             {% if kind in ['produtos','categorias'] %}<form method="post" action="{{ url_for('excluir_cadastro',kind=kind,id=r.id) }}" class="catalog-delete-form" data-delete-name="{{ r.nome }}"><input type="hidden" name="csrf" value="{{ csrf }}"><button type="submit" class="secondary danger">Excluir</button></form>{% endif %}
           </div>
