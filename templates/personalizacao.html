@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Personalização e fotos</h1>
+<div class="personalizacao-heading">
+  <h1>Personalização e fotos</h1>
+  <input id="photo-product-search" type="search" placeholder="Buscar produto…" aria-label="Buscar produto" aria-controls="product-photos-grid">
+</div>
 <p>Configure a identidade do restaurante e as imagens exibidas no cardápio.</p>
 {% if request.args.get('saved') %}<p role="status" class="panel">Alterações salvas.</p>{% endif %}
 <div class="management personalizacao-layout"><section class="panel"><h2>Identidade e capa do cardápio do cliente</h2>
@@ -26,12 +29,14 @@
     JPG, PNG ou WebP, até 5 MB.
   </p>
 
-  <div class="product-photos-grid">
+  <p id="photo-search-empty" role="status" hidden>Nenhum produto encontrado.</p>
+  <div class="product-photos-grid" id="product-photos-grid">
     {% for p in products %}
       {% set photo = appearance.photos.get(p.id|string) %}
 
       <form
         class="photo-form product-photo-card"
+        data-product-name="{{ p.nome }}"
         method="post"
         enctype="multipart/form-data"
       >
@@ -78,4 +83,24 @@
       <p>Cadastre produtos para adicionar fotos.</p>
     {% endfor %}
   </div>
-</section></div>{% endblock %}
+</section></div>
+<style>
+.product-photo-card[hidden],#photo-search-empty[hidden]{display:none}
+.personalizacao-heading{display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:12px}
+.personalizacao-heading>input{flex:0 1 300px;width:300px;max-width:100%;min-width:0;box-sizing:border-box}
+.personalizacao-heading>h1{margin:0}
+@media(max-width:600px){.personalizacao-heading{gap:12px}.personalizacao-heading>input{flex-basis:100%;width:100%}}
+</style>
+<script>
+(() => {
+  const input = document.querySelector('#photo-product-search');
+  const cards = [...document.querySelectorAll('#product-photos-grid [data-product-name]')];
+  const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim();
+  input.addEventListener('input', () => {
+    const query = normalize(input.value);
+    cards.forEach(card => { card.hidden = !normalize(card.dataset.productName).includes(query); });
+    document.querySelector('#photo-search-empty').hidden = !cards.length || cards.some(card => !card.hidden);
+  });
+})();
+</script>
+{% endblock %}
