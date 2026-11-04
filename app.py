@@ -227,9 +227,21 @@ def create_app(overrides=None):
     @app.errorhandler(409)
     @app.errorhandler(429)
     def error(e):
+
         db.session.rollback()
-        if request.path.startswith("/api"):
+
+        if "/opcoes" in request.path:
+            app.logger.warning(
+                "Salvamento de opções recusado: HTTP %s — %s", e.code, e.description
+            )
+        if (
+            request.path.startswith("/api")
+            or request.is_json
+            or request.accept_mimetypes.best == "application/json"
+        ):
+
             return jsonify(error=e.description), e.code
+
         return render_template("error.html", message=e.description), e.code
 
     @app.route("/login", methods=["GET", "POST"])

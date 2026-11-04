@@ -177,6 +177,97 @@
         render();
       }),
   );
+  async function send(url, payload) {
+    const response = await fetch(restaurantURL(url), {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .content,
+      },
+      body: JSON.stringify(payload),
+    });
+    const raw = await response.text();
+    let result;
+    try {
+      result = JSON.parse(raw);
+      if (!result || typeof result !== "object" || Array.isArray(result))
+        throw Error();
+    } catch {
+      const doc = new DOMParser().parseFromString(raw, "text/html");
+      const panel = [...doc.querySelectorAll("section.panel")].find((element) =>
+        element
+          .querySelector("h1")
+          ?.textContent.includes("Não foi possível concluir"),
+      );
+      const detail = (
+        panel?.querySelector("p") || doc.querySelector("body > p")
+      )?.textContent
+        .trim()
+        .slice(0, 600);
+      const error = Error(
+        detail
+          ? `${detail} (HTTP ${response.status})`
+          : `O servidor não devolveu uma mensagem de erro legível (HTTP ${response.status}). Encerre e reinicie o servidor antes de tentar novamente; suas alterações continuam nesta tela.`,
+      );
+      error.status = response.status;
+      if (response.status === 403 && detail?.includes("Confirme a senha"))
+        error.code = "management_auth_required";
+      throw error;
+    }
+    if (!response.ok || !result.ok) {
+      const error = Error(result.error || "Não foi possível salvar as opções.");
+      error.status = response.status;
+      error.code = result.code;
+      throw error;
+    }
+    return result;
+  }
+  function confirmAccess() {
+    return new Promise((resolve) => {
+      const dialog = document.createElement("dialog");
+      dialog.className = "app-dialog";
+      dialog.setAttribute("aria-labelledby", "options-auth-title");
+      dialog.innerHTML = `<form><div class="dialog-head"><h2 id="options-auth-title">Confirme sua senha</h2><button type="button" class="icon-button" aria-label="Cancelar">×</button></div><p>A liberação administrativa venceu. Suas opções continuam preenchidas.</p><label>Senha do administrador<input type="password" name="senha" autocomplete="current-password" required maxlength="256"></label><p role="status" class="error" hidden></p><button type="submit">Confirmar e salvar</button></form>`;
+      const authForm = dialog.querySelector("form"),
+        field = authForm.elements.senha,
+        error = dialog.querySelector('[role="status"]');
+      let confirmed = false;
+      const finish = () => {
+        field.value = "";
+        dialog.remove();
+        resolve(confirmed);
+      };
+      dialog.addEventListener("close", finish, { once: true });
+      dialog.querySelector('[type="button"]').onclick = () => dialog.close();
+      authForm.onsubmit = async (event) => {
+        event.preventDefault();
+        const button = authForm.querySelector('[type="submit"]');
+        button.disabled = true;
+        field.disabled = true;
+        try {
+          await send(form.dataset.unlockUrl, {
+            destino: form.dataset.destination,
+            senha: field.value,
+          });
+          confirmed = true;
+          dialog.close();
+        } catch (failure) {
+          error.hidden = false;
+          error.textContent = failure.message;
+        } finally {
+          button.disabled = false;
+          field.disabled = false;
+          if (dialog.open) field.focus();
+        }
+      };
+      document.body.append(dialog);
+      dialog.showModal();
+      field.focus();
+    });
+  }
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (saving) return;
@@ -223,15 +314,28 @@
       .querySelectorAll("input,select,button")
       .forEach((el) => (el.disabled = true));
     try {
-      const response = await api(form.dataset.url, payload);
+      let response;
+      try {
+        response = await send(form.dataset.url, payload);
+      } catch (failure) {
+        if (
+          failure.status !== 403 ||
+          failure.code !== "management_auth_required"
+        )
+          throw failure;
+        if (!(await confirmAccess())) {
+          show(
+            "Salvamento cancelado. Suas alterações continuam nesta tela.",
+            true,
+          );
+          return;
+        }
+        response = await send(form.dataset.url, payload);
+      }
       version = response.version;
       show("Opções salvas. Elas já estão disponíveis no cardápio e no PDV.");
     } catch (e) {
-      show(
-        e.message +
-          " Se a liberação da área expirou, volte a Produtos e confirme sua senha.",
-        true,
-      );
+      show(e.message, true);
     } finally {
       saving = false;
       form
