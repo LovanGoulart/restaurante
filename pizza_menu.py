@@ -85,12 +85,26 @@ def revision(config):
     return hashlib.sha256(json.dumps(config,sort_keys=True,ensure_ascii=False).encode()).hexdigest()[:24]
 
 
+def ordering_modifiers(modifiers):
+    """Acompanhamentos da pizza são opcionais e permitem todas as escolhas."""
+    result = deepcopy(modifiers)
+    for group in result:
+        title = normalized(group.get('title', ''))
+        if group.get('type') in {'single', 'multiple'} and (
+            'acompanh' in title or 'adicion' in title
+            or group.get('id') == 'acompanhamentos'
+        ):
+            group.update(type='multiple', required=False,
+                         max=max(1, sum(bool(c.get('enabled')) for c in group['choices'])))
+    return result
+
+
 def effective(product):
     config=settings(product.categoria_id)
     from appearance import settings as appearance_settings
     photos=appearance_settings()['photos']
     flavors=[dict(id='product'+str(p.id),label=p.nome,description=(p.descricao or '')[:400],price=p.preco,enabled=True,photo=photos.get(str(p.id),'')) for p in products_for(product.categoria_id)]
-    return dict(pizza_menu=True,pricing_mode=config['pricing_mode'],notes=config['notes'],groups=[dict(id='pizzasize',title='Tamanho e fatias',type='sizes',enabled=True,required=True,max=1,choices=[dict(id=s['id'],label=f"{s['label']} · {s['slices']} fatias",price=s['amount'],slices=s['slices'],max_flavors=s['max_flavors'],enabled=s['enabled']) for s in config['sizes']]),*config['modifiers'],dict(id='pizzaflavor',title='Sabores',type='flavors',enabled=True,required=True,max=20,choices=flavors)])
+    return dict(pizza_menu=True,pricing_mode=config['pricing_mode'],notes=config['notes'],groups=[dict(id='pizzasize',title='Tamanho e fatias',type='sizes',enabled=True,required=True,max=1,choices=[dict(id=s['id'],label=f"{s['label']} · {s['slices']} fatias",price=s['amount'],slices=s['slices'],max_flavors=s['max_flavors'],enabled=s['enabled']) for s in config['sizes']]),*ordering_modifiers(config['modifiers']),dict(id='pizzaflavor',title='Sabores',type='flavors',enabled=True,required=True,max=20,choices=flavors)])
 
 
 def clean(data):

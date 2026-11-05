@@ -1,3 +1,16 @@
+{# Pizzas primeiro nos filtros e na lista, em celular e desktop. #}
+{% set ordem = namespace(pizzas=[], outros=[]) %}
+{% for categoria in categorias %}
+  {% if 'pizza' in categoria.nome|lower %}
+    {% set ordem.pizzas = ordem.pizzas + [categoria] %}
+  {% else %}
+    {% set ordem.outros = ordem.outros + [categoria] %}
+  {% endif %}
+{% endfor %}
+{% set categorias = ordem.pizzas + ordem.outros %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product-picker.css') }}">
+
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product-picker.css') }}">
 <div class="catalog-controls">
   <input id="search" type="search" placeholder="Buscar no cardápio…" aria-label="Buscar produtos">

@@ -2,24 +2,24 @@
 
 {% block content %}
   <section class="login panel">
-    <div class="eyebrow">SALÃO · COZINHA · CAIXA</div>
+    <div class="eyebrow">SABOR · QUALIDADE · PRATICIDADE</div>
     <h1>
-      Uma operação.
+      Seu próximo pedido
       <br />
-      Todo mundo conectado.
+      começa aqui.
     </h1>
-    <p>Administradores: entre com seu e-mail cadastrado e senha. Equipe: use seu usuário e senha.</p>
+    <!--<p>Administradores: entre com seu e-mail cadastrado e senha. Equipe: use seu usuário e senha.</p>-->
     {% if error %}
       <p class="error">{{ error }}</p>
     {% endif %}
     <form method="post">
       <input type="hidden" name="csrf" value="{{ csrf }}" />
       <label>
-        E-mail do administrador ou usuário da equipe
+        E-mail:
         <input name="login" autocomplete="username" required maxlength="254" />
       </label>
       <label>
-        Senha
+        Senha:
         <input type="password" name="senha" autocomplete="current-password" required />
       </label>
       <button>Entrar no sistema →</button>

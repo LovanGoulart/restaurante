@@ -614,6 +614,9 @@ body.product-picker-open {
   opacity: 0;
 }
 .pizza-counter-choice:focus-within {
+  outline: none;
+}
+.pizza-counter-choice:has(input:focus-visible) {
   outline: 2px solid var(--orange);
   outline-offset: 2px;
 }
@@ -743,6 +746,10 @@ body.product-picker-open {
 .category-list-row {flex-wrap:wrap}
 .product-row-actions.category-row-actions {flex-wrap:nowrap}
 .category-row-actions .catalog-delete-form button {margin:0;min-height:42px}
+#product-picker .pizza-counter-choice {margin-bottom:8px}
+@media(hover:none) and (pointer:coarse){
+ #product-picker .pizza-counter-choice:focus-within {outline:none}
+}
 @media(min-width:851px){
  .pdv-catalog .catalog-controls>input {order:0}
  .pdv-catalog .catalog-controls .catalog-chips {order:1}
