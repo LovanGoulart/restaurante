@@ -182,6 +182,7 @@
       money(total - cash) +
       " em pagamentos eletrônicos a conferir.";
     document.querySelector("#settlement-confirm-check").checked = false;
+    document.querySelector("#settlement-confirm-error").hidden = true;
     syncConfirmation();
     dialog.showModal();
   };
@@ -191,13 +192,18 @@
       return;
     }
     busy = true;
+    const confirmError = document.querySelector("#settlement-confirm-error");
+    confirmError.hidden = true;
     e.target.disabled = true;
     try {
       await api("/api/acerto-entregadores", { entregas: ids, confirmado: true });
       dialog.close();
       toast("Acerto registrado no caixa.");
     } catch (err) {
-      toast(err.message);
+      confirmError.textContent = err.message;
+      confirmError.hidden = false;
+      confirmError.focus();
+      confirmError.scrollIntoView({ block: "nearest" });
     } finally {
       busy = false;
       syncConfirmation();

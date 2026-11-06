@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from app import app
 from flask import current_app
 from models import db, Notificacao, PushSubscription, PushDelivery, Usuario, Pedido
-from notifications import push_config
+from notifications import push_config, process_scheduled
 from config import DATA, data_dir
 
 
@@ -12,6 +12,7 @@ def process_pending(send=None):
     check = current_app.config.get("ACCESS_CHECK")
     if check and not check():
         return 0
+    process_scheduled()
     if send is None:
         from pywebpush import webpush
 

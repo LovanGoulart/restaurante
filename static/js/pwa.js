@@ -21,16 +21,27 @@ function updateInstall() {
       localStorage.setItem(restaurantURL("/") + "restaurant-installed", "yes");
     } catch {}
   }
-  installButtons.forEach((b) => (b.hidden = standalone() || installedMarker()));
+  const installed = standalone() || installedMarker();
+  installButtons.forEach((b) => (b.hidden = installed));
   const banner = document.querySelector("#pwa-prompt");
-  if (banner) banner.hidden = standalone() || installedMarker();
+  if (banner) {
+    banner.hidden = standalone();
+    banner.querySelector("b").textContent = installed ? "Aplicativo instalado" : "Seu restaurante, sempre à mão.";
+    banner.querySelector("span").textContent = installed ? "Acesse seus pedidos e o cardápio." : "Instale o Manager no celular ou computador.";
+    let open = banner.querySelector(".open-installed-app");
+    if (installed && !open) {
+      open = document.createElement("a");
+      open.className = "button-link secondary open-installed-app";
+      open.href = restaurantURL("/");
+      open.textContent = "Abrir app ↗";
+      banner.append(open);
+    }
+    if (open) open.hidden = !installed;
+  }
 }
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredInstall = e;
-  try {
-    localStorage.removeItem(restaurantURL("/") + "restaurant-installed");
-  } catch {}
   updateInstall();
 });
 window.addEventListener("appinstalled", () => {
@@ -68,6 +79,17 @@ installButtons.forEach(
     }),
 );
 updateInstall();
+if (navigator.getInstalledRelatedApps) {
+  navigator.getInstalledRelatedApps().then(apps => {
+    const root = new URL(restaurantURL("/"), location.origin).href;
+    if (apps.some(app => app.platform === "webapp" && app.url &&
+        new URL(app.url, location.origin).href.startsWith(root))) {
+      try { localStorage.setItem(restaurantURL("/") + "restaurant-installed", "yes"); } catch {}
+      updateInstall();
+    }
+  }).catch(() => {});
+}
+window.addEventListener("storage", updateInstall);
 if ("serviceWorker" in navigator && window.isSecureContext) {
   swReady = navigator.serviceWorker
     .register(restaurantURL("/sw.js"), { scope: restaurantURL("/") })

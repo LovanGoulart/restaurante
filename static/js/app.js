@@ -179,7 +179,7 @@ if (orders) {
       pronto: ["admin", "garcom"].includes(orders.dataset.role)
         ? "Pedido pronto"
         : "Pronto",
-      saiu_entrega: "Saiu para entrega",
+      saiu_entrega: orders.dataset.role === "cliente" ? "Em trânsito" : "Saiu para entrega",
       entregue: "Entregue",
     },
     paymentLabels = {
@@ -281,6 +281,7 @@ if (orders) {
     );
   }
   const itemStageLabels = {
+    saiu_entrega: "Em trânsito",
     aberto: "Pendente",
     em_preparo: "Em preparo",
     pronto: "Pronto para levar",
@@ -838,6 +839,7 @@ if (document.body.dataset.user) {
           (n) => /* HTML */ `
             <a
               class="notification-item ${n.lida ? "" : "unread"}"
+              data-notification-id="${n.id}"
               href="${escapeHTML(n.url || "/pedidos")}"
             >
               <b>${escapeHTML(n.titulo)}</b>
@@ -860,6 +862,24 @@ if (document.body.dataset.user) {
     document.querySelector("#notifications-dialog").showModal();
     loadInbox();
   };
+  document.querySelector("#notifications-list").addEventListener("click", async (event) => {
+    const link = event.target.closest("a[data-notification-id]");
+    if (!link) return;
+    const normal = !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey;
+    if (normal) event.preventDefault();
+    if (link.dataset.reading) return;
+    link.dataset.reading = "yes";
+    try {
+      await api("/api/notificacoes/lidas", { id: Number(link.dataset.notificationId) });
+      link.classList.remove("unread");
+      if (normal) window.location.assign(link.href);
+      else loadInbox();
+    } catch (e) {
+      toast(e.message);
+    } finally {
+      delete link.dataset.reading;
+    }
+  });
   document.querySelector("#notifications-read").onclick = async () => {
     try {
       await api("/api/notificacoes/lidas", { ate: unreadCursor });

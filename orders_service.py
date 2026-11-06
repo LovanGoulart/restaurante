@@ -1,6 +1,21 @@
 from flask import abort
 from models import db, Produto, Item
 from product_options import resolve_item, ordering_settings
+from datetime import datetime, timezone, timedelta
+
+
+def customer_order_status(p, user, at=None):
+    if user.perfil not in {"cliente", "visitante"}:
+        return p.status
+    delivery = p.online and p.online.modalidade == "entrega"
+    if p.status == "pronto" and (not p.online or delivery):
+        return "em_preparo"
+    if delivery and p.status == "saiu_entrega":
+        assigned = p.entrega.atribuido_em if p.entrega else None
+        at = at or datetime.now(timezone.utc)
+        if not assigned or at.replace(tzinfo=None) < assigned.replace(tzinfo=None) + timedelta(minutes=5):
+            return "em_preparo"
+    return p.status
 
 
 def add_items(pedido, itens):
@@ -44,6 +59,10 @@ def add_items(pedido, itens):
 
 def serialize_order(p, user):
     online = p.online
+    status = customer_order_status(p, user)
+    hide_ready = user.perfil in {"cliente", "visitante"} and (
+        not online or online.modalidade == "entrega"
+    )
     guest = user.perfil == "visitante"
     if guest and not any(q.usuario_id == user.id for q in p.qr):
         abort(403)
@@ -64,7 +83,7 @@ def serialize_order(p, user):
         numero_mesa=p.numero_mesa if not online else "",
         pedido_qr=bool(p.qr),
         aguardando_comanda=bool(p.qr and not p.mesa),
-        status=p.status,
+        status=status,
         pago=p.pago,
         subtotal=sum(i.preco * i.quantidade for i in items) if guest else p.subtotal,
         taxa_entrega=online.taxa_entrega if online else 0,
@@ -79,7 +98,9 @@ def serialize_order(p, user):
                 quantidade=i.quantidade,
                 preco=i.preco,
                 observacao=i.observacao,
-                etapa="entregue" if p.status == "entregue" else i.etapa,
+                etapa=("entregue" if p.status == "entregue" else
+                       ("saiu_entrega" if status == "saiu_entrega" else "em_preparo")
+                       if hide_ready and i.etapa == "pronto" else i.etapa),
             )
             for i in items
         ],

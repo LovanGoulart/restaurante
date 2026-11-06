@@ -961,6 +961,7 @@ main {
   margin-top: 15px;
 }
 .notification-item {
+  background: #fff;
   display: block;
   color: var(--ink);
   border-bottom: 1px solid var(--line);

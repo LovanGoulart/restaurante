@@ -142,5 +142,13 @@
       return context?.state || "locked";
     },
   };
+  window.addEventListener("storage", (event) => {
+    if (event.key === key) {
+      enabled = event.newValue === "on";
+      update();
+      if (enabled) gesture();
+    }
+  });
   update();
+  if (enabled) gesture();
 })();
