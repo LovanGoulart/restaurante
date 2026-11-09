@@ -121,3 +121,6 @@
   .guest-nav { flex-wrap: wrap; justify-content: flex-end; max-width: 100%; }
   .guest-nav .ui-preferences-icons { flex-shrink: 0; }
 }
+
+/* Cardápio sempre visível no acesso pelo QR Code. */
+.guest-nav.qr-guest-nav > a:first-child { display: flex; align-items: center; }
