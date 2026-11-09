@@ -844,10 +844,10 @@ if (document.body.dataset.user) {
       document.querySelector("#notifications-list").textContent = e.message;
     }
   }
-  document.querySelector("#notifications-open").onclick = () => {
+  document.querySelector("#notifications-open")?.addEventListener("click", () => {
     document.querySelector("#notifications-dialog").showModal();
     loadInbox();
-  };
+  });
   document.querySelector("#notifications-list").addEventListener("click", async (event) => {
     const link = event.target.closest("a[data-notification-id]");
     if (!link) return;
@@ -954,4 +954,30 @@ if (document.body.dataset.user) {
   setInterval(() => {
     if (document.visibilityState === "visible") loadInbox();
   }, 45000);
+}
+
+// A visita QR é encerrada pelo servidor quando a comanda é paga.
+if (document.body.dataset.qrGuest === "1") {
+  let checkingVisit = false;
+  async function checkVisit() {
+    if (checkingVisit || !navigator.onLine) return;
+    checkingVisit = true;
+    try {
+      const response = await fetch(restaurantURL("/api/salao/sessao"), {cache: "no-store"});
+      if (!response.ok) return;
+      const state = await response.json();
+      if (!state.ativa) {
+        window.location.replace(restaurantURL("/salao"));
+        return;
+      }
+      document.querySelectorAll("[data-qr-table]").forEach(el => { el.textContent = state.mesa || ""; });
+    } catch {} finally { checkingVisit = false; }
+  }
+  checkVisit();
+  setInterval(checkVisit, 5000);
+  window.addEventListener("orders-updated", checkVisit);
+  window.addEventListener("online", checkVisit);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") checkVisit();
+  });
 }

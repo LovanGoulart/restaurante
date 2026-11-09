@@ -425,6 +425,7 @@ def create_app(overrides=None):
                     Pedido.status.in_(["aberto", "em_preparo", "pronto"]),
                 )
                 .order_by(
+                    case(((Pedido.mesa == "") & Pedido.qr.any() & Pedido.pago.is_(False), 0), else_=1),
                     priority,
                     Pedido.id.desc(),
                 )
@@ -652,6 +653,11 @@ def create_app(overrides=None):
 
         enqueue(p, forma)
         emit_order(p, "pago")
+        # Encerrar somente identidades temporárias do salão, mantendo o histórico.
+        for link in p.qr:
+            visitor = db.session.get(Usuario, link.usuario_id)
+            if visitor and visitor.perfil == "visitante":
+                visitor.ativo = False
         db.session.commit()
         return jsonify(ok=True)
 

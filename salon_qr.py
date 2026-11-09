@@ -45,6 +45,25 @@ def append_to_order(p, itens):
     p.status = "aberto"
 
 
+def active_guest_order(uid):
+    return db.session.scalar(
+        db.select(Pedido).where(
+            Pedido.qr.any(usuario_id=uid), Pedido.pago.is_(False),
+            Pedido.mesa != "", ~Pedido.online.has(),
+        ).order_by(Pedido.id.desc())
+    )
+
+
+@bp.get("/api/salao/sessao")
+def guest_session():
+    if not g.user or g.user.perfil != "visitante":
+        return jsonify(ativa=False)
+    order = active_guest_order(g.user.id)
+    if order:
+        session["qr_numero_mesa"] = order.numero_mesa
+    return jsonify(ativa=True, mesa=session_table(), comanda=order.mesa if order else "")
+
+
 def guest_only():
     if not g.user or g.user.perfil != "visitante":
         abort(403, "Abra o cardápio pelo QR Code para continuar.")
@@ -184,12 +203,25 @@ def orders():
             409,
             "Informe seu nome e sua mesa na entrada do salão antes de enviar o pedido.",
         )
-    p = Pedido(mesa="", numero_mesa=mesa, usuario_id=uid)
-    add_items(p, data.get("itens"))
+    # Revalidar dentro da mesma transação que inclui os itens: pagamento pode
+    # ter encerrado esta visita depois do carregamento da página.
+    visitor = db.session.get(Usuario, uid, populate_existing=True)
+    if not visitor or not visitor.ativo:
+        abort(403, "Esta visita foi encerrada. Identifique-se novamente pelo QR Code.")
+    p = active_guest_order(uid)
+    if p:
+        session["qr_numero_mesa"] = p.numero_mesa
+        previous_items = set(p.itens)
+        append_to_order(p, data.get("itens"))
+    else:
+        p = Pedido(mesa="", numero_mesa=mesa, usuario_id=uid)
+        previous_items = set()
+        add_items(p, data.get("itens"))
+        p.qr.append(PedidoQR(usuario_id=uid))
+        db.session.add(p)
     for item in p.itens:
-        item.visitante_id = uid
-    p.qr.append(PedidoQR(usuario_id=uid))
-    db.session.add(p)
+        if item not in previous_items:
+            item.visitante_id = uid
     db.session.flush()
     db.session.add(
         EnvioPedido(
