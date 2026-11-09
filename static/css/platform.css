@@ -4,8 +4,8 @@
     -apple-system,
     Segoe UI,
     sans-serif;
-  color: #253a53;
-  background: #eff3f8;
+  color: var(--ui-text-blue, #253a53);
+  background: var(--ui-surface-blue, #eff3f8);
   font-size: 14px;
 }
 * {
@@ -71,10 +71,10 @@ h3 {
 }
 p {
   line-height: 1.6;
-  color: #617187;
+  color: var(--ui-text-neutral, #617187);
 }
 .eyebrow {
-  color: #ba4e2b;
+  color: var(--ui-text-red, #ba4e2b);
   font-weight: 700;
   letter-spacing: 1.5px;
   font-size: 10px;
@@ -88,8 +88,8 @@ p {
   margin-bottom: 24px;
 }
 .panel {
-  background: white;
-  border: 1px solid #dce5ef;
+  background: var(--ui-surface, white);
+  border: 1px solid var(--ui-border, #dce5ef);
   border-radius: 16px;
   padding: 24px;
   margin: 0 0 22px;
@@ -104,13 +104,13 @@ p {
   display: grid;
   gap: 14px;
   padding: 22px;
-  border: 1px solid #dce5ef;
-  background: #f9fbfd;
+  border: 1px solid var(--ui-border, #dce5ef);
+  background: var(--ui-surface, #f9fbfd);
   border-radius: 14px;
 }
 .metrics span {
   font-size: 12px;
-  color: #64748b;
+  color: var(--ui-text-neutral, #64748b);
 }
 .metrics strong {
   font-size: 29px;
@@ -123,8 +123,8 @@ p {
 .site-card {
   padding: 20px;
   border-radius: 12px;
-  border: 1px solid #dfe7ef;
-  background: #fbfcfe;
+  border: 1px solid var(--ui-border, #dfe7ef);
+  background: var(--ui-surface, #fbfcfe);
   min-width: 0;
 }
 .card-heading {
@@ -140,19 +140,19 @@ p {
   font-weight: 700;
 }
 .active {
-  background: #e4f3eb;
-  color: #27744f;
+  background: var(--ui-surface-green, #e4f3eb);
+  color: var(--ui-text-green, #27744f);
 }
 .inactive {
-  background: #fbe9e6;
-  color: #a44e43;
+  background: var(--ui-surface-red, #fbe9e6);
+  color: var(--ui-text-red, #a44e43);
 }
 .expiry {
   margin: 15px 0 2px;
 }
 .muted {
   font-size: 12px;
-  color: #748298;
+  color: var(--ui-text-neutral, #748298);
 }
 .links {
   display: flex;
@@ -162,7 +162,7 @@ p {
   margin: 12px 0 18px;
 }
 a {
-  color: #2454a4;
+  color: var(--ui-text-blue, #2454a4);
 }
 label {
   display: grid;
@@ -174,7 +174,7 @@ label {
 small {
   display: block;
   font-size: 11px;
-  color: #7a8797;
+  color: var(--ui-text-neutral, #7a8797);
   font-weight: 400;
   line-height: 1.5;
 }
@@ -182,15 +182,15 @@ input,
 select {
   font: inherit;
   padding: 11px 12px;
-  border: 1px solid #cdd9e6;
+  border: 1px solid var(--ui-border, #cdd9e6);
   border-radius: 8px;
   width: 100%;
   min-width: 0;
-  background: #fff;
-  color: #233b56;
+  background: var(--ui-surface, #fff);
+  color: var(--ui-text-blue, #233b56);
 }
 input[readonly] {
-  background: #f2f5f9;
+  background: var(--ui-surface-blue, #f2f5f9);
   font-weight: 400;
 }
 button,
@@ -211,9 +211,9 @@ button,
   min-height: 40px;
 }
 .outline {
-  background: white;
-  color: #52657d;
-  border-color: #cdd9e6;
+  background: var(--ui-surface, white);
+  color: var(--ui-text-blue, #52657d);
+  border-color: var(--ui-border, #cdd9e6);
 }
 .renew {
   display: flex;
@@ -249,14 +249,14 @@ form + form {
 }
 .success,
 .notice {
-  background: #e9f4ee;
-  border: 1px solid #c8e1d3;
+  background: var(--ui-surface-green, #e9f4ee);
+  border: 1px solid var(--ui-border, #c8e1d3);
   border-radius: 10px;
   padding: 15px;
-  color: #326c51;
+  color: var(--ui-text-green, #326c51);
 }
 .error {
-  color: #a13c35;
+  color: var(--ui-text-red, #a13c35);
 }
 summary {
   cursor: pointer;
@@ -275,17 +275,17 @@ th,
 td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #e6edf3;
+  border-bottom: 1px solid var(--ui-border, #e6edf3);
   vertical-align: top;
 }
 th {
-  background: #f1f5fa;
+  background: var(--ui-surface-blue, #f1f5fa);
 }
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 3px solid #9ac2f0;
+  outline: 3px solid var(--ui-border, #9ac2f0);
   outline-offset: 3px;
 }
 @media (max-width: 700px) {
@@ -368,7 +368,7 @@ select:focus-visible {
 }
 .form-grid > label {min-width:0;}
 .form-grid input {width:100%;max-width:100%;}
-.form-grid .error {grid-column:1/-1;background:#fff0ee;padding:14px;border-radius:10px;}
+.form-grid .error {grid-column:1/-1;background:var(--ui-surface-red, #fff0ee);padding:14px;border-radius:10px;}
 .form-grid small {font-weight:400;line-height:1.5;}
 
 .form-grid > label {align-content:start;}

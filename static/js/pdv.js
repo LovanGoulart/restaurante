@@ -12,7 +12,7 @@ function setBag(open) {
   if (open) {
     bag.setAttribute("role", "dialog");
     bag.setAttribute("aria-modal", "true");
-    bag.setAttribute("aria-label", "Revisar pedido");
+    bag.setAttribute("aria-label", uiText("Revisar pedido"));
     document.querySelector(".bag-close").focus();
   } else {
     bag.removeAttribute("role");
@@ -66,7 +66,7 @@ function updateTotals() {
   document.querySelector("#cart-count").textContent = count;
   document.querySelector("#mobile-count").textContent = count;
   send.disabled = !cart.length || sending || !navigator.onLine;
-  send.textContent = sending ? "Enviando pedido…" : "Enviar para a cozinha →";
+  send.textContent = sending ? uiText("Enviando pedido…") : uiText("Enviar para a cozinha →");
 }
 function draw() {
   document.querySelector(".pizza-continue").hidden = !cart.some((item) =>
@@ -74,7 +74,7 @@ function draw() {
   );
   cartEl.innerHTML =
     cart.map((i, k) => ProductPicker.line(i, k)).join("") ||
-    '<div class="empty"><span>🛍️</span><h3>O que vamos servir?</h3><p>Toque em + para adicionar um produto.</p></div>';
+    ("<div class=\"empty\"><span>🛍️</span><h3>" + uiHtml("O que vamos servir?") + "</h3><p>" + uiHtml("Toque em + para adicionar um produto.") + "</p></div>");
   updateTotals();
 }
 ProductPicker.bind({
@@ -93,8 +93,8 @@ ProductPicker.bind({
       }, 0);
     toast(
       items.length > 1
-        ? "Pizzas adicionadas separadamente ao pedido."
-        : "Item adicionado ao pedido.",
+        ? uiText("Pizzas adicionadas separadamente ao pedido.")
+        : uiText("Item adicionado ao pedido."),
     );
     return true;
   },
@@ -170,7 +170,7 @@ send.onclick = async () => {
     !qr &&
     (!/^\d{1,12}$/.test(comanda || "") || !/^\d{1,12}$/.test(numero_mesa || ""))
   ) {
-    toast("Informe os números da comanda e da mesa.");
+    toast(uiText("Informe os números da comanda e da mesa."));
     return;
   }
   sending = true;
@@ -204,9 +204,9 @@ send.onclick = async () => {
     if (document.body.classList.contains("bag-open")) setBag(false);
     toast(
       qr
-        ? "Pedido enviado! Acompanhe em Meus pedidos."
+        ? uiText("Pedido enviado! Acompanhe em Meus pedidos.")
         : (p.adicionado
-            ? "Itens adicionados à comanda "
+            ? uiText("Itens adicionados à comanda ")
             : "Pedido enviado. Comanda ") +
             comanda +
             " · Mesa " +
@@ -232,7 +232,7 @@ if (existing && bag.dataset.qr !== "yes")
   api("/api/pedidos/" + Number(existing) + "/detalhes")
     .then((p) => {
       if (p.canal !== "salao" || p.pago)
-        throw new Error("Comanda indisponível para adicionar itens.");
+        throw new Error(uiText("Comanda indisponível para adicionar itens."));
       document.querySelector("#comanda").value = p.comanda;
       document.querySelector("#numero-mesa").value = p.numero_mesa;
       toast("Adicionando itens à comanda " + p.comanda);

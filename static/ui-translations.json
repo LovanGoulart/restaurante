@@ -1,0 +1,3890 @@
+{
+  "Aparência e idioma": {
+    "en": "Appearance and language",
+    "es": "Apariencia e idioma"
+  },
+  "Idioma": {
+    "en": "Language",
+    "es": "Idioma"
+  },
+  "Tema": {
+    "en": "Theme",
+    "es": "Tema"
+  },
+  "Modo diurno": {
+    "en": "Light mode",
+    "es": "Modo claro"
+  },
+  "Modo noturno": {
+    "en": "Dark mode",
+    "es": "Modo oscuro"
+  },
+  "Aplicar preferências": {
+    "en": "Apply preferences",
+    "es": "Aplicar preferencias"
+  },
+  "Restaurante Manager": {
+    "en": "Restaurant Manager",
+    "es": "Restaurante Manager"
+  },
+  "Ir ao conteúdo": {
+    "en": "Skip to content",
+    "es": "Ir al contenido"
+  },
+  "Navegação principal": {
+    "en": "Main navigation",
+    "es": "Navegación principal"
+  },
+  "Minhas entregas": {
+    "en": "My deliveries",
+    "es": "Mis entregas"
+  },
+  "Cardápio": {
+    "en": "Menu",
+    "es": "Menú"
+  },
+  "Meus pedidos": {
+    "en": "My orders",
+    "es": "Mis pedidos"
+  },
+  "Minha conta": {
+    "en": "My account",
+    "es": "Mi cuenta"
+  },
+  "Pedidos": {
+    "en": "Orders",
+    "es": "Pedidos"
+  },
+  "Dashboard": {
+    "en": "Dashboard",
+    "es": "Panel"
+  },
+  "PDV": {
+    "en": "POS",
+    "es": "TPV"
+  },
+  "Caixa": {
+    "en": "Cash register",
+    "es": "Caja"
+  },
+  "Relatórios": {
+    "en": "Reports",
+    "es": "Informes"
+  },
+  "Painel de Controle ▾": {
+    "en": "Control Panel ▾",
+    "es": "Panel de control ▾"
+  },
+  "Sair": {
+    "en": "Sign out",
+    "es": "Cerrar sesión"
+  },
+  "Abrir notificações": {
+    "en": "Open notifications",
+    "es": "Abrir notificaciones"
+  },
+  "Abrir menu e opções": {
+    "en": "Open menu and options",
+    "es": "Abrir menú y opciones"
+  },
+  "Menu do cliente": {
+    "en": "Customer menu",
+    "es": "Menú del cliente"
+  },
+  "Entrar": {
+    "en": "Sign in",
+    "es": "Iniciar sesión"
+  },
+  "Criar conta": {
+    "en": "Create account",
+    "es": "Crear cuenta"
+  },
+  "Ative os alertas sonoros": {
+    "en": "Enable sound alerts",
+    "es": "Activa los avisos sonoros"
+  },
+  "Receba um aviso quando houver novidades nos seus pedidos.": {
+    "en": "Get an alert when your orders are updated.",
+    "es": "Recibe un aviso cuando se actualicen tus pedidos."
+  },
+  "Ativar som ♪": {
+    "en": "Enable sound ♪",
+    "es": "Activar sonido ♪"
+  },
+  "Seu restaurante, sempre à mão.": {
+    "en": "Your restaurant, always at hand.",
+    "es": "Tu restaurante, siempre a mano."
+  },
+  "Instale o Manager no celular ou computador.": {
+    "en": "Install Manager on your phone or computer.",
+    "es": "Instala Manager en tu móvil u ordenador."
+  },
+  "Instalar app ↗": {
+    "en": "Install app ↗",
+    "es": "Instalar app ↗"
+  },
+  "Sem conexão. Aguarde reconectar para enviar pedidos e registrar operações.": {
+    "en": "Offline. Reconnect to submit orders and save changes.",
+    "es": "Sin conexión. Vuelve a conectarte para enviar pedidos y guardar cambios."
+  },
+  "Navegação no celular": {
+    "en": "Mobile navigation",
+    "es": "Navegación móvil"
+  },
+  "Entregas": {
+    "en": "Deliveries",
+    "es": "Entregas"
+  },
+  "Mais": {
+    "en": "More",
+    "es": "Más"
+  },
+  "SUA CONTA": {
+    "en": "YOUR ACCOUNT",
+    "es": "TU CUENTA"
+  },
+  "Sua conta": {
+    "en": "Your account",
+    "es": "Tu cuenta"
+  },
+  "Administração": {
+    "en": "Administration",
+    "es": "Administración"
+  },
+  "Atendimento no salão": {
+    "en": "Dine-in service",
+    "es": "Atención en sala"
+  },
+  "Operação da cozinha": {
+    "en": "Kitchen operations",
+    "es": "Operación de cocina"
+  },
+  "Cliente no salão": {
+    "en": "Dine-in customer",
+    "es": "Cliente en sala"
+  },
+  "Tele-entregas": {
+    "en": "Deliveries",
+    "es": "Entregas a domicilio"
+  },
+  "Fechar menu": {
+    "en": "Close menu",
+    "es": "Cerrar menú"
+  },
+  "🎨 Personalização e fotos": {
+    "en": "🎨 Branding and photos",
+    "es": "🎨 Personalización y fotos"
+  },
+  "Áreas de gestão": {
+    "en": "Management areas",
+    "es": "Áreas de gestión"
+  },
+  "🔒 Categorias →": {
+    "en": "🔒 Categories →",
+    "es": "🔒 Categorías →"
+  },
+  "🔒 Produtos →": {
+    "en": "🔒 Products →",
+    "es": "🔒 Productos →"
+  },
+  "🔒 Equipe →": {
+    "en": "🔒 Staff →",
+    "es": "🔒 Equipo →"
+  },
+  "🔒 Clientes →": {
+    "en": "🔒 Customers →",
+    "es": "🔒 Clientes →"
+  },
+  "🔒 Configuração fiscal e NFC-e →": {
+    "en": "🔒 Tax settings and NFC-e →",
+    "es": "🔒 Configuración fiscal y NFC-e →"
+  },
+  "↗ Ver cardápio público →": {
+    "en": "↗ View public menu →",
+    "es": "↗ Ver menú público →"
+  },
+  "▦ QR Code para pedidos no salão →": {
+    "en": "▦ QR code for dine-in orders →",
+    "es": "▦ Código QR para pedidos en sala →"
+  },
+  "⚙ Segurança dos menus →": {
+    "en": "⚙ Menu security →",
+    "es": "⚙ Seguridad de los menús →"
+  },
+  "👤 Minha conta e endereço": {
+    "en": "👤 My account and address",
+    "es": "👤 Mi cuenta y dirección"
+  },
+  "↗ Instalar aplicativo": {
+    "en": "↗ Install app",
+    "es": "↗ Instalar aplicación"
+  },
+  "♪ Ativar som dos avisos": {
+    "en": "♪ Enable notification sound",
+    "es": "♪ Activar sonido de avisos"
+  },
+  "♪ Som ativado · toque para silenciar": {
+    "en": "♪ Sound on · tap to mute",
+    "es": "♪ Sonido activado · toca para silenciar"
+  },
+  "▷ Testar alerta sonoro": {
+    "en": "▷ Test sound alert",
+    "es": "▷ Probar aviso sonoro"
+  },
+  "Som desativado.": {
+    "en": "Sound off.",
+    "es": "Sonido desactivado."
+  },
+  "Som desativado. Ative para ouvir novos avisos.": {
+    "en": "Sound off. Enable it to hear new alerts.",
+    "es": "Sonido desactivado. Actívalo para oír los avisos."
+  },
+  "🔔 Ativar avisos no dispositivo": {
+    "en": "🔔 Enable device notifications",
+    "es": "🔔 Activar avisos en el dispositivo"
+  },
+  "Avisos visuais funcionam com o sistema aberto.": {
+    "en": "On-screen notifications work while Manager is open.",
+    "es": "Los avisos en pantalla funcionan con Manager abierto."
+  },
+  "Sair da conta": {
+    "en": "Sign out",
+    "es": "Cerrar sesión"
+  },
+  "Notificações": {
+    "en": "Notifications",
+    "es": "Notificaciones"
+  },
+  "Fechar notificações": {
+    "en": "Close notifications",
+    "es": "Cerrar notificaciones"
+  },
+  "Marcar como lidas": {
+    "en": "Mark as read",
+    "es": "Marcar como leídas"
+  },
+  "Carregando avisos…": {
+    "en": "Loading notifications…",
+    "es": "Cargando avisos…"
+  },
+  "Você está em dia. Os próximos avisos aparecerão aqui.": {
+    "en": "You're all caught up. New notifications will appear here.",
+    "es": "Estás al día. Los nuevos avisos aparecerán aquí."
+  },
+  "Leve o Manager com você": {
+    "en": "Take Manager with you",
+    "es": "Lleva Manager contigo"
+  },
+  "Fechar instruções": {
+    "en": "Close instructions",
+    "es": "Cerrar instrucciones"
+  },
+  "O aplicativo precisa de conexão para pedidos, cozinha e caixa.": {
+    "en": "The app needs a connection for orders, kitchen and checkout.",
+    "es": "La app necesita conexión para pedidos, cocina y caja."
+  },
+  "SALÃO · COZINHA · CAIXA": {
+    "en": "DINING ROOM · KITCHEN · CHECKOUT",
+    "es": "SALA · COCINA · CAJA"
+  },
+  "Uma operação.": {
+    "en": "One operation.",
+    "es": "Una operación."
+  },
+  "Todo mundo conectado.": {
+    "en": "Everyone connected.",
+    "es": "Todos conectados."
+  },
+  "SABOR · QUALIDADE · PRATICIDADE": {
+    "en": "FLAVOR · QUALITY · CONVENIENCE",
+    "es": "SABOR · CALIDAD · COMODIDAD"
+  },
+  "Seu próximo pedido começa aqui.": {
+    "en": "Your next order starts here.",
+    "es": "Tu próximo pedido empieza aquí."
+  },
+  "Administradores: entre com seu e-mail cadastrado e senha. Equipe: use seu usuário e senha.": {
+    "en": "Administrators sign in with their registered email and password. Staff use their username and password.",
+    "es": "Los administradores acceden con su correo registrado y contraseña. El equipo usa su usuario y contraseña."
+  },
+  "E-mail do administrador ou usuário da equipe": {
+    "en": "Administrator email or staff username",
+    "es": "Correo del administrador o usuario del equipo"
+  },
+  "E-mail": {
+    "en": "Email",
+    "es": "Correo electrónico"
+  },
+  "E-mail:": {
+    "en": "Email:",
+    "es": "Correo electrónico:"
+  },
+  "Senha": {
+    "en": "Password",
+    "es": "Contraseña"
+  },
+  "Senha:": {
+    "en": "Password:",
+    "es": "Contraseña:"
+  },
+  "Entrar →": {
+    "en": "Sign in →",
+    "es": "Iniciar sesión →"
+  },
+  "Entrar no sistema →": {
+    "en": "Sign in →",
+    "es": "Iniciar sesión →"
+  },
+  "Quer pedir de casa?": {
+    "en": "Ordering from home?",
+    "es": "¿Quieres pedir desde casa?"
+  },
+  "Crie sua conta de cliente": {
+    "en": "Create your customer account",
+    "es": "Crea tu cuenta de cliente"
+  },
+  "ou": {
+    "en": "or",
+    "es": "o"
+  },
+  "veja o cardápio": {
+    "en": "browse the menu",
+    "es": "consulta el menú"
+  },
+  "Ainda não tem conta?": {
+    "en": "Don't have an account?",
+    "es": "¿Todavía no tienes cuenta?"
+  },
+  "Buscar no cardápio…": {
+    "en": "Search the menu…",
+    "es": "Buscar en el menú…"
+  },
+  "Buscar no cardápio...": {
+    "en": "Search the menu…",
+    "es": "Buscar en el menú…"
+  },
+  "Buscar produtos": {
+    "en": "Search products",
+    "es": "Buscar productos"
+  },
+  "Filtrar por categoria": {
+    "en": "Filter by category",
+    "es": "Filtrar por categoría"
+  },
+  "Todos": {
+    "en": "All",
+    "es": "Todos"
+  },
+  "Até": {
+    "en": "Up to",
+    "es": "Hasta"
+  },
+  "A partir de": {
+    "en": "From",
+    "es": "Desde"
+  },
+  "· Personalizar": {
+    "en": "· Customize",
+    "es": "· Personalizar"
+  },
+  "Nenhum produto encontrado. Tente outra palavra ou categoria.": {
+    "en": "No products found. Try another term or category.",
+    "es": "No se encontraron productos. Prueba otra palabra o categoría."
+  },
+  "Fechar opções": {
+    "en": "Close options",
+    "es": "Cerrar opciones"
+  },
+  "Valor por unidade": {
+    "en": "Price per unit",
+    "es": "Precio por unidad"
+  },
+  "Etapas da pizza": {
+    "en": "Pizza steps",
+    "es": "Pasos de la pizza"
+  },
+  "Buscar opções…": {
+    "en": "Search options…",
+    "es": "Buscar opciones…"
+  },
+  "Buscar opções desta etapa": {
+    "en": "Search options in this step",
+    "es": "Buscar opciones de este paso"
+  },
+  "← Voltar ao tamanho": {
+    "en": "← Back to size",
+    "es": "← Volver al tamaño"
+  },
+  "Quantidade de sabores": {
+    "en": "Number of flavors",
+    "es": "Cantidad de sabores"
+  },
+  "Observação": {
+    "en": "Note",
+    "es": "Nota"
+  },
+  "Quantidade": {
+    "en": "Quantity",
+    "es": "Cantidad"
+  },
+  "Diminuir quantidade": {
+    "en": "Decrease quantity",
+    "es": "Reducir cantidad"
+  },
+  "Aumentar quantidade": {
+    "en": "Increase quantity",
+    "es": "Aumentar cantidad"
+  },
+  "Adicionar ·": {
+    "en": "Add ·",
+    "es": "Añadir ·"
+  },
+  "Adicionar": {
+    "en": "Add",
+    "es": "Añadir"
+  },
+  "A partir de, por pizza": {
+    "en": "Starting price per pizza",
+    "es": "Precio inicial por pizza"
+  },
+  "Pizza": {
+    "en": "Pizza",
+    "es": "Pizza"
+  },
+  "Pizzas": {
+    "en": "Pizzas",
+    "es": "Pizzas"
+  },
+  "Sabores": {
+    "en": "Flavors",
+    "es": "Sabores"
+  },
+  "Sabores da pizza": {
+    "en": "Pizza flavors",
+    "es": "Sabores de pizza"
+  },
+  "Massas": {
+    "en": "Dough",
+    "es": "Masas"
+  },
+  "Bordas": {
+    "en": "Crusts",
+    "es": "Bordes"
+  },
+  "Acompanhamentos": {
+    "en": "Sides",
+    "es": "Acompañamientos"
+  },
+  "Adicionais": {
+    "en": "Extras",
+    "es": "Extras"
+  },
+  "Fatias": {
+    "en": "Slices",
+    "es": "Porciones"
+  },
+  "Máximo de sabores": {
+    "en": "Maximum flavors",
+    "es": "Máximo de sabores"
+  },
+  "Escolha o tamanho": {
+    "en": "Choose a size",
+    "es": "Elige el tamaño"
+  },
+  "Escolha o tamanho da pizza": {
+    "en": "Choose a pizza size",
+    "es": "Elige el tamaño de la pizza"
+  },
+  "Escolher pizza para personalizar": {
+    "en": "Choose a pizza to customize",
+    "es": "Elige la pizza para personalizar"
+  },
+  "Próximo ·": {
+    "en": "Next ·",
+    "es": "Siguiente ·"
+  },
+  "Próxima pizza ·": {
+    "en": "Next pizza ·",
+    "es": "Siguiente pizza ·"
+  },
+  "Inserir ·": {
+    "en": "Add ·",
+    "es": "Añadir ·"
+  },
+  "Limpar escolha": {
+    "en": "Clear selection",
+    "es": "Borrar selección"
+  },
+  "Obrigatório": {
+    "en": "Required",
+    "es": "Obligatorio"
+  },
+  "Opcional": {
+    "en": "Optional",
+    "es": "Opcional"
+  },
+  "O preço é definido pelo tamanho. Os sabores estão incluídos.": {
+    "en": "The price is set by size. Flavors are included.",
+    "es": "El precio se define por el tamaño. Los sabores están incluidos."
+  },
+  "O preço é o do tamanho, mais os complementos.": {
+    "en": "The price is based on size plus extras.",
+    "es": "El precio se basa en el tamaño más los complementos."
+  },
+  "O valor final será a média dos preços dos sabores escolhidos.": {
+    "en": "The final price is the average of the selected flavors.",
+    "es": "El precio final es el promedio de los sabores elegidos."
+  },
+  "O valor final é a média dos sabores escolhidos, mais os complementos.": {
+    "en": "The final price is the average of the chosen flavors plus extras.",
+    "es": "El precio final es el promedio de los sabores elegidos más los complementos."
+  },
+  "Seu pedido": {
+    "en": "Your order",
+    "es": "Tu pedido"
+  },
+  "Seu nome": {
+    "en": "Your name",
+    "es": "Tu nombre"
+  },
+  "Sua sacola": {
+    "en": "Your cart",
+    "es": "Tu carrito"
+  },
+  "Fechar sacola": {
+    "en": "Close cart",
+    "es": "Cerrar carrito"
+  },
+  "Escolha os produtos para começar.": {
+    "en": "Choose products to get started.",
+    "es": "Elige productos para empezar."
+  },
+  "Continuar comprando": {
+    "en": "Keep shopping",
+    "es": "Seguir comprando"
+  },
+  "Como deseja receber?": {
+    "en": "How would you like to receive your order?",
+    "es": "¿Cómo quieres recibir tu pedido?"
+  },
+  "Como pretende receber?": {
+    "en": "How will you receive your order?",
+    "es": "¿Cómo vas a recibir tu pedido?"
+  },
+  "Retirar no caixa": {
+    "en": "Pick up at the counter",
+    "es": "Retirar en caja"
+  },
+  "Retirar no caixa · sem endereço": {
+    "en": "Counter pickup · no address",
+    "es": "Retirada en caja · sin dirección"
+  },
+  "Tele-entrega · cadastrar endereço": {
+    "en": "Delivery · add address",
+    "es": "Entrega a domicilio · registrar dirección"
+  },
+  "Tele-entrega": {
+    "en": "Delivery",
+    "es": "Entrega a domicilio"
+  },
+  "Tele-Entrega": {
+    "en": "Delivery",
+    "es": "Entrega a domicilio"
+  },
+  "Onde vamos entregar?": {
+    "en": "Where should we deliver?",
+    "es": "¿Dónde entregamos?"
+  },
+  "Forma de pagamento": {
+    "en": "Payment method",
+    "es": "Forma de pago"
+  },
+  "Dinheiro": {
+    "en": "Cash",
+    "es": "Efectivo"
+  },
+  "Cartão de crédito": {
+    "en": "Credit card",
+    "es": "Tarjeta de crédito"
+  },
+  "Cartão de débito": {
+    "en": "Debit card",
+    "es": "Tarjeta de débito"
+  },
+  "Crédito": {
+    "en": "Credit",
+    "es": "Crédito"
+  },
+  "Débito": {
+    "en": "Debit",
+    "es": "Débito"
+  },
+  "Precisa de troco para quanto? (R$)": {
+    "en": "Change needed for how much? (R$)",
+    "es": "¿Para cuánto necesitas cambio? (R$)"
+  },
+  "Vazio = sem troco": {
+    "en": "Leave blank for no change",
+    "es": "Deja en blanco si no necesitas cambio"
+  },
+  "Pagamento na retirada ou entrega. O Pix precisa ser combinado e conferido pelo restaurante.": {
+    "en": "Pay at pickup or delivery. Arrange Pix payment with the restaurant for verification.",
+    "es": "Paga al retirar o recibir. Coordina el pago por Pix con el restaurante para que lo verifique."
+  },
+  "Produtos": {
+    "en": "Products",
+    "es": "Productos"
+  },
+  "Taxa de entrega": {
+    "en": "Delivery fee",
+    "es": "Tarifa de entrega"
+  },
+  "Inclui taxa de entrega": {
+    "en": "Includes delivery fee",
+    "es": "Incluye tarifa de entrega"
+  },
+  "Total": {
+    "en": "Total",
+    "es": "Total"
+  },
+  "Total do pedido": {
+    "en": "Order total",
+    "es": "Total del pedido"
+  },
+  "Usar PDV do salão": {
+    "en": "Use dine-in POS",
+    "es": "Usar TPV de sala"
+  },
+  "Primeira vez?": {
+    "en": "First time?",
+    "es": "¿Es tu primera vez?"
+  },
+  "Crie sua conta": {
+    "en": "Create your account",
+    "es": "Crea tu cuenta"
+  },
+  ". Sua sacola será mantida neste navegador.": {
+    "en": ". Your cart will be kept in this browser.",
+    "es": ". Tu carrito se conservará en este navegador."
+  },
+  "itens · Ver sacola": {
+    "en": "items · View cart",
+    "es": "artículos · Ver carrito"
+  },
+  "itens · Ver pedido": {
+    "en": "items · View order",
+    "es": "artículos · Ver pedido"
+  },
+  "Confirmar meu pedido →": {
+    "en": "Confirm my order →",
+    "es": "Confirmar mi pedido →"
+  },
+  "Entrar para fazer o pedido →": {
+    "en": "Sign in to order →",
+    "es": "Inicia sesión para pedir →"
+  },
+  "Enviar para a cozinha →": {
+    "en": "Send to kitchen →",
+    "es": "Enviar a cocina →"
+  },
+  "REVISE E ENVIE": {
+    "en": "REVIEW AND SEND",
+    "es": "REVISA Y ENVÍA"
+  },
+  "Comanda": {
+    "en": "Tab",
+    "es": "Cuenta"
+  },
+  "COMANDA": {
+    "en": "TAB",
+    "es": "CUENTA"
+  },
+  "Mesa": {
+    "en": "Table",
+    "es": "Mesa"
+  },
+  "O garçom informará sua comanda ao servir.": {
+    "en": "Your server will provide your tab number when serving you.",
+    "es": "El camarero te indicará tu número de cuenta al servirte."
+  },
+  "Corrigir nome ou mesa para os próximos pedidos": {
+    "en": "Change name or table for future orders",
+    "es": "Corregir nombre o mesa para próximos pedidos"
+  },
+  "O que vamos servir?": {
+    "en": "What are we serving?",
+    "es": "¿Qué vamos a servir?"
+  },
+  "Toque em + para adicionar um produto.": {
+    "en": "Tap + to add a product.",
+    "es": "Toca + para añadir un producto."
+  },
+  "↻ Atualizar agora": {
+    "en": "↻ Refresh now",
+    "es": "↻ Actualizar ahora"
+  },
+  "↻ Atualizar": {
+    "en": "↻ Refresh",
+    "es": "↻ Actualizar"
+  },
+  "Buscar comanda": {
+    "en": "Find tab",
+    "es": "Buscar cuenta"
+  },
+  "Digite ou bipe a comanda": {
+    "en": "Enter or scan the tab number",
+    "es": "Escribe o escanea el número de cuenta"
+  },
+  "Filtrar pedidos": {
+    "en": "Filter orders",
+    "es": "Filtrar pedidos"
+  },
+  "Todos os pedidos": {
+    "en": "All orders",
+    "es": "Todos los pedidos"
+  },
+  "Aguardando preparo": {
+    "en": "Awaiting preparation",
+    "es": "Pendiente de preparación"
+  },
+  "Em preparo": {
+    "en": "Preparing",
+    "es": "En preparación"
+  },
+  "Prontos para retirar": {
+    "en": "Ready for pickup",
+    "es": "Listos para retirar"
+  },
+  "Saiu para entrega": {
+    "en": "Out for delivery",
+    "es": "Salió para entrega"
+  },
+  "Entregues": {
+    "en": "Delivered",
+    "es": "Entregados"
+  },
+  "Não pagos": {
+    "en": "Unpaid",
+    "es": "Sin pagar"
+  },
+  "Origem": {
+    "en": "Channel",
+    "es": "Canal"
+  },
+  "Salão": {
+    "en": "Dine-in",
+    "es": "Sala"
+  },
+  "Retirada": {
+    "en": "Pickup",
+    "es": "Retirada"
+  },
+  "Carregando pedidos…": {
+    "en": "Loading orders…",
+    "es": "Cargando pedidos…"
+  },
+  "Detalhes do pedido": {
+    "en": "Order details",
+    "es": "Detalles del pedido"
+  },
+  "Fechar detalhes": {
+    "en": "Close details",
+    "es": "Cerrar detalles"
+  },
+  "Confirmar recebimento": {
+    "en": "Confirm receipt",
+    "es": "Confirmar recepción"
+  },
+  "Cancelar recebimento": {
+    "en": "Cancel receipt",
+    "es": "Cancelar recepción"
+  },
+  "Confirme que o valor foi recebido. Esta operação não cobra o cliente automaticamente.": {
+    "en": "Confirm you received the amount. This action does not charge the customer automatically.",
+    "es": "Confirma que recibiste el importe. Esta operación no cobra al cliente automáticamente."
+  },
+  "Confirmar pagamento": {
+    "en": "Confirm payment",
+    "es": "Confirmar pago"
+  },
+  "Registrar pagamento": {
+    "en": "Record payment",
+    "es": "Registrar pago"
+  },
+  "Em trânsito": {
+    "en": "In transit",
+    "es": "En tránsito"
+  },
+  "Em entrega": {
+    "en": "Out for delivery",
+    "es": "En reparto"
+  },
+  "Entregue": {
+    "en": "Delivered",
+    "es": "Entregado"
+  },
+  "Entregue na mesa": {
+    "en": "Served at the table",
+    "es": "Entregado en mesa"
+  },
+  "Aberto": {
+    "en": "Open",
+    "es": "Abierto"
+  },
+  "Pendente": {
+    "en": "Pending",
+    "es": "Pendiente"
+  },
+  "Pronto": {
+    "en": "Ready",
+    "es": "Listo"
+  },
+  "Pedido pronto": {
+    "en": "Order ready",
+    "es": "Pedido listo"
+  },
+  "Pronto para levar": {
+    "en": "Ready to serve",
+    "es": "Listo para servir"
+  },
+  "Enviado à cozinha": {
+    "en": "Sent to kitchen",
+    "es": "Enviado a cocina"
+  },
+  "Aguardando comanda": {
+    "en": "Awaiting tab",
+    "es": "Esperando cuenta"
+  },
+  "A definir": {
+    "en": "To be assigned",
+    "es": "Por asignar"
+  },
+  "Pago": {
+    "en": "Paid",
+    "es": "Pagado"
+  },
+  "Não pago": {
+    "en": "Unpaid",
+    "es": "Sin pagar"
+  },
+  "A receber": {
+    "en": "Payment due",
+    "es": "Por cobrar"
+  },
+  "Finalizado": {
+    "en": "Completed",
+    "es": "Finalizado"
+  },
+  "Novo pedido na cozinha": {
+    "en": "New kitchen order",
+    "es": "Nuevo pedido en cocina"
+  },
+  "Preparo iniciado": {
+    "en": "Preparation started",
+    "es": "Preparación iniciada"
+  },
+  "Pedido pronto para retirar": {
+    "en": "Order ready for pickup",
+    "es": "Pedido listo para retirar"
+  },
+  "Pedido entregue": {
+    "en": "Order delivered",
+    "es": "Pedido entregado"
+  },
+  "Pedido saiu para entrega": {
+    "en": "Order out for delivery",
+    "es": "Pedido en reparto"
+  },
+  "Pagamento registrado": {
+    "en": "Payment recorded",
+    "es": "Pago registrado"
+  },
+  "Seu pedido foi recebido!": {
+    "en": "Your order was received!",
+    "es": "¡Recibimos tu pedido!"
+  },
+  "Seu pedido está em preparo!": {
+    "en": "Your order is being prepared!",
+    "es": "¡Estamos preparando tu pedido!"
+  },
+  "Seu pedido está em trânsito!": {
+    "en": "Your order is on its way!",
+    "es": "¡Tu pedido está en camino!"
+  },
+  "Seu pedido está indo até você.": {
+    "en": "Your order is on its way.",
+    "es": "Tu pedido está en camino."
+  },
+  "Seu pedido está pronto.": {
+    "en": "Your order is ready.",
+    "es": "Tu pedido está listo."
+  },
+  "Seu pedido está pronto! Retire no caixa.": {
+    "en": "Your order is ready! Pick it up at the counter.",
+    "es": "¡Tu pedido está listo! Retíralo en caja."
+  },
+  "Seu pedido está pronto. Você pode ficar a vontade para vir retirar! Vem rapidinho para não esfriar viu!": {
+    "en": "Your order is ready for pickup! Come by while it's still hot.",
+    "es": "¡Tu pedido está listo para retirar! Ven pronto para que no se enfríe."
+  },
+  "Seu pedido foi entregue!": {
+    "en": "Your order was delivered!",
+    "es": "¡Tu pedido fue entregado!"
+  },
+  "Pagamento do seu pedido confirmado!": {
+    "en": "Payment for your order is confirmed!",
+    "es": "¡El pago de tu pedido está confirmado!"
+  },
+  "PEDIDO ONLINE": {
+    "en": "ONLINE ORDER",
+    "es": "PEDIDO EN LÍNEA"
+  },
+  "Pagamento escolhido:": {
+    "en": "Selected payment:",
+    "es": "Pago elegido:"
+  },
+  "Pagamento:": {
+    "en": "Payment:",
+    "es": "Pago:"
+  },
+  "Pedido #": {
+    "en": "Order #",
+    "es": "Pedido #"
+  },
+  "PEDIDO #": {
+    "en": "ORDER #",
+    "es": "PEDIDO #"
+  },
+  "Iniciar preparo →": {
+    "en": "Start preparation →",
+    "es": "Iniciar preparación →"
+  },
+  "✓ Marcar como pronto": {
+    "en": "✓ Mark ready",
+    "es": "✓ Marcar como listo"
+  },
+  "✓ Confirmar retirada": {
+    "en": "✓ Confirm pickup",
+    "es": "✓ Confirmar retirada"
+  },
+  "✓ Registrar entrega": {
+    "en": "✓ Record delivery",
+    "es": "✓ Registrar entrega"
+  },
+  "Enviar com entregador →": {
+    "en": "Assign courier →",
+    "es": "Asignar repartidor →"
+  },
+  "Reatribuir entrega": {
+    "en": "Reassign delivery",
+    "es": "Reasignar entrega"
+  },
+  "Definir entregador": {
+    "en": "Assign courier",
+    "es": "Asignar repartidor"
+  },
+  "Definir comanda e mesa": {
+    "en": "Set tab and table",
+    "es": "Asignar cuenta y mesa"
+  },
+  "Entregador": {
+    "en": "Courier",
+    "es": "Repartidor"
+  },
+  "Entregador:": {
+    "en": "Courier:",
+    "es": "Repartidor:"
+  },
+  "Dia da entrega": {
+    "en": "Delivery date",
+    "es": "Fecha de entrega"
+  },
+  "Entregas do dia selecionado": {
+    "en": "Deliveries on the selected date",
+    "es": "Entregas de la fecha seleccionada"
+  },
+  "Conferir selecionadas": {
+    "en": "Review selected deliveries",
+    "es": "Revisar entregas seleccionadas"
+  },
+  "Selecionar pendentes deste filtro": {
+    "en": "Select pending deliveries in this filter",
+    "es": "Seleccionar pendientes de este filtro"
+  },
+  "Confirmar acerto": {
+    "en": "Confirm settlement",
+    "es": "Confirmar liquidación"
+  },
+  "Confirmar e registrar no caixa": {
+    "en": "Confirm and record at checkout",
+    "es": "Confirmar y registrar en caja"
+  },
+  "Recebi o dinheiro indicado e conferi os pagamentos eletrônicos.": {
+    "en": "I received the stated cash and checked the electronic payments.",
+    "es": "Recibí el efectivo indicado y verifiqué los pagos electrónicos."
+  },
+  "Confira as entregas e os recebimentos dos entregadores.": {
+    "en": "Review deliveries and courier receipts.",
+    "es": "Revisa las entregas y los cobros de los repartidores."
+  },
+  "Cancelar": {
+    "en": "Cancel",
+    "es": "Cancelar"
+  },
+  "Concluir entrega": {
+    "en": "Complete delivery",
+    "es": "Completar entrega"
+  },
+  "Confirmar entrega": {
+    "en": "Confirm delivery",
+    "es": "Confirmar entrega"
+  },
+  "Como o cliente pagou?": {
+    "en": "How did the customer pay?",
+    "es": "¿Cómo pagó el cliente?"
+  },
+  "Este pedido já está pago. Não cobre novamente.": {
+    "en": "This order is already paid. Do not charge it again.",
+    "es": "Este pedido ya está pagado. No lo cobres de nuevo."
+  },
+  "Confirme somente após entregar o pedido e receber o valor. O administrador fará a conferência do acerto.": {
+    "en": "Confirm after delivering the order and receiving payment. The administrator will review the settlement.",
+    "es": "Confirma después de entregar el pedido y recibir el pago. El administrador revisará la liquidación."
+  },
+  "Confirmo que entreguei o pedido e conferi o pagamento.": {
+    "en": "I confirm I delivered the order and checked the payment.",
+    "es": "Confirmo que entregué el pedido y verifiqué el pago."
+  },
+  "Próxima parada: cliente.": {
+    "en": "Next stop: the customer.",
+    "es": "Próxima parada: el cliente."
+  },
+  "SUAS TELE-ENTREGAS": {
+    "en": "YOUR DELIVERIES",
+    "es": "TUS ENTREGAS"
+  },
+  "Somente os pedidos de entrega atribuídos a você.": {
+    "en": "Only delivery orders assigned to you.",
+    "es": "Solo los pedidos de entrega asignados a ti."
+  },
+  "Buscar pedido": {
+    "en": "Find order",
+    "es": "Buscar pedido"
+  },
+  "Número, cliente, endereço ou bairro": {
+    "en": "Number, customer, address or neighborhood",
+    "es": "Número, cliente, dirección o barrio"
+  },
+  "Buscar por número do pedido, nome do cliente, endereço ou bairro": {
+    "en": "Search by order number, customer, address or neighborhood",
+    "es": "Busca por número de pedido, cliente, dirección o barrio"
+  },
+  "Entregas concluídas no dia": {
+    "en": "Deliveries completed on the date",
+    "es": "Entregas completadas en la fecha"
+  },
+  "As entregas em andamento sempre aparecem.": {
+    "en": "Active deliveries are always shown.",
+    "es": "Las entregas en curso siempre aparecen."
+  },
+  "Carregando suas entregas…": {
+    "en": "Loading your deliveries…",
+    "es": "Cargando tus entregas…"
+  },
+  "CONTROLE DO ADMINISTRADOR": {
+    "en": "ADMIN CONTROL",
+    "es": "CONTROL DE ADMINISTRACIÓN"
+  },
+  "Nome": {
+    "en": "Name",
+    "es": "Nombre"
+  },
+  "Login": {
+    "en": "Username",
+    "es": "Usuario"
+  },
+  "Confirmar senha": {
+    "en": "Confirm password",
+    "es": "Confirmar contraseña"
+  },
+  "Data de nascimento": {
+    "en": "Date of birth",
+    "es": "Fecha de nacimiento"
+  },
+  "Número": {
+    "en": "Number",
+    "es": "Número"
+  },
+  "Bairro": {
+    "en": "Neighborhood",
+    "es": "Barrio"
+  },
+  "Endereço": {
+    "en": "Address",
+    "es": "Dirección"
+  },
+  "Rua / endereço": {
+    "en": "Street / address",
+    "es": "Calle / dirección"
+  },
+  "Ponto de referência": {
+    "en": "Landmark",
+    "es": "Punto de referencia"
+  },
+  "Telefone para contato (opcional)": {
+    "en": "Contact phone (optional)",
+    "es": "Teléfono de contacto (opcional)"
+  },
+  "Endereço de entrega": {
+    "en": "Delivery address",
+    "es": "Dirección de entrega"
+  },
+  "Referência:": {
+    "en": "Landmark:",
+    "es": "Referencia:"
+  },
+  "PEÇA DE ONDE ESTIVER": {
+    "en": "ORDER FROM ANYWHERE",
+    "es": "PIDE DESDE DONDE ESTÉS"
+  },
+  "Vamos criar sua conta?": {
+    "en": "Create your account?",
+    "es": "¿Creamos tu cuenta?"
+  },
+  "Escolha seus favoritos, acompanhe o preparo e receba os avisos por aqui.": {
+    "en": "Pick your favorites, track preparation and get updates here.",
+    "es": "Elige tus favoritos, sigue la preparación y recibe avisos aquí."
+  },
+  "Usaremos seu cadastro para identificar sua conta e atender seus pedidos. O endereço é solicitado apenas para entrega.": {
+    "en": "We use your account to identify you and fulfill orders. An address is required for delivery.",
+    "es": "Usamos tu cuenta para identificarte y atender tus pedidos. La dirección se solicita para entregas."
+  },
+  "Criar conta e ver cardápio →": {
+    "en": "Create account and view menu →",
+    "es": "Crear cuenta y ver menú →"
+  },
+  "Já tem conta?": {
+    "en": "Already have an account?",
+    "es": "¿Ya tienes cuenta?"
+  },
+  "SEUS DADOS": {
+    "en": "YOUR DETAILS",
+    "es": "TUS DATOS"
+  },
+  "Dados salvos com sucesso.": {
+    "en": "Details saved.",
+    "es": "Datos guardados."
+  },
+  "Dados de entrega": {
+    "en": "Delivery details",
+    "es": "Datos de entrega"
+  },
+  "Não alterar endereço agora": {
+    "en": "Keep current address",
+    "es": "Mantener la dirección actual"
+  },
+  "Cadastrar / atualizar endereço de entrega": {
+    "en": "Add or update delivery address",
+    "es": "Registrar o actualizar dirección de entrega"
+  },
+  "Alterar minha senha": {
+    "en": "Change my password",
+    "es": "Cambiar mi contraseña"
+  },
+  "Deixe os campos vazios para manter a senha atual.": {
+    "en": "Leave the fields blank to keep your password.",
+    "es": "Deja los campos vacíos para conservar la contraseña."
+  },
+  "Senha atual": {
+    "en": "Current password",
+    "es": "Contraseña actual"
+  },
+  "Confirmar nova senha": {
+    "en": "Confirm new password",
+    "es": "Confirmar nueva contraseña"
+  },
+  "Salvar meus dados": {
+    "en": "Save my details",
+    "es": "Guardar mis datos"
+  },
+  "Login:": {
+    "en": "Username:",
+    "es": "Usuario:"
+  },
+  "Nascimento:": {
+    "en": "Date of birth:",
+    "es": "Fecha de nacimiento:"
+  },
+  "Mais sabor": {
+    "en": "More flavor",
+    "es": "Más sabor"
+  },
+  "do seu jeito.": {
+    "en": "your way.",
+    "es": "a tu manera."
+  },
+  "BORA PEDIR?": {
+    "en": "READY TO ORDER?",
+    "es": "¿LISTO PARA PEDIR?"
+  },
+  "PEDIDO NA MESA": {
+    "en": "TABLE ORDER",
+    "es": "PEDIDO EN MESA"
+  },
+  "Peça pelo celular": {
+    "en": "Order from your phone",
+    "es": "Pide desde tu móvil"
+  },
+  "Número da sua mesa": {
+    "en": "Your table number",
+    "es": "Número de tu mesa"
+  },
+  "Confira o número indicado na mesa. A comanda será informada pelo garçom.": {
+    "en": "Check the number on your table. Your server will provide your tab number.",
+    "es": "Comprueba el número de tu mesa. El camarero te indicará tu número de cuenta."
+  },
+  "Ver cardápio e fazer pedido": {
+    "en": "View menu and order",
+    "es": "Ver menú y hacer pedido"
+  },
+  "Voltar ao início": {
+    "en": "Back to home",
+    "es": "Volver al inicio"
+  },
+  "Voltar aos pedidos": {
+    "en": "Back to orders",
+    "es": "Volver a pedidos"
+  },
+  "← Voltar aos pedidos": {
+    "en": "← Back to orders",
+    "es": "← Volver a pedidos"
+  },
+  "Não foi possível concluir": {
+    "en": "Could not complete",
+    "es": "No se pudo completar"
+  },
+  "Não foi possível ler a resposta do servidor.": {
+    "en": "Could not read the server response.",
+    "es": "No se pudo leer la respuesta del servidor."
+  },
+  "Sua sessão terminou. Entre novamente.": {
+    "en": "Your session ended. Sign in again.",
+    "es": "Tu sesión terminó. Vuelve a iniciar sesión."
+  },
+  "Operação não permitida.": {
+    "en": "Operation not allowed.",
+    "es": "Operación no permitida."
+  },
+  "Entre novamente": {
+    "en": "Sign in again",
+    "es": "Vuelve a iniciar sesión"
+  },
+  "Ao vivo": {
+    "en": "Live",
+    "es": "En directo"
+  },
+  "Reconectando": {
+    "en": "Reconnecting",
+    "es": "Reconectando"
+  },
+  "Sem conexão": {
+    "en": "Offline",
+    "es": "Sin conexión"
+  },
+  "Atualização periódica": {
+    "en": "Periodic refresh",
+    "es": "Actualización periódica"
+  },
+  "Aguarde…": {
+    "en": "Please wait…",
+    "es": "Espera…"
+  },
+  "Processando…": {
+    "en": "Processing…",
+    "es": "Procesando…"
+  },
+  "Enviando pedido…": {
+    "en": "Sending order…",
+    "es": "Enviando pedido…"
+  },
+  "Pedido enviado! Acompanhe em Meus pedidos.": {
+    "en": "Order sent! Track it under My orders.",
+    "es": "¡Pedido enviado! Síguelo en Mis pedidos."
+  },
+  "Pedido atualizado com sucesso.": {
+    "en": "Order updated.",
+    "es": "Pedido actualizado."
+  },
+  "Pagamento registrado.": {
+    "en": "Payment recorded.",
+    "es": "Pago registrado."
+  },
+  "Acerto registrado no caixa.": {
+    "en": "Settlement recorded at checkout.",
+    "es": "Liquidación registrada en caja."
+  },
+  "Item adicionado ao pedido.": {
+    "en": "Item added to the order.",
+    "es": "Artículo añadido al pedido."
+  },
+  "Editar opções e observação": {
+    "en": "Edit options and note",
+    "es": "Editar opciones y nota"
+  },
+  "Remover": {
+    "en": "Remove",
+    "es": "Quitar"
+  },
+  "Revisar pedido": {
+    "en": "Review order",
+    "es": "Revisar pedido"
+  },
+  "Aplicativo instalado": {
+    "en": "App installed",
+    "es": "Aplicación instalada"
+  },
+  "Abrir app ↗": {
+    "en": "Open app ↗",
+    "es": "Abrir app ↗"
+  },
+  "Acesse seus pedidos e o cardápio.": {
+    "en": "Access your orders and the menu.",
+    "es": "Accede a tus pedidos y al menú."
+  },
+  "Aplicativo instalado com sucesso.": {
+    "en": "App installed successfully.",
+    "es": "Aplicación instalada correctamente."
+  },
+  "Ative para ouvir avisos de pedidos novos ou prontos, conforme seu perfil.": {
+    "en": "Enable sound for new or ready orders, depending on your role.",
+    "es": "Activa el sonido para pedidos nuevos o listos, según tu perfil."
+  },
+  "Liberar som ♪": {
+    "en": "Allow sound ♪",
+    "es": "Permitir sonido ♪"
+  },
+  "Fechar caixa": {
+    "en": "Close register",
+    "es": "Cerrar caja"
+  },
+  "Abrir caixa": {
+    "en": "Open register",
+    "es": "Abrir caja"
+  },
+  "CONTROLE FINANCEIRO": {
+    "en": "FINANCIAL CONTROL",
+    "es": "CONTROL FINANCIERO"
+  },
+  "Caixa e recebimentos": {
+    "en": "Register and receipts",
+    "es": "Caja y cobros"
+  },
+  "Fundo inicial:": {
+    "en": "Opening float:",
+    "es": "Fondo inicial:"
+  },
+  "Saldo esperado em dinheiro": {
+    "en": "Expected cash balance",
+    "es": "Saldo esperado en efectivo"
+  },
+  "Pix e cartões não compõem o saldo físico.": {
+    "en": "Pix and card payments are excluded from the cash balance.",
+    "es": "Pix y tarjetas no forman parte del saldo en efectivo."
+  },
+  "Operação": {
+    "en": "Transaction",
+    "es": "Operación"
+  },
+  "Sangria": {
+    "en": "Cash withdrawal",
+    "es": "Retiro de efectivo"
+  },
+  "Suprimento": {
+    "en": "Cash deposit",
+    "es": "Ingreso de efectivo"
+  },
+  "Descrição (obrigatória em sangria e suprimento)": {
+    "en": "Description (required for withdrawals and deposits)",
+    "es": "Descripción (obligatoria para retiros e ingresos)"
+  },
+  "Registrar operação": {
+    "en": "Record transaction",
+    "es": "Registrar operación"
+  },
+  "Movimentações do caixa atual": {
+    "en": "Current register transactions",
+    "es": "Movimientos de la caja actual"
+  },
+  "Nenhuma movimentação.": {
+    "en": "No transactions.",
+    "es": "Sin movimientos."
+  },
+  "Histórico de caixas": {
+    "en": "Register history",
+    "es": "Historial de cajas"
+  },
+  "Inicial": {
+    "en": "Opening",
+    "es": "Inicial"
+  },
+  "· Contado": {
+    "en": "· Counted",
+    "es": "· Contado"
+  },
+  "Descrição": {
+    "en": "Description",
+    "es": "Descripción"
+  },
+  "Preço (R$)": {
+    "en": "Price (R$)",
+    "es": "Precio (R$)"
+  },
+  "Categoria": {
+    "en": "Category",
+    "es": "Categoría"
+  },
+  "Categorias": {
+    "en": "Categories",
+    "es": "Categorías"
+  },
+  "Imagem do produto": {
+    "en": "Product image",
+    "es": "Imagen del producto"
+  },
+  "Prévia da imagem": {
+    "en": "Image preview",
+    "es": "Vista previa de la imagen"
+  },
+  "Escolha uma foto para mostrar no cardápio.": {
+    "en": "Choose a photo for the menu.",
+    "es": "Elige una foto para el menú."
+  },
+  "Escolher imagem": {
+    "en": "Choose image",
+    "es": "Elegir imagen"
+  },
+  "JPG, PNG ou WebP, até 5 MB. A imagem é salva junto com o produto.": {
+    "en": "JPG, PNG or WebP, up to 5 MB. The image is saved with the product.",
+    "es": "JPG, PNG o WebP, hasta 5 MB. La imagen se guarda con el producto."
+  },
+  "Remover imagem atual": {
+    "en": "Remove current image",
+    "es": "Quitar imagen actual"
+  },
+  "Perfil": {
+    "en": "Role",
+    "es": "Perfil"
+  },
+  "Ativo": {
+    "en": "Active",
+    "es": "Activo"
+  },
+  "Inativo": {
+    "en": "Inactive",
+    "es": "Inactivo"
+  },
+  "Salvar cadastro": {
+    "en": "Save record",
+    "es": "Guardar registro"
+  },
+  "Cancelar edição": {
+    "en": "Cancel editing",
+    "es": "Cancelar edición"
+  },
+  "Cadastros existentes": {
+    "en": "Existing records",
+    "es": "Registros existentes"
+  },
+  "Editar →": {
+    "en": "Edit →",
+    "es": "Editar →"
+  },
+  "Editar": {
+    "en": "Edit",
+    "es": "Editar"
+  },
+  "Excluir": {
+    "en": "Delete",
+    "es": "Eliminar"
+  },
+  "Nenhum cadastro.": {
+    "en": "No records.",
+    "es": "Sin registros."
+  },
+  "Configurar tamanhos, massas e bordas →": {
+    "en": "Configure sizes, dough and crusts →",
+    "es": "Configurar tamaños, masas y bordes →"
+  },
+  "📷 Gerenciar fotos dos produtos": {
+    "en": "📷 Manage product photos",
+    "es": "📷 Gestionar fotos de productos"
+  },
+  "Buscar produto…": {
+    "en": "Search products…",
+    "es": "Buscar productos…"
+  },
+  "Buscar produto": {
+    "en": "Search products",
+    "es": "Buscar productos"
+  },
+  "Personalização e fotos": {
+    "en": "Branding and photos",
+    "es": "Personalización y fotos"
+  },
+  "Configure a identidade do restaurante e as imagens exibidas no cardápio.": {
+    "en": "Customize your restaurant's branding and menu images.",
+    "es": "Configura la identidad del restaurante y las imágenes del menú."
+  },
+  "Identidade e capa do cardápio do cliente": {
+    "en": "Branding and customer menu cover",
+    "es": "Identidad y portada del menú del cliente"
+  },
+  "A imagem ocupa toda a capa do cardápio público. O título e a descrição aparecem sobre a imagem. Deixe os dois campos vazios para exibir somente a capa.": {
+    "en": "The image fills the public menu cover. The title and description overlay the image. Leave both fields empty to show only the image.",
+    "es": "La imagen ocupa toda la portada del menú público. El título y la descripción aparecen sobre la imagen. Deja ambos campos vacíos para mostrar solo la imagen."
+  },
+  "Título da capa (opcional)": {
+    "en": "Cover title (optional)",
+    "es": "Título de la portada (opcional)"
+  },
+  "Descrição da capa (opcional)": {
+    "en": "Cover description (optional)",
+    "es": "Descripción de la portada (opcional)"
+  },
+  "Capa atual": {
+    "en": "Current cover",
+    "es": "Portada actual"
+  },
+  "Imagem da capa": {
+    "en": "Cover image",
+    "es": "Imagen de portada"
+  },
+  "Restaurar ilustração original": {
+    "en": "Restore original illustration",
+    "es": "Restaurar ilustración original"
+  },
+  "JPG, PNG ou WebP, até 5 MB por imagem. Escolha cores com bom contraste.": {
+    "en": "JPG, PNG or WebP, up to 5 MB per image. Choose colors with good contrast.",
+    "es": "JPG, PNG o WebP, hasta 5 MB por imagen. Elige colores con buen contraste."
+  },
+  "Salvar identidade visual": {
+    "en": "Save branding",
+    "es": "Guardar identidad visual"
+  },
+  "Fotos dos produtos": {
+    "en": "Product photos",
+    "es": "Fotos de productos"
+  },
+  "As fotos aparecem no PDV e no cardápio público. JPG, PNG ou WebP, até 5 MB.": {
+    "en": "Photos appear in the POS and public menu. JPG, PNG or WebP, up to 5 MB.",
+    "es": "Las fotos aparecen en el TPV y el menú público. JPG, PNG o WebP, hasta 5 MB."
+  },
+  "Nenhum produto encontrado.": {
+    "en": "No products found.",
+    "es": "No se encontraron productos."
+  },
+  "Sem foto cadastrada": {
+    "en": "No photo",
+    "es": "Sin foto"
+  },
+  "Remover foto e usar ícone": {
+    "en": "Remove photo and use icon",
+    "es": "Quitar foto y usar icono"
+  },
+  "Salvar foto": {
+    "en": "Save photo",
+    "es": "Guardar foto"
+  },
+  "Cadastre produtos para adicionar fotos.": {
+    "en": "Add products to upload photos.",
+    "es": "Registra productos para añadir fotos."
+  },
+  "CONFIGURAÇÃO DAS PIZZAS": {
+    "en": "PIZZA SETTINGS",
+    "es": "CONFIGURACIÓN DE PIZZAS"
+  },
+  "Tamanhos, massas e bordas": {
+    "en": "Sizes, dough and crusts",
+    "es": "Tamaños, masas y bordes"
+  },
+  "← Produtos e sabores": {
+    "en": "← Products and flavors",
+    "es": "← Productos y sabores"
+  },
+  "Cadastrar categoria →": {
+    "en": "Add category →",
+    "es": "Registrar categoría →"
+  },
+  "Categoria de pizzas": {
+    "en": "Pizza category",
+    "es": "Categoría de pizzas"
+  },
+  "1. Os quatro tamanhos do PDV": {
+    "en": "1. The four POS sizes",
+    "es": "1. Los cuatro tamaños del TPV"
+  },
+  "Um card por tamanho ativo. Os sabores não aparecem como produtos separados no PDV.": {
+    "en": "One card per active size. Flavors are grouped under the pizza size in the POS.",
+    "es": "Una tarjeta por tamaño activo. Los sabores se agrupan por tamaño en el TPV."
+  },
+  "Como definir o valor?": {
+    "en": "How should prices be set?",
+    "es": "¿Cómo se define el precio?"
+  },
+  "Média dos preços dos sabores + acréscimo do tamanho": {
+    "en": "Average flavor price + size surcharge",
+    "es": "Promedio de los sabores + suplemento por tamaño"
+  },
+  "Preço fixo por tamanho — sabores incluídos": {
+    "en": "Fixed price by size, flavors included",
+    "es": "Precio fijo por tamaño, sabores incluidos"
+  },
+  "Exibir no PDV": {
+    "en": "Show in POS",
+    "es": "Mostrar en TPV"
+  },
+  "2. Massa, borda e acompanhamentos": {
+    "en": "2. Dough, crust and sides",
+    "es": "2. Masa, borde y acompañamientos"
+  },
+  "Tradicional, fina e outras": {
+    "en": "Traditional, thin and more",
+    "es": "Tradicional, fina y otras"
+  },
+  "Recheadas e tradicionais": {
+    "en": "Stuffed and traditional",
+    "es": "Rellenos y tradicionales"
+  },
+  "Adicionais, molhos e mais": {
+    "en": "Extras, sauces and more",
+    "es": "Extras, salsas y más"
+  },
+  "Observação para a cozinha": {
+    "en": "Kitchen note",
+    "es": "Nota para cocina"
+  },
+  "Permitir observação": {
+    "en": "Allow a note",
+    "es": "Permitir nota"
+  },
+  "Nome do campo": {
+    "en": "Field name",
+    "es": "Nombre del campo"
+  },
+  "Dica": {
+    "en": "Hint",
+    "es": "Sugerencia"
+  },
+  "Aplicar aos quatro tamanhos": {
+    "en": "Apply to all four sizes",
+    "es": "Aplicar a los cuatro tamaños"
+  },
+  "Novos sabores entram automaticamente pela categoria.": {
+    "en": "New flavors are included automatically by category.",
+    "es": "Los nuevos sabores se incluyen automáticamente por categoría."
+  },
+  "Salvar configurações de pizzas": {
+    "en": "Save pizza settings",
+    "es": "Guardar configuración de pizzas"
+  },
+  "Sabores encontrados nas opções antigas": {
+    "en": "Flavors found in older options",
+    "es": "Sabores encontrados en opciones antiguas"
+  },
+  "Importar": {
+    "en": "Import",
+    "es": "Importar"
+  },
+  "sabores antigos para Produtos": {
+    "en": "older flavors into Products",
+    "es": "sabores antiguos a Productos"
+  },
+  "3. Sabores desta categoria": {
+    "en": "3. Flavors in this category",
+    "es": "3. Sabores de esta categoría"
+  },
+  "+ Cadastrar sabor": {
+    "en": "+ Add flavor",
+    "es": "+ Registrar sabor"
+  },
+  "Editar sabor →": {
+    "en": "Edit flavor →",
+    "es": "Editar sabor →"
+  },
+  "Nenhum sabor cadastrado. Adicione o primeiro produto a esta categoria.": {
+    "en": "No flavors yet. Add the first product to this category.",
+    "es": "Aún no hay sabores. Añade el primer producto a esta categoría."
+  },
+  "CONFIGURAÇÃO DO CARDÁPIO": {
+    "en": "MENU SETTINGS",
+    "es": "CONFIGURACIÓN DEL MENÚ"
+  },
+  "Opções do produto": {
+    "en": "Product options",
+    "es": "Opciones del producto"
+  },
+  "Preço base:": {
+    "en": "Base price:",
+    "es": "Precio base:"
+  },
+  "← Voltar para Produtos": {
+    "en": "← Back to Products",
+    "es": "← Volver a Productos"
+  },
+  "O que o cliente pode escolher?": {
+    "en": "What can the customer choose?",
+    "es": "¿Qué puede elegir el cliente?"
+  },
+  "Adicione os blocos que precisa. Depois abra cada bloco para preencher as opções.": {
+    "en": "Add the groups you need. Open each group to enter its options.",
+    "es": "Añade los bloques que necesites. Abre cada bloque para completar sus opciones."
+  },
+  "Tamanhos de pizza": {
+    "en": "Pizza sizes",
+    "es": "Tamaños de pizza"
+  },
+  "Broto, média, grande e família": {
+    "en": "Personal, medium, large and family",
+    "es": "Individual, mediana, grande y familiar"
+  },
+  "Sabores e preços inteiros": {
+    "en": "Flavors and whole-pizza prices",
+    "es": "Sabores y precios de pizza entera"
+  },
+  "Recheadas ou tradicionais": {
+    "en": "Stuffed or traditional",
+    "es": "Rellenos o tradicionales"
+  },
+  "Ponto da carne": {
+    "en": "Meat doneness",
+    "es": "Punto de la carne"
+  },
+  "Para hambúrgueres e carnes": {
+    "en": "For burgers and meats",
+    "es": "Para hamburguesas y carnes"
+  },
+  "Outro bloco": {
+    "en": "Another group",
+    "es": "Otro bloque"
+  },
+  "Blocos deste produto": {
+    "en": "Option groups for this product",
+    "es": "Bloques de opciones de este producto"
+  },
+  "Observação livre": {
+    "en": "Custom note",
+    "es": "Nota libre"
+  },
+  "Permita que o cliente escreva um recado para a cozinha.": {
+    "en": "Allow customers to write a note for the kitchen.",
+    "es": "Permite que el cliente escriba una nota para cocina."
+  },
+  "Permitir observações": {
+    "en": "Allow notes",
+    "es": "Permitir notas"
+  },
+  "Nome exibido no cardápio": {
+    "en": "Name shown on menu",
+    "es": "Nombre visible en el menú"
+  },
+  "Exemplo para orientar o cliente": {
+    "en": "Example to guide the customer",
+    "es": "Ejemplo para orientar al cliente"
+  },
+  "Ex.: sem cebola": {
+    "en": "E.g. no onion",
+    "es": "P. ej. sin cebolla"
+  },
+  "Terminou de configurar?": {
+    "en": "Finished configuring?",
+    "es": "¿Terminaste de configurar?"
+  },
+  "As opções ficam disponíveis no cardápio e no PDV após salvar.": {
+    "en": "Options are available in the menu and POS after saving.",
+    "es": "Las opciones estarán disponibles en el menú y el TPV después de guardar."
+  },
+  "Salvar opções do produto": {
+    "en": "Save product options",
+    "es": "Guardar opciones del producto"
+  },
+  "Relatórios de vendas": {
+    "en": "Sales reports",
+    "es": "Informes de ventas"
+  },
+  "Resultados e oportunidades do seu restaurante.": {
+    "en": "Results and opportunities for your restaurant.",
+    "es": "Resultados y oportunidades de tu restaurante."
+  },
+  "Filtros dos relatórios": {
+    "en": "Report filters",
+    "es": "Filtros de informes"
+  },
+  "Período": {
+    "en": "Period",
+    "es": "Período"
+  },
+  "Data de referência": {
+    "en": "Reference date",
+    "es": "Fecha de referencia"
+  },
+  "Pedidos incluídos": {
+    "en": "Included orders",
+    "es": "Pedidos incluidos"
+  },
+  "Somente pagos": {
+    "en": "Paid only",
+    "es": "Solo pagados"
+  },
+  "Consultar": {
+    "en": "View report",
+    "es": "Consultar"
+  },
+  "Total dos pedidos": {
+    "en": "Order total",
+    "es": "Total de pedidos"
+  },
+  "Marcado pago": {
+    "en": "Marked paid",
+    "es": "Marcado como pagado"
+  },
+  "Ticket médio": {
+    "en": "Average order value",
+    "es": "Valor medio del pedido"
+  },
+  "Unidades": {
+    "en": "Units",
+    "es": "Unidades"
+  },
+  "Vendas": {
+    "en": "Sales",
+    "es": "Ventas"
+  },
+  "Nenhum pedido corresponde aos filtros selecionados.": {
+    "en": "No orders match the selected filters.",
+    "es": "Ningún pedido coincide con los filtros seleccionados."
+  },
+  "Evolução do valor de vendas": {
+    "en": "Sales over time",
+    "es": "Evolución de las ventas"
+  },
+  "Vendas por categoria": {
+    "en": "Sales by category",
+    "es": "Ventas por categoría"
+  },
+  "Top 5 categorias por valor": {
+    "en": "Top 5 categories by value",
+    "es": "5 categorías con mayor valor"
+  },
+  "Categoria atual": {
+    "en": "Current category",
+    "es": "Categoría actual"
+  },
+  "Valor": {
+    "en": "Amount",
+    "es": "Importe"
+  },
+  "Nenhuma venda de produtos no período.": {
+    "en": "No product sales in this period.",
+    "es": "Sin ventas de productos en este período."
+  },
+  "← Anterior": {
+    "en": "← Previous",
+    "es": "← Anterior"
+  },
+  "Próxima →": {
+    "en": "Next →",
+    "es": "Siguiente →"
+  },
+  "Melhores clientes": {
+    "en": "Top customers",
+    "es": "Mejores clientes"
+  },
+  "Top 5 clientes por valor": {
+    "en": "Top 5 customers by value",
+    "es": "5 clientes con mayor valor"
+  },
+  "Cliente": {
+    "en": "Customer",
+    "es": "Cliente"
+  },
+  "Clientes": {
+    "en": "Customers",
+    "es": "Clientes"
+  },
+  "Nenhum cliente identificado nos pedidos deste período.": {
+    "en": "No customers were identified in orders for this period.",
+    "es": "No se identificaron clientes en los pedidos de este período."
+  },
+  "Produtos mais vendidos": {
+    "en": "Best-selling products",
+    "es": "Productos más vendidos"
+  },
+  "Top 5 produtos por unidades": {
+    "en": "Top 5 products by units",
+    "es": "5 productos con más unidades vendidas"
+  },
+  "Produto": {
+    "en": "Product",
+    "es": "Producto"
+  },
+  "Nenhum produto vendido no período.": {
+    "en": "No products sold in this period.",
+    "es": "No se vendieron productos en este período."
+  },
+  "Pedidos do período": {
+    "en": "Orders for the period",
+    "es": "Pedidos del período"
+  },
+  "Detalhamento dos pedidos que compõem os totais.": {
+    "en": "Breakdown of the orders included in the totals.",
+    "es": "Detalle de los pedidos incluidos en los totales."
+  },
+  "Pedido": {
+    "en": "Order",
+    "es": "Pedido"
+  },
+  "Criado em": {
+    "en": "Created at",
+    "es": "Creado el"
+  },
+  "Pagamento": {
+    "en": "Payment",
+    "es": "Pago"
+  },
+  "Nenhum pedido no período.": {
+    "en": "No orders in this period.",
+    "es": "Sin pedidos en este período."
+  },
+  "Como ler os números": {
+    "en": "How to read the numbers",
+    "es": "Cómo leer las cifras"
+  },
+  "ACESSO DO ADMINISTRADOR": {
+    "en": "ADMINISTRATOR ACCESS",
+    "es": "ACCESO DEL ADMINISTRADOR"
+  },
+  "Clientes cadastrados": {
+    "en": "Registered customers",
+    "es": "Clientes registrados"
+  },
+  "Exportar Excel": {
+    "en": "Export Excel",
+    "es": "Exportar Excel"
+  },
+  "Sem endereço de entrega cadastrado.": {
+    "en": "No delivery address on file.",
+    "es": "Sin dirección de entrega registrada."
+  },
+  "Os primeiros clientes aparecerão aqui.": {
+    "en": "Your first customers will appear here.",
+    "es": "Los primeros clientes aparecerán aquí."
+  },
+  "VISÃO GERAL · DIA ATUAL · HORÁRIO DE BRASÍLIA": {
+    "en": "OVERVIEW · TODAY · BRASÍLIA TIME",
+    "es": "RESUMEN · HOY · HORA DE BRASILIA"
+  },
+  "O ritmo do seu restaurante": {
+    "en": "Your restaurant at a glance",
+    "es": "Tu restaurante de un vistazo"
+  },
+  "Pedidos do dia": {
+    "en": "Today's orders",
+    "es": "Pedidos del día"
+  },
+  "O primeiro pedido do dia está por vir.": {
+    "en": "The first order of the day is on its way.",
+    "es": "El primer pedido del día está por llegar."
+  },
+  "ADMINISTRAÇÃO": {
+    "en": "ADMINISTRATION",
+    "es": "ADMINISTRACIÓN"
+  },
+  "Segurança dos menus": {
+    "en": "Menu security",
+    "es": "Seguridad de los menús"
+  },
+  "Preferência salva.": {
+    "en": "Preference saved.",
+    "es": "Preferencia guardada."
+  },
+  "Exigir senha adicional nos menus administrativos": {
+    "en": "Require password confirmation in admin menus",
+    "es": "Exigir confirmación de contraseña en menús de administración"
+  },
+  "Confirme sua senha para salvar": {
+    "en": "Confirm your password to save",
+    "es": "Confirma tu contraseña para guardar"
+  },
+  "Salvar preferência": {
+    "en": "Save preference",
+    "es": "Guardar preferencia"
+  },
+  "ÁREA RESTRITA": {
+    "en": "RESTRICTED AREA",
+    "es": "ÁREA RESTRINGIDA"
+  },
+  "Confirme sua senha": {
+    "en": "Confirm your password",
+    "es": "Confirma tu contraseña"
+  },
+  "Senha do administrador": {
+    "en": "Administrator password",
+    "es": "Contraseña del administrador"
+  },
+  "Liberar esta área": {
+    "en": "Unlock this area",
+    "es": "Desbloquear esta área"
+  },
+  "Configurações da loja e da tele-entrega": {
+    "en": "Store and delivery settings",
+    "es": "Configuración de tienda y entregas"
+  },
+  "Configurações salvas.": {
+    "en": "Settings saved.",
+    "es": "Configuración guardada."
+  },
+  "Nome no cardápio público": {
+    "en": "Name on public menu",
+    "es": "Nombre en el menú público"
+  },
+  "Taxa fixa de entrega (R$)": {
+    "en": "Flat delivery fee (R$)",
+    "es": "Tarifa fija de entrega (R$)"
+  },
+  "Receber pedidos online": {
+    "en": "Accept online orders",
+    "es": "Recibir pedidos en línea"
+  },
+  "Disponibilizar tele-entrega": {
+    "en": "Enable delivery",
+    "es": "Habilitar entregas a domicilio"
+  },
+  "Salvar configurações de entrega": {
+    "en": "Save delivery settings",
+    "es": "Guardar configuración de entregas"
+  },
+  "Link para seus clientes": {
+    "en": "Link for your customers",
+    "es": "Enlace para tus clientes"
+  },
+  "Desbloquear configurações de entrega →": {
+    "en": "Unlock delivery settings →",
+    "es": "Desbloquear configuración de entregas →"
+  },
+  "Nome do restaurante": {
+    "en": "Restaurant name",
+    "es": "Nombre del restaurante"
+  },
+  "CONFIGURAÇÕES DO ADMINISTRADOR": {
+    "en": "ADMINISTRATOR SETTINGS",
+    "es": "CONFIGURACIÓN DEL ADMINISTRADOR"
+  },
+  "Loja e entregas": {
+    "en": "Store and delivery",
+    "es": "Tienda y entregas"
+  },
+  "Salvar configurações": {
+    "en": "Save settings",
+    "es": "Guardar configuración"
+  },
+  "QR Code para pedidos no salão": {
+    "en": "QR code for dine-in orders",
+    "es": "Código QR para pedidos en sala"
+  },
+  "QR Code do cardápio para clientes do salão": {
+    "en": "Menu QR code for dine-in customers",
+    "es": "Código QR del menú para clientes en sala"
+  },
+  "Link do cardápio no salão": {
+    "en": "Dine-in menu link",
+    "es": "Enlace del menú en sala"
+  },
+  "Baixar QR Code para impressão": {
+    "en": "Download QR code for printing",
+    "es": "Descargar código QR para imprimir"
+  },
+  "ADMINISTRAÇÃO · DOCUMENTOS FISCAIS": {
+    "en": "ADMINISTRATION · TAX DOCUMENTS",
+    "es": "ADMINISTRACIÓN · DOCUMENTOS FISCALES"
+  },
+  "Notas fiscais NFC-e": {
+    "en": "NFC-e tax receipts",
+    "es": "Comprobantes fiscales NFC-e"
+  },
+  "Configure sua empresa, valide a conexão e acompanhe as emissões.": {
+    "en": "Set up your company, validate the connection and track issuance.",
+    "es": "Configura tu empresa, valida la conexión y sigue las emisiones."
+  },
+  "Instale as tabelas fiscais": {
+    "en": "Install tax tables",
+    "es": "Instalar tablas fiscales"
+  },
+  "Execute": {
+    "en": "Run",
+    "es": "Ejecuta"
+  },
+  "Seções fiscais": {
+    "en": "Tax sections",
+    "es": "Secciones fiscales"
+  },
+  "Empresa": {
+    "en": "Company",
+    "es": "Empresa"
+  },
+  "Certificado": {
+    "en": "Certificate",
+    "es": "Certificado"
+  },
+  "Parâmetros": {
+    "en": "Parameters",
+    "es": "Parámetros"
+  },
+  "Tributação": {
+    "en": "Taxation",
+    "es": "Tributación"
+  },
+  "Emissões": {
+    "en": "Issuance",
+    "es": "Emisiones"
+  },
+  "Comece em": {
+    "en": "Start in",
+    "es": "Comienza en"
+  },
+  "Teste / Homologação": {
+    "en": "Testing / Sandbox",
+    "es": "Pruebas / Homologación"
+  },
+  "1. Dados da empresa": {
+    "en": "1. Company details",
+    "es": "1. Datos de la empresa"
+  },
+  "Razão social": {
+    "en": "Legal company name",
+    "es": "Razón social"
+  },
+  "Inscrição estadual": {
+    "en": "State tax registration",
+    "es": "Registro estatal"
+  },
+  "Inscrição municipal (opcional)": {
+    "en": "Municipal tax registration (optional)",
+    "es": "Registro municipal (opcional)"
+  },
+  "Regime tributário": {
+    "en": "Tax regime",
+    "es": "Régimen tributario"
+  },
+  "2. Integração com a Focus NFe": {
+    "en": "2. Focus NFe integration",
+    "es": "2. Integración con Focus NFe"
+  },
+  "Token de emissão do ambiente": {
+    "en": "Environment issuance token",
+    "es": "Token de emisión del entorno"
+  },
+  "Chave administrativa · Token Master": {
+    "en": "Administrative key · Master Token",
+    "es": "Clave administrativa · Token Master"
+  },
+  "ID da empresa na API": {
+    "en": "Company API ID",
+    "es": "ID de empresa en la API"
+  },
+  "ID disponível no painel Focus": {
+    "en": "ID found in the Focus dashboard",
+    "es": "ID disponible en el panel de Focus"
+  },
+  "Testar conexão com a API": {
+    "en": "Test API connection",
+    "es": "Probar conexión con la API"
+  },
+  "3. Certificado digital A1": {
+    "en": "3. A1 digital certificate",
+    "es": "3. Certificado digital A1"
+  },
+  "Arquivo do certificado": {
+    "en": "Certificate file",
+    "es": "Archivo del certificado"
+  },
+  "Senha do certificado": {
+    "en": "Certificate password",
+    "es": "Contraseña del certificado"
+  },
+  "Certificado local válido até": {
+    "en": "Local certificate valid until",
+    "es": "Certificado local válido hasta"
+  },
+  "Enviar certificado salvo à Focus": {
+    "en": "Send saved certificate to Focus",
+    "es": "Enviar certificado guardado a Focus"
+  },
+  "4. Parâmetros de emissão": {
+    "en": "4. Issuance parameters",
+    "es": "4. Parámetros de emisión"
+  },
+  "Ambiente": {
+    "en": "Environment",
+    "es": "Entorno"
+  },
+  "Produção · notas com validade fiscal": {
+    "en": "Production · legally valid tax receipts",
+    "es": "Producción · comprobantes con validez fiscal"
+  },
+  "UF do estabelecimento": {
+    "en": "Business state",
+    "es": "Estado del establecimiento"
+  },
+  "Série da NFC-e": {
+    "en": "NFC-e series",
+    "es": "Serie de NFC-e"
+  },
+  "Próximo número": {
+    "en": "Next number",
+    "es": "Siguiente número"
+  },
+  "ICMS padrão (%) · opcional": {
+    "en": "Default ICMS (%) · optional",
+    "es": "ICMS predeterminado (%) · opcional"
+  },
+  "Tipo de Pix recebido": {
+    "en": "Pix payment type",
+    "es": "Tipo de Pix recibido"
+  },
+  "Estático · chave / QR fixo": {
+    "en": "Static · key / fixed QR",
+    "es": "Estático · clave / QR fijo"
+  },
+  "Dinâmico · QR por cobrança": {
+    "en": "Dynamic · QR per charge",
+    "es": "Dinámico · QR por cobro"
+  },
+  "Emitir automaticamente ao registrar pagamento": {
+    "en": "Issue automatically when recording payment",
+    "es": "Emitir automáticamente al registrar el pago"
+  },
+  "Salvar configuração fiscal": {
+    "en": "Save tax settings",
+    "es": "Guardar configuración fiscal"
+  },
+  "5. Tributação dos itens": {
+    "en": "5. Item taxation",
+    "es": "5. Tributación de artículos"
+  },
+  "Nome exato do item": {
+    "en": "Exact item name",
+    "es": "Nombre exacto del artículo"
+  },
+  "8 dígitos": {
+    "en": "8 digits",
+    "es": "8 dígitos"
+  },
+  "CFOP de venda interna": {
+    "en": "Domestic sale CFOP",
+    "es": "CFOP de venta interna"
+  },
+  "4 dígitos": {
+    "en": "4 digits",
+    "es": "4 dígitos"
+  },
+  "CEST (se aplicável)": {
+    "en": "CEST (if applicable)",
+    "es": "CEST (si corresponde)"
+  },
+  "Unidade": {
+    "en": "Unit",
+    "es": "Unidad"
+  },
+  "Origem ICMS": {
+    "en": "ICMS origin",
+    "es": "Origen del ICMS"
+  },
+  "ICMS do item (%) · opcional": {
+    "en": "Item ICMS (%) · optional",
+    "es": "ICMS del artículo (%) · opcional"
+  },
+  "Alíquota": {
+    "en": "Tax rate",
+    "es": "Tasa"
+  },
+  "Obrigatória para CST 01/02": {
+    "en": "Required for CST 01/02",
+    "es": "Obligatoria para CST 01/02"
+  },
+  "Salvar tributação do item": {
+    "en": "Save item tax settings",
+    "es": "Guardar tributación del artículo"
+  },
+  "6. Emissões e acompanhamento": {
+    "en": "6. Issuance and tracking",
+    "es": "6. Emisiones y seguimiento"
+  },
+  "Número interno do pedido": {
+    "en": "Internal order number",
+    "es": "Número interno del pedido"
+  },
+  "ID do pedido, não a comanda": {
+    "en": "Order ID (not tab number)",
+    "es": "ID del pedido (no de la cuenta)"
+  },
+  "Emitir NFC-e de pedido já pago": {
+    "en": "Issue NFC-e for a paid order",
+    "es": "Emitir NFC-e de un pedido pagado"
+  },
+  "Nota local #": {
+    "en": "Local receipt #",
+    "es": "Comprobante local #"
+  },
+  "· Pedido #": {
+    "en": "· Order #",
+    "es": "· Pedido #"
+  },
+  "· Série": {
+    "en": "· Series",
+    "es": "· Serie"
+  },
+  "Chave:": {
+    "en": "Key:",
+    "es": "Clave:"
+  },
+  "Abrir DANFC-e": {
+    "en": "Open DANFC-e",
+    "es": "Abrir DANFC-e"
+  },
+  "Abrir XML": {
+    "en": "Open XML",
+    "es": "Abrir XML"
+  },
+  "Consultar situação fiscal": {
+    "en": "Check tax status",
+    "es": "Consultar situación fiscal"
+  },
+  "Preparar com os dados corrigidos": {
+    "en": "Prepare with corrected details",
+    "es": "Preparar con los datos corregidos"
+  },
+  "Nenhuma nota fiscal registrada ainda.": {
+    "en": "No tax receipts recorded yet.",
+    "es": "Aún no hay comprobantes fiscales registrados."
+  },
+  "Completar destinatário de tele-entrega antes do envio": {
+    "en": "Complete delivery recipient before sending",
+    "es": "Completar destinatario de entrega antes del envío"
+  },
+  "Salvar destinatário da nota": {
+    "en": "Save receipt recipient",
+    "es": "Guardar destinatario del comprobante"
+  },
+  "Páginas das notas": {
+    "en": "Receipt pages",
+    "es": "Páginas de comprobantes"
+  },
+  "← Anteriores": {
+    "en": "← Previous",
+    "es": "← Anteriores"
+  },
+  "Página": {
+    "en": "Page",
+    "es": "Página"
+  },
+  "Próximas →": {
+    "en": "Next →",
+    "es": "Siguientes →"
+  },
+  "Manager · Administração geral": {
+    "en": "Manager · General administration",
+    "es": "Manager · Administración general"
+  },
+  "ADMINISTRAÇÃO GERAL": {
+    "en": "GENERAL ADMINISTRATION",
+    "es": "ADMINISTRACIÓN GENERAL"
+  },
+  "Instalar administração geral": {
+    "en": "Install general administration",
+    "es": "Instalar administración general"
+  },
+  "Seu painel geral no computador.": {
+    "en": "Your administration panel on your computer.",
+    "es": "Tu panel general en el ordenador."
+  },
+  "Instale o Manager Geral para abrir a administração dos restaurantes em uma janela própria.": {
+    "en": "Install Manager Admin to open restaurant administration in its own window.",
+    "es": "Instala Manager General para abrir la administración de restaurantes en una ventana propia."
+  },
+  "Instalar Manager Geral": {
+    "en": "Install Manager Admin",
+    "es": "Instalar Manager General"
+  },
+  "Alterações salvas.": {
+    "en": "Changes saved.",
+    "es": "Cambios guardados."
+  },
+  "Voltar ao painel": {
+    "en": "Back to dashboard",
+    "es": "Volver al panel"
+  },
+  "ACESSO DO PROPRIETÁRIO": {
+    "en": "OWNER ACCESS",
+    "es": "ACCESO DEL PROPIETARIO"
+  },
+  "Seu painel de controle.": {
+    "en": "Your control panel.",
+    "es": "Tu panel de control."
+  },
+  "Gerencie restaurantes, administradores e a validade dos planos.": {
+    "en": "Manage restaurants, administrators and plan expiration.",
+    "es": "Gestiona restaurantes, administradores y vigencia de los planes."
+  },
+  "Configure sua conta pelo terminal do servidor:": {
+    "en": "Set up your account in the server terminal:",
+    "es": "Configura tu cuenta desde la terminal del servidor:"
+  },
+  "Não existe cadastro público de administrador geral.": {
+    "en": "General administrator accounts are created privately.",
+    "es": "El registro de administradores generales es privado."
+  },
+  "Entrar no painel geral": {
+    "en": "Sign in to the admin panel",
+    "es": "Entrar al panel general"
+  },
+  "CONTROLE DA PLATAFORMA": {
+    "en": "PLATFORM CONTROL",
+    "es": "CONTROL DE LA PLATAFORMA"
+  },
+  "Seus restaurantes.": {
+    "en": "Your restaurants.",
+    "es": "Tus restaurantes."
+  },
+  "Você controla quem acessa, por quanto tempo e quando renovar.": {
+    "en": "Control who has access, for how long and when to renew.",
+    "es": "Controla quién accede, durante cuánto tiempo y cuándo renovar."
+  },
+  "+ Cadastrar restaurante": {
+    "en": "+ Add restaurant",
+    "es": "+ Registrar restaurante"
+  },
+  "Restaurantes": {
+    "en": "Restaurants",
+    "es": "Restaurantes"
+  },
+  "Com acesso ativo": {
+    "en": "Active access",
+    "es": "Con acceso activo"
+  },
+  "Inativos ou sem plano": {
+    "en": "Inactive or without a plan",
+    "es": "Inactivos o sin plan"
+  },
+  "Acessos e planos": {
+    "en": "Access and plans",
+    "es": "Accesos y planes"
+  },
+  "Válido até": {
+    "en": "Valid until",
+    "es": "Válido hasta"
+  },
+  "Suspenso ou aguardando ativação.": {
+    "en": "Suspended or awaiting activation.",
+    "es": "Suspendido o pendiente de activación."
+  },
+  "Plano vencido. Renove para liberar o acesso.": {
+    "en": "Plan expired. Renew to restore access.",
+    "es": "Plan vencido. Renueva para habilitar el acceso."
+  },
+  "Acesso liberado para este restaurante.": {
+    "en": "Access enabled for this restaurant.",
+    "es": "Acceso habilitado para este restaurante."
+  },
+  "Link do restaurante": {
+    "en": "Restaurant link",
+    "es": "Enlace del restaurante"
+  },
+  "Abrir login ↗": {
+    "en": "Open sign-in ↗",
+    "es": "Abrir inicio de sesión ↗"
+  },
+  "Cardápio público ↗": {
+    "en": "Public menu ↗",
+    "es": "Menú público ↗"
+  },
+  "Administradores →": {
+    "en": "Administrators →",
+    "es": "Administradores →"
+  },
+  "Renovar por": {
+    "en": "Renew for",
+    "es": "Renovar por"
+  },
+  "Renovar e ativar": {
+    "en": "Renew and activate",
+    "es": "Renovar y activar"
+  },
+  "Cadastre seu primeiro restaurante abaixo.": {
+    "en": "Add your first restaurant below.",
+    "es": "Registra tu primer restaurante abajo."
+  },
+  "NOVO ACESSO": {
+    "en": "NEW ACCESS",
+    "es": "NUEVO ACCESO"
+  },
+  "Cadastrar restaurante e administrador": {
+    "en": "Add restaurant and administrator",
+    "es": "Registrar restaurante y administrador"
+  },
+  "Link do restaurante (identificador)": {
+    "en": "Restaurant link (identifier)",
+    "es": "Enlace del restaurante (identificador)"
+  },
+  "Senha inicial": {
+    "en": "Initial password",
+    "es": "Contraseña inicial"
+  },
+  "Período de acesso": {
+    "en": "Access period",
+    "es": "Período de acceso"
+  },
+  "Cadastrar e liberar acesso": {
+    "en": "Register and enable access",
+    "es": "Registrar y habilitar acceso"
+  },
+  "Últimas alterações de acesso": {
+    "en": "Latest access changes",
+    "es": "Últimos cambios de acceso"
+  },
+  "Data · Brasília": {
+    "en": "Date · Brasília",
+    "es": "Fecha · Brasilia"
+  },
+  "Restaurante": {
+    "en": "Restaurant",
+    "es": "Restaurante"
+  },
+  "Ação": {
+    "en": "Action",
+    "es": "Acción"
+  },
+  "← Restaurantes": {
+    "en": "← Restaurants",
+    "es": "← Restaurantes"
+  },
+  "Administradores": {
+    "en": "Administrators",
+    "es": "Administradores"
+  },
+  "· Plano até": {
+    "en": "· Plan until",
+    "es": "· Plan hasta"
+  },
+  "Acesso por e-mail:": {
+    "en": "Email sign-in:",
+    "es": "Acceso por correo:"
+  },
+  "Salvar dados do administrador": {
+    "en": "Save administrator details",
+    "es": "Guardar datos del administrador"
+  },
+  "Nova senha": {
+    "en": "New password",
+    "es": "Nueva contraseña"
+  },
+  "Redefinir senha": {
+    "en": "Reset password",
+    "es": "Restablecer contraseña"
+  },
+  "Adicionar administrador neste restaurante": {
+    "en": "Add administrator to this restaurant",
+    "es": "Añadir administrador a este restaurante"
+  },
+  "Cadastrar administrador": {
+    "en": "Add administrator",
+    "es": "Registrar administrador"
+  },
+  "Nome completo do administrador": {
+    "en": "Administrator's full name",
+    "es": "Nombre completo del administrador"
+  },
+  "Nome da pessoa responsável pelo caixa. O acesso será feito pelo e-mail abaixo.": {
+    "en": "Name of the person responsible for the register. Sign-in uses the email below.",
+    "es": "Nombre de la persona responsable de la caja. El acceso se realiza con el correo indicado abajo."
+  },
+  "E-mail de acesso": {
+    "en": "Sign-in email",
+    "es": "Correo de acceso"
+  },
+  "Use um endereço de e-mail válido e exclusivo neste restaurante.": {
+    "en": "Use a valid email unique to this restaurant.",
+    "es": "Usa un correo válido y exclusivo en este restaurante."
+  },
+  "CPF do administrador": {
+    "en": "Administrator CPF",
+    "es": "CPF del administrador"
+  },
+  "11 dígitos. O sistema confere os dígitos verificadores.": {
+    "en": "11 digits. The system checks the check digits.",
+    "es": "11 dígitos. El sistema verifica los dígitos de control."
+  },
+  "Endereço do administrador": {
+    "en": "Administrator address",
+    "es": "Dirección del administrador"
+  },
+  "Dia/mês/ano. Selecione pelo calendário do dispositivo.": {
+    "en": "Day/month/year. Select using the device calendar.",
+    "es": "Día/mes/año. Selecciona en el calendario del dispositivo."
+  },
+  "A taxa é exibida antes de confirmar o pedido. Alterações não modificam os pedidos já realizados.": {
+    "en": "The fee appears before order confirmation. Changes do not affect existing orders.",
+    "es": "La tarifa aparece antes de confirmar el pedido. Los cambios no afectan a pedidos existentes."
+  },
+  "O cadastro e o pedido não confirmam um pagamento bancário. Confira o recebimento e registre no caixa.": {
+    "en": "Account creation and ordering do not confirm bank payments. Verify receipt and record it at the register.",
+    "es": "El registro y el pedido no confirman pagos bancarios. Verifica el cobro y regístralo en caja."
+  },
+  "As configurações continuam protegidas pela senha do administrador.": {
+    "en": "These settings require the administrator password.",
+    "es": "Esta configuración requiere la contraseña del administrador."
+  },
+  "Se não houver, informe: sem referência": {
+    "en": "If there is none, enter “no landmark”",
+    "es": "Si no hay, escribe «sin referencia»"
+  },
+  "Dinheiro é o valor líquido a repassar, já descontado o troco. Pix e cartões precisam de conferência e não representam dinheiro físico com o entregador.": {
+    "en": "Cash is the net amount to hand over after change. Check Pix and card payments separately from the courier's cash.",
+    "es": "El efectivo es el importe neto a entregar, descontado el cambio. Verifica Pix y tarjetas por separado del efectivo del repartidor."
+  },
+  "As entregas selecionadas serão conferidas. Os recebimentos ainda não pagos serão registrados no caixa aberto, sem duplicar pagamentos antecipados.": {
+    "en": "Selected deliveries will be settled. Outstanding receipts are recorded in the open register without duplicating prepaid amounts.",
+    "es": "Se liquidarán las entregas seleccionadas. Los cobros pendientes se registrarán en la caja abierta sin duplicar pagos anticipados."
+  },
+  "Esta área contém informações de gestão. Informe a senha de": {
+    "en": "This area contains management information. Enter the password for",
+    "es": "Esta área contiene información de gestión. Introduce la contraseña de"
+  },
+  "para continuar.": {
+    "en": "to continue.",
+    "es": "para continuar."
+  },
+  "A liberação permanece válida durante esta sessão, até você sair da conta ou bloquear as áreas de gestão. Não expira enquanto você edita.": {
+    "en": "Access remains unlocked during this session until you sign out or lock management areas. It does not expire while editing.",
+    "es": "El acceso permanece abierto durante la sesión hasta que cierres sesión o bloquees las áreas de gestión. No caduca mientras editas."
+  },
+  "O sistema confere os dígitos do CPF. Isso não confirma titularidade nem situação cadastral na Receita Federal.": {
+    "en": "The system checks CPF digits. This does not verify ownership or registration status with the tax authority.",
+    "es": "El sistema comprueba los dígitos del CPF. Esto no confirma la titularidad ni la situación del registro fiscal."
+  },
+  "Para cadastrar sabores, use uma categoria com “Pizza” no nome. Os sabores ativos entram automaticamente em todos os tamanhos.": {
+    "en": "Use a category with “Pizza” in its name to add flavors. Active flavors are automatically available in all sizes.",
+    "es": "Usa una categoría con «Pizza» en el nombre para registrar sabores. Los sabores activos se incluyen automáticamente en todos los tamaños."
+  },
+  "Até 200 cadastros recentes. CPF completo não é exibido. Contas de clientes não recebem permissões da equipe.": {
+    "en": "Up to 200 recent accounts. Full CPFs are hidden. Customer accounts do not receive staff permissions.",
+    "es": "Hasta 200 registros recientes. El CPF completo se oculta. Las cuentas de clientes no reciben permisos del equipo."
+  },
+  "A receber primeiro; dentro de cada grupo: prontos, em preparo, abertos, em entrega e entregues.": {
+    "en": "Unpaid orders first. Each group shows ready, preparing, open, in delivery and delivered orders in that order.",
+    "es": "Primero los pedidos por cobrar. Cada grupo muestra listos, en preparación, abiertos, en reparto y entregados en ese orden."
+  },
+  "no servidor, com o ambiente virtual do sistema, e reinicie a aplicação.": {
+    "en": "on the server using the system's virtual environment, then restart the application.",
+    "es": "en el servidor con el entorno virtual del sistema y reinicia la aplicación."
+  },
+  ". A emissão automática fica desativada até você habilitá-la. Para emitir, mantenha o processador fiscal em execução no servidor.": {
+    "en": ". Automatic issuance stays off until enabled. Keep the tax processor running on the server to issue receipts.",
+    "es": ". La emisión automática queda desactivada hasta que la habilites. Mantén el procesador fiscal en ejecución en el servidor."
+  },
+  "Esta instalação está liberada para homologação. A emissão em produção exige validação tributária e habilitação no servidor.": {
+    "en": "This installation is enabled for testing. Production issuance requires tax validation and server activation.",
+    "es": "Esta instalación está habilitada para homologación. La emisión en producción requiere validación fiscal y habilitación en el servidor."
+  },
+  "Use os mesmos dados cadastrados no painel da Focus NFe.": {
+    "en": "Use the same details registered in the Focus NFe dashboard.",
+    "es": "Usa los mismos datos registrados en el panel de Focus NFe."
+  },
+  "O adaptador desta versão calcula os perfis básicos de CRT 1 e 3. Outros enquadramentos precisam de extensão fiscal antes da emissão.": {
+    "en": "This version calculates basic CRT 1 and 3 profiles. Other regimes require additional tax support before issuance.",
+    "es": "Esta versión calcula perfiles básicos CRT 1 y 3. Otros regímenes requieren una extensión fiscal antes de emitir."
+  },
+  "Tokens ficam criptografados e nunca são exibidos novamente.": {
+    "en": "Tokens are encrypted and are never displayed again.",
+    "es": "Los tokens se cifran y no vuelven a mostrarse."
+  },
+  "A Focus autentica a emissão com o token e senha vazia; o Master é uma credencial administrativa separada.": {
+    "en": "Focus authenticates issuance using the token and a blank password. The Master token is a separate administrative credential.",
+    "es": "Focus autentica la emisión con el token y una contraseña vacía. El Master es una credencial administrativa separada."
+  },
+  "Envie o arquivo .pfx ou .p12 com chave privada, até 1 MB.": {
+    "en": "Upload the .pfx or .p12 file with the private key, up to 1 MB.",
+    "es": "Sube el archivo .pfx o .p12 con la clave privada, hasta 1 MB."
+  },
+  "Salvar guarda uma cópia criptografada no restaurante. O botão abaixo envia o certificado salvo para a empresa da Focus; ele também será usado nas emissões de produção desse CNPJ.": {
+    "en": "Saving keeps an encrypted copy for the restaurant. The button below sends the saved certificate to the Focus company for use in production issuance for this CNPJ as well.",
+    "es": "Al guardar se conserva una copia cifrada para el restaurante. El botón envía el certificado guardado a la empresa en Focus para usarlo también en las emisiones de producción de este CNPJ."
+  },
+  "Alíquota padrão aplicada somente ao ICMS CST 00, quando o item não informa outra. A numeração é reservada localmente por CNPJ, ambiente e série; não use a mesma série em outro emissor.": {
+    "en": "The default rate applies only to ICMS CST 00 when no item rate is provided. Numbers are reserved locally by CNPJ, environment and series. Use a different series in other issuers.",
+    "es": "La tasa predeterminada se aplica solo al ICMS CST 00 cuando el artículo no indica otra. La numeración se reserva por CNPJ, entorno y serie. Usa otra serie en otros emisores."
+  },
+  "Para produção: confirmei credenciamento, CSC e tributação com o responsável fiscal.": {
+    "en": "For production: I confirmed accreditation, CSC and taxation with the tax representative.",
+    "es": "Para producción: confirmé la acreditación, el CSC y la tributación con el responsable fiscal."
+  },
+  "Preencha com os códigos definidos pelo contador. O nome precisa corresponder ao item gravado na comanda; renomear um produto exige cadastrar a nova regra. Os preços vêm do pedido, inclusive adicionais e sabores.": {
+    "en": "Use the codes supplied by your accountant. The name must match the saved tab item. Renamed products need a new rule. Prices come from the order, including extras and flavors.",
+    "es": "Usa los códigos del contador. El nombre debe coincidir con el artículo guardado en la cuenta. Si cambias el nombre del producto, registra una nueva regla. Los precios provienen del pedido, incluidos extras y sabores."
+  },
+  "102 · Simples sem crédito": {
+    "en": "102 · Simples without credit",
+    "es": "102 · Simples sin crédito"
+  },
+  "500 · ICMS cobrado anteriormente ST": {
+    "en": "500 · ICMS previously collected under ST",
+    "es": "500 · ICMS cobrado previamente por ST"
+  },
+  "00 · Tributado integralmente": {
+    "en": "00 · Fully taxed",
+    "es": "00 · Tributación íntegra"
+  },
+  "40 · Isento": {
+    "en": "40 · Exempt",
+    "es": "40 · Exento"
+  },
+  "41 · Não tributado": {
+    "en": "41 · Not taxed",
+    "es": "41 · No gravado"
+  },
+  "60 · ICMS cobrado anteriormente ST": {
+    "en": "60 · ICMS previously collected under ST",
+    "es": "60 · ICMS cobrado previamente por ST"
+  },
+  "Até 20 notas por página. Rejeições e pendências fiscais precisam ser resolvidas mesmo quando o pagamento já foi recebido.": {
+    "en": "Up to 20 receipts per page. Resolve tax rejections and pending issues even after payment.",
+    "es": "Hasta 20 comprobantes por página. Resuelve rechazos y pendientes fiscales incluso después de cobrar."
+  },
+  "Use dados reais do cliente e o ID local da nota exibido no card. O cadastro atual do cliente não possui todos os campos exigidos na NFC-e.": {
+    "en": "Use the customer's real details and the local receipt ID shown on the card. The customer record lacks some required NFC-e fields.",
+    "es": "Usa los datos reales del cliente y el ID local mostrado en la tarjeta. El registro del cliente no tiene todos los campos requeridos para NFC-e."
+  },
+  "Preencha o nome e o link do restaurante, depois os dados pessoais do administrador. Todos os campos são obrigatórios. Cada restaurante mantém seus dados separados.": {
+    "en": "Enter the restaurant name and link, then the administrator's personal details. All fields are required. Restaurant data is kept separate.",
+    "es": "Introduce el nombre y enlace del restaurante y luego los datos del administrador. Todos los campos son obligatorios. Los datos de cada restaurante se mantienen separados."
+  },
+  "Apenas o final do link. Ex.: sabor-da-casa gera /r/sabor-da-casa/. Não digite rua, www ou https. O endereço residencial é informado abaixo.": {
+    "en": "Enter only the link suffix. For example, sabor-da-casa creates /r/sabor-da-casa/. Enter the residential address below.",
+    "es": "Introduce solo el final del enlace. Por ejemplo, sabor-da-casa genera /r/sabor-da-casa/. Introduce la dirección residencial abajo."
+  },
+  "Planos são controlados manualmente. Não há cobrança ou renovação automática. A renovação de um plano vigente soma o período ao vencimento atual; se vencido, conta a partir de agora.": {
+    "en": "Plans are managed manually. Renewal extends an active plan from its current expiration date or starts now for an expired plan.",
+    "es": "Los planes se gestionan manualmente. La renovación amplía un plan activo desde su vencimiento actual o empieza ahora si ya venció."
+  },
+  ". A conta só acessa quando o plano do restaurante e o usuário estão ativos.": {
+    "en": ". The account can sign in while both the restaurant plan and user are active.",
+    "es": ". La cuenta puede acceder si el plan del restaurante y el usuario están activos."
+  },
+  "Compartilhe o endereço abaixo após publicar o sistema com HTTPS:": {
+    "en": "Share the address below after publishing the system over HTTPS:",
+    "es": "Comparte la dirección de abajo después de publicar el sistema con HTTPS:"
+  },
+  "A taxa de entrega é fixa e aparece antes da confirmação. Alterar a taxa preserva o valor dos pedidos já realizados.": {
+    "en": "The flat delivery fee appears before confirmation. Changing it keeps existing order amounts intact.",
+    "es": "La tarifa fija aparece antes de confirmar. Al cambiarla se conservan los importes de los pedidos existentes."
+  },
+  "Cadastre os sabores em Produtos. Aqui você configura como todas as pizzas desta categoria serão montadas.": {
+    "en": "Add flavors under Products. Configure how pizzas in this category are built here.",
+    "es": "Registra los sabores en Productos. Configura aquí cómo se preparan las pizzas de esta categoría."
+  },
+  "Cadastre uma categoria com “Pizza” no nome e adicione os sabores em Produtos.": {
+    "en": "Create a category with “Pizza” in its name and add flavors in Products.",
+    "es": "Registra una categoría con «Pizza» en el nombre y añade los sabores en Productos."
+  },
+  "Abra um bloco para editar as opções. A massa pode ser obrigatória e a borda opcional.": {
+    "en": "Open a group to edit options. Dough can be required and crust optional.",
+    "es": "Abre un bloque para editar las opciones. La masa puede ser obligatoria y el borde opcional."
+  },
+  "Estes sabores ainda não estão cadastrados como produtos. Confira a lista e importe para preservar os nomes, descrições e preços. Produtos existentes não serão alterados.": {
+    "en": "These flavors are not registered as products yet. Review and import them to keep their names, descriptions and prices. Existing products are preserved.",
+    "es": "Estos sabores todavía no están registrados como productos. Revisa e importa para conservar nombres, descripciones y precios. Los productos existentes se conservan."
+  },
+  "Nome, ingredientes, imagem e preço vêm do cadastro do produto. Somente os sabores ativos aparecem para escolher.": {
+    "en": "Name, ingredients, image and price come from the product record. Customers can choose active flavors.",
+    "es": "El nombre, ingredientes, imagen y precio vienen del producto registrado. Solo aparecen sabores activos."
+  },
+  "Na pizza, tamanhos e sabores são usados juntos. Nos demais blocos, você escolhe se a resposta é obrigatória.": {
+    "en": "Pizza sizes and flavors work together. For other groups, choose whether an answer is required.",
+    "es": "Los tamaños y sabores de pizza funcionan juntos. Para los demás bloques, elige si la respuesta es obligatoria."
+  },
+  "Clique no título para abrir ou recolher. Os pedidos já enviados serão preservados.": {
+    "en": "Click the title to expand or collapse. Existing orders are preserved.",
+    "es": "Haz clic en el título para abrir o cerrar. Los pedidos enviados se conservan."
+  },
+  "Imprima e coloque nas mesas. O cliente escolhe os produtos sem senha e o garçom vincula a comanda ao atender.": {
+    "en": "Print and place on tables. Customers choose items without a password and the server links their tab.",
+    "es": "Imprime y coloca en las mesas. El cliente elige productos sin contraseña y el camarero vincula la cuenta al atender."
+  },
+  "O código usa o endereço pelo qual você acessou o sistema. Gere na URL pública com HTTPS para funcionar nos celulares dos clientes.": {
+    "en": "The code uses the current site address. Generate it on the public HTTPS URL for customer phones.",
+    "es": "El código usa la dirección actual del sistema. Genéralo en la URL pública con HTTPS para que funcione en los móviles de los clientes."
+  },
+  "Este acesso é para clientes no salão. Para testar, abra o QR Code em outro navegador ou saia da conta atual.": {
+    "en": "This link is for dine-in customers. To test it, open the QR code in another browser or sign out first.",
+    "es": "Este acceso es para clientes en sala. Para probarlo, abre el QR en otro navegador o cierra la sesión actual."
+  },
+  "Informe seu nome e a mesa onde está sentado. Assim, o garçom saberá onde levar seu pedido e completará o atendimento com o número da comanda.": {
+    "en": "Enter your name and table. Your server will bring your order there and assign the tab number.",
+    "es": "Indica tu nombre y mesa. El camarero llevará allí tu pedido y asignará el número de cuenta."
+  },
+  "Sem senha. Seus pedidos ficam disponíveis apenas neste navegador. Ao sair ou limpar os dados do navegador, o acesso a esse histórico é perdido.": {
+    "en": "No password required. Your orders are available in this browser. Signing out or clearing browser data removes access to this history.",
+    "es": "Sin contraseña. Tus pedidos están disponibles en este navegador. Cerrar sesión o borrar los datos elimina el acceso a este historial."
+  },
+  "· Brasília · Semana de segunda a domingo.": {
+    "en": "· Brasília · Weeks run Monday to Sunday.",
+    "es": "· Brasilia · Semana de lunes a domingo."
+  },
+  "Produtos:": {
+    "en": "Products:",
+    "es": "Productos:"
+  },
+  "· Entrega:": {
+    "en": "· Delivery:",
+    "es": "· Entrega:"
+  },
+  "Valores em reais, incluindo entrega. Posicione o cursor nos pontos para consultar os valores.": {
+    "en": "Amounts in Brazilian reais, including delivery. Hover over points to view amounts.",
+    "es": "Importes en reales, incluida la entrega. Pasa el cursor sobre los puntos para ver los importes."
+  },
+  "Ordenadas pelo valor dos produtos, sem taxa de entrega.": {
+    "en": "Sorted by product value, excluding delivery fees.",
+    "es": "Ordenadas por importe de productos, sin tarifa de entrega."
+  },
+  "Categorias associadas pelo nome ao cadastro atual. Sem correspondência segura: “Categoria não identificada”.": {
+    "en": "Categories match current records by name. Unmatched items appear as “Unidentified category”.",
+    "es": "Las categorías coinciden por nombre con el registro actual. Sin coincidencia se muestra «Categoría no identificada»."
+  },
+  "Ranking pelo valor dos pedidos no período, incluindo entrega.": {
+    "en": "Ranked by order value in the period, including delivery.",
+    "es": "Clasificación por importe de pedidos del período, incluida la entrega."
+  },
+  "Somente clientes identificados em pedidos online. Pedidos do salão sem cliente associado:": {
+    "en": "Only identified online customers. Dine-in orders without an associated customer:",
+    "es": "Solo clientes identificados en pedidos en línea. Pedidos en sala sin cliente asociado:"
+  },
+  "Ranking por quantidade de unidades; desempate pelo valor dos itens.": {
+    "en": "Ranked by unit count, with item value breaking ties.",
+    "es": "Clasificación por unidades, con desempate por importe de los artículos."
+  },
+  "Os itens são agrupados pelo nome. Produtos renomeados podem aparecer separados. Valores usam o preço salvo no pedido.": {
+    "en": "Items are grouped by name. Renamed products may appear separately. Amounts use the price saved with the order.",
+    "es": "Los artículos se agrupan por nombre. Los productos renombrados pueden aparecer separados. Los importes usan el precio guardado en el pedido."
+  },
+  "O período usa a criação do pedido em Brasília; “Somente pagos” considera o pagamento atual. Para entradas por data de recebimento, consulte o caixa. Semana de segunda a domingo. Gráficos de ranking mostram os cinco primeiros; paginação e Excel incluem todos. Categorias usam o cadastro atual e não a categoria histórica da venda.": {
+    "en": "Periods use order creation time in Brasília. “Paid only” uses the current payment status. For receipts by payment date, see the cash register. Weeks run Monday to Sunday. Ranking charts show the top five, while pages and Excel include every result. Categories use current records.",
+    "es": "El período usa la fecha de creación en Brasilia. «Solo pagados» usa el estado de pago actual. Consulta la caja para ver cobros por fecha de recepción. La semana va de lunes a domingo. Los gráficos muestran los cinco primeros y la paginación y Excel incluyen todos. Se usan las categorías actuales."
+  },
+  "Ative o JavaScript para usar as abas e gráficos. A exportação completa continua disponível no botão superior.": {
+    "en": "Enable JavaScript for tabs and charts. The full export is available using the button above.",
+    "es": "Activa JavaScript para usar pestañas y gráficos. La exportación completa está disponible en el botón superior."
+  },
+  "Escolha se as áreas de gestão exigem confirmação adicional de senha. O login de administrador continua obrigatório.": {
+    "en": "Choose whether management areas require extra password confirmation. Administrator sign-in remains required.",
+    "es": "Elige si las áreas de gestión requieren confirmación adicional de contraseña. El acceso de administrador sigue siendo obligatorio."
+  },
+  "Com a proteção ativa, basta liberar cada área uma vez por sessão. A edição não tem limite de tempo. Desmarcando esta opção, os menus ficam desbloqueados para os usuários com perfil administrador deste restaurante.": {
+    "en": "When enabled, unlock each area once per session. Editing has no time limit. Uncheck to keep menus unlocked for this restaurant's administrators.",
+    "es": "Con la protección activa, desbloquea cada área una vez por sesión. La edición no tiene límite de tiempo. Desmarca la opción para dejar los menús abiertos a los administradores del restaurante."
+  },
+  "Ex.: 8": {
+    "en": "E.g. 8",
+    "es": "P. ej. 8"
+  },
+  "Ex.: 120 ou s/n": {
+    "en": "E.g. 120 or no number",
+    "es": "P. ej. 120 o s/n"
+  },
+  "Ex.: 123 ou s/n": {
+    "en": "E.g. 123 or no number",
+    "es": "P. ej. 123 o s/n"
+  },
+  "Ex.: Centro": {
+    "en": "E.g. Downtown",
+    "es": "P. ej. Centro"
+  },
+  "Ex.: Rua das Flores": {
+    "en": "E.g. Rua das Flores",
+    "es": "P. ej. Rua das Flores"
+  },
+  "Ex.: Maria da Silva": {
+    "en": "E.g. Maria da Silva",
+    "es": "P. ej. Maria da Silva"
+  },
+  "Ex.: João": {
+    "en": "E.g. João",
+    "es": "P. ej. João"
+  },
+  "Ex.: RS": {
+    "en": "E.g. RS",
+    "es": "P. ej. RS"
+  },
+  "Ex.: 18,00": {
+    "en": "E.g. 18.00",
+    "es": "P. ej. 18,00"
+  },
+  "ex.: sabor-da-casa": {
+    "en": "e.g. sabor-da-casa",
+    "es": "p. ej. sabor-da-casa"
+  },
+  "A combinar": {
+    "en": "To be arranged",
+    "es": "Por acordar"
+  },
+  "A conferir": {
+    "en": "To be checked",
+    "es": "Por verificar"
+  },
+  "A entrega foi atualizada. Confira a lista.": {
+    "en": "Delivery updated. Check the list.",
+    "es": "Entrega actualizada. Revisa la lista."
+  },
+  "A imagem deve ter no máximo 5 MB.": {
+    "en": "The image must be 5 MB or smaller.",
+    "es": "La imagen debe tener un máximo de 5 MB."
+  },
+  "A imagem será removida ao salvar.": {
+    "en": "The image will be removed when you save.",
+    "es": "La imagen se eliminará al guardar."
+  },
+  "Acerto conferido": {
+    "en": "Settlement checked",
+    "es": "Liquidación verificada"
+  },
+  "Acréscimo": {
+    "en": "Surcharge",
+    "es": "Suplemento"
+  },
+  "Acréscimo (R$)": {
+    "en": "Surcharge (R$)",
+    "es": "Suplemento (R$)"
+  },
+  "Acréscimo ao preço dos sabores (R$)": {
+    "en": "Flavor price surcharge (R$)",
+    "es": "Suplemento al precio de sabores (R$)"
+  },
+  "Adicionar borda": {
+    "en": "Add crust",
+    "es": "Añadir borde"
+  },
+  "Adicionar massa": {
+    "en": "Add dough",
+    "es": "Añadir masa"
+  },
+  "Adicionar opção": {
+    "en": "Add option",
+    "es": "Añadir opción"
+  },
+  "Adicionar ponto": {
+    "en": "Add doneness option",
+    "es": "Añadir punto de cocción"
+  },
+  "Adicionar sabor": {
+    "en": "Add flavor",
+    "es": "Añadir sabor"
+  },
+  "Adicionar tamanho": {
+    "en": "Add size",
+    "es": "Añadir tamaño"
+  },
+  "Aguardando conferência": {
+    "en": "Awaiting review",
+    "es": "Pendiente de revisión"
+  },
+  "Alguns itens mudaram. Confira o cardápio e escolha as opções novamente.": {
+    "en": "Some items changed. Check the menu and choose the options again.",
+    "es": "Algunos artículos cambiaron. Revisa el menú y vuelve a elegir las opciones."
+  },
+  "Alterar título exibido no cardápio": {
+    "en": "Change title displayed on the menu",
+    "es": "Cambiar título del menú"
+  },
+  "Antecipado": {
+    "en": "Prepaid",
+    "es": "Anticipado"
+  },
+  "Ao ponto": {
+    "en": "Medium",
+    "es": "Al punto"
+  },
+  "Bem passado": {
+    "en": "Well done",
+    "es": "Bien cocido"
+  },
+  "Mal passado": {
+    "en": "Rare",
+    "es": "Poco hecho"
+  },
+  "Broto": {
+    "en": "Personal",
+    "es": "Individual"
+  },
+  "Média": {
+    "en": "Medium",
+    "es": "Mediana"
+  },
+  "Grande": {
+    "en": "Large",
+    "es": "Grande"
+  },
+  "Família": {
+    "en": "Family",
+    "es": "Familiar"
+  },
+  "Pizza média": {
+    "en": "Medium pizza",
+    "es": "Pizza mediana"
+  },
+  "Pizza grande": {
+    "en": "Large pizza",
+    "es": "Pizza grande"
+  },
+  "Pizza família": {
+    "en": "Family pizza",
+    "es": "Pizza familiar"
+  },
+  "Tradicional": {
+    "en": "Traditional",
+    "es": "Tradicional"
+  },
+  "Fina": {
+    "en": "Thin",
+    "es": "Fina"
+  },
+  "Sem borda": {
+    "en": "No stuffed crust",
+    "es": "Sin borde relleno"
+  },
+  "Cliente precisa escolher": {
+    "en": "Customer must choose",
+    "es": "El cliente debe elegir"
+  },
+  "Cobrar na entrega": {
+    "en": "Collect on delivery",
+    "es": "Cobrar en la entrega"
+  },
+  "Comanda indisponível para adicionar itens.": {
+    "en": "This tab is unavailable for additional items.",
+    "es": "No se pueden añadir artículos a esta cuenta."
+  },
+  "Comanda vinculada.": {
+    "en": "Tab linked.",
+    "es": "Cuenta vinculada."
+  },
+  "Como o cliente responde?": {
+    "en": "How does the customer respond?",
+    "es": "¿Cómo responde el cliente?"
+  },
+  "Conferido": {
+    "en": "Checked",
+    "es": "Verificado"
+  },
+  "Confirmar e salvar": {
+    "en": "Confirm and save",
+    "es": "Confirmar y guardar"
+  },
+  "Confirme a entrega e a conferência do pagamento.": {
+    "en": "Confirm delivery and payment review.",
+    "es": "Confirma la entrega y la revisión del pago."
+  },
+  "Confirme a senha": {
+    "en": "Confirm password",
+    "es": "Confirma la contraseña"
+  },
+  "Confirme que recebeu o dinheiro e conferiu os pagamentos.": {
+    "en": "Confirm you received the cash and checked the payments.",
+    "es": "Confirma que recibiste el efectivo y verificaste los pagos."
+  },
+  "Crédito a conferir": {
+    "en": "Credit payments to check",
+    "es": "Crédito por verificar"
+  },
+  "Débito a conferir": {
+    "en": "Debit payments to check",
+    "es": "Débito por verificar"
+  },
+  "Dinheiro a repassar": {
+    "en": "Cash to hand over",
+    "es": "Efectivo a entregar"
+  },
+  "Data (dd/mm/aaaa)": {
+    "en": "Date (dd/mm/yyyy)",
+    "es": "Fecha (dd/mm/aaaa)"
+  },
+  "Descreva esta opção": {
+    "en": "Describe this option",
+    "es": "Describe esta opción"
+  },
+  "Descrição da opção (opcional)": {
+    "en": "Option description (optional)",
+    "es": "Descripción de la opción (opcional)"
+  },
+  "Escolhe uma opção": {
+    "en": "Choose one option",
+    "es": "Elige una opción"
+  },
+  "Escolhido pelo cliente:": {
+    "en": "Selected by customer:",
+    "es": "Elegido por el cliente:"
+  },
+  "Escreve um texto curto": {
+    "en": "Enter a short text",
+    "es": "Escribe un texto corto"
+  },
+  "Exibir": {
+    "en": "Show",
+    "es": "Mostrar"
+  },
+  "Exibir no cardápio": {
+    "en": "Show on the menu",
+    "es": "Mostrar en el menú"
+  },
+  "Imagem atual cadastrada": {
+    "en": "Current saved image",
+    "es": "Imagen actual registrada"
+  },
+  "Incluir tamanho:": {
+    "en": "Add size:",
+    "es": "Añadir tamaño:"
+  },
+  "Incluído ·": {
+    "en": "Included ·",
+    "es": "Incluido ·"
+  },
+  "Informe os números da comanda e da mesa.": {
+    "en": "Enter the tab and table numbers.",
+    "es": "Indica los números de cuenta y mesa."
+  },
+  "Informe um valor como 5,50, 5.50 ou 1.234,56.": {
+    "en": "Enter an amount like 5,50, 5.50 or 1.234,56.",
+    "es": "Indica un importe como 5,50, 5.50 o 1.234,56."
+  },
+  "Informe uma data válida: dd/mm/aaaa.": {
+    "en": "Enter a valid date: dd/mm/yyyy.",
+    "es": "Indica una fecha válida: dd/mm/aaaa."
+  },
+  "Ingredientes / descrição do sabor": {
+    "en": "Flavor ingredients / description",
+    "es": "Ingredientes / descripción del sabor"
+  },
+  "Itens adicionados à comanda": {
+    "en": "Items added to the tab",
+    "es": "Artículos añadidos a la cuenta"
+  },
+  "Já pago": {
+    "en": "Already paid",
+    "es": "Ya pagado"
+  },
+  "Marcação desfeita.": {
+    "en": "Selection undone.",
+    "es": "Selección deshecha."
+  },
+  "Máx. sabores": {
+    "en": "Max. flavors",
+    "es": "Máx. sabores"
+  },
+  "Máximo de opções": {
+    "en": "Maximum options",
+    "es": "Máximo de opciones"
+  },
+  "Nenhum pedido encontrado para essa comanda.": {
+    "en": "No orders found for this tab.",
+    "es": "No se encontraron pedidos para esta cuenta."
+  },
+  "Nenhum registro": {
+    "en": "No records",
+    "es": "Sin registros"
+  },
+  "Nenhuma imagem selecionada": {
+    "en": "No image selected",
+    "es": "Ninguna imagen seleccionada"
+  },
+  "Nome da borda": {
+    "en": "Crust name",
+    "es": "Nombre del borde"
+  },
+  "Nome da opção": {
+    "en": "Option name",
+    "es": "Nombre de la opción"
+  },
+  "Nome do bloco no cardápio": {
+    "en": "Group name on menu",
+    "es": "Nombre del bloque en el menú"
+  },
+  "Nome do sabor": {
+    "en": "Flavor name",
+    "es": "Nombre del sabor"
+  },
+  "Notificações ativadas neste dispositivo.": {
+    "en": "Notifications enabled on this device.",
+    "es": "Notificaciones activadas en este dispositivo."
+  },
+  "Não foi possível concluir a operação.": {
+    "en": "Could not complete the operation.",
+    "es": "No se pudo completar la operación."
+  },
+  "Não foi possível salvar. Confira os campos.": {
+    "en": "Could not save. Check the fields.",
+    "es": "No se pudo guardar. Revisa los campos."
+  },
+  "Não foi possível salvar as opções.": {
+    "en": "Could not save options.",
+    "es": "No se pudieron guardar las opciones."
+  },
+  "Oculto": {
+    "en": "Hidden",
+    "es": "Oculto"
+  },
+  "Outro bloco de opções": {
+    "en": "Another option group",
+    "es": "Otro bloque de opciones"
+  },
+  "Pagamento antecipado": {
+    "en": "Prepaid",
+    "es": "Pago anticipado"
+  },
+  "Pago antecipadamente · não cobrado pelo entregador": {
+    "en": "Prepaid · courier does not collect",
+    "es": "Pago anticipado · el repartidor no cobra"
+  },
+  "Pagos antecipadamente": {
+    "en": "Prepaid orders",
+    "es": "Pagados por adelantado"
+  },
+  "Pendente de conferência": {
+    "en": "Pending review",
+    "es": "Pendiente de revisión"
+  },
+  "Pix a conferir": {
+    "en": "Pix payments to check",
+    "es": "Pix por verificar"
+  },
+  "Pode escolher várias opções": {
+    "en": "Choose multiple options",
+    "es": "Elige varias opciones"
+  },
+  "Preço": {
+    "en": "Price",
+    "es": "Precio"
+  },
+  "Preço da pizza (R$)": {
+    "en": "Pizza price (R$)",
+    "es": "Precio de pizza (R$)"
+  },
+  "Preço inteiro (R$)": {
+    "en": "Whole-pizza price (R$)",
+    "es": "Precio de pizza entera (R$)"
+  },
+  "Recebido pelo entregador:": {
+    "en": "Received by courier:",
+    "es": "Recibido por el repartidor:"
+  },
+  "Recebimentos já conferidos": {
+    "en": "Receipts already checked",
+    "es": "Cobros ya verificados"
+  },
+  "Reenviar a mesma tentativa →": {
+    "en": "Retry the same submission →",
+    "es": "Reintentar el mismo envío →"
+  },
+  "Remover este bloco": {
+    "en": "Remove this group",
+    "es": "Quitar este bloque"
+  },
+  "Remover montagem de pizza": {
+    "en": "Remove pizza builder",
+    "es": "Quitar configuración de pizza"
+  },
+  "Remoção selecionada": {
+    "en": "Removal selected",
+    "es": "Eliminación seleccionada"
+  },
+  "Retirada no caixa": {
+    "en": "Counter pickup",
+    "es": "Retirada en caja"
+  },
+  "Salvar ·": {
+    "en": "Save ·",
+    "es": "Guardar ·"
+  },
+  "Selecione um entregador": {
+    "en": "Select a courier",
+    "es": "Selecciona un repartidor"
+  },
+  "Selecione um entregador.": {
+    "en": "Select a courier.",
+    "es": "Selecciona un repartidor."
+  },
+  "Sem dados para este período.": {
+    "en": "No data for this period.",
+    "es": "Sin datos para este período."
+  },
+  "Seu pedido está pronto e aguarda saída para entrega.": {
+    "en": "Your order is ready and waiting to go out for delivery.",
+    "es": "Tu pedido está listo y espera el reparto."
+  },
+  "Sua sacola e finalização": {
+    "en": "Cart and checkout",
+    "es": "Carrito y confirmación"
+  },
+  "TELE-ENTREGA": {
+    "en": "DELIVERY",
+    "es": "ENTREGA A DOMICILIO"
+  },
+  "Tamanho": {
+    "en": "Size",
+    "es": "Tamaño"
+  },
+  "Tamanho e fatias": {
+    "en": "Size and slices",
+    "es": "Tamaño y porciones"
+  },
+  "Texto": {
+    "en": "Text",
+    "es": "Texto"
+  },
+  "Total recebido nas entregas": {
+    "en": "Total received for deliveries",
+    "es": "Total recibido en las entregas"
+  },
+  "Título": {
+    "en": "Title",
+    "es": "Título"
+  },
+  "Use 0,00 para opções sem custo adicional.": {
+    "en": "Use 0,00 for options with no extra charge.",
+    "es": "Usa 0,00 para opciones sin coste adicional."
+  },
+  "Use um valor como 1.234,56.": {
+    "en": "Enter an amount like 1.234,56.",
+    "es": "Indica un importe como 1.234,56."
+  },
+  "Valor em reais": {
+    "en": "Amount in Brazilian reais",
+    "es": "Importe en reales"
+  },
+  "← Alterar tamanho": {
+    "en": "← Change size",
+    "es": "← Cambiar tamaño"
+  },
+  "← Etapa anterior": {
+    "en": "← Previous step",
+    "es": "← Paso anterior"
+  },
+  "✓ Confirmar entrega e pagamento": {
+    "en": "✓ Confirm delivery and payment",
+    "es": "✓ Confirmar entrega y pago"
+  },
+  "✓ Pago": {
+    "en": "✓ Paid",
+    "es": "✓ Pagado"
+  },
+  "🔔 Avisos ativados · desativar": {
+    "en": "🔔 Alerts enabled · disable",
+    "es": "🔔 Avisos activados · desactivar"
+  },
+  "Som ativado. A liberação do áudio será tentada ao interagir com a página.": {
+    "en": "Sound enabled. Audio will be unlocked when you interact with the page.",
+    "es": "Sonido activado. Se intentará habilitar el audio al interactuar con la página."
+  },
+  "Som liberado para os avisos desta sessão.": {
+    "en": "Sound is ready for this session's alerts.",
+    "es": "Sonido habilitado para los avisos de esta sesión."
+  },
+  "Som de teste reproduzido. Alertas ativados.": {
+    "en": "Test sound played. Alerts enabled.",
+    "es": "Sonido de prueba reproducido. Avisos activados."
+  },
+  "Som de teste reproduzido. Ative os avisos para ouvir os próximos pedidos.": {
+    "en": "Test sound played. Enable alerts to hear future orders.",
+    "es": "Sonido de prueba reproducido. Activa los avisos para escuchar los próximos pedidos."
+  },
+  "Este navegador não oferece áudio para os alertas.": {
+    "en": "This browser does not support sound alerts.",
+    "es": "Este navegador no admite avisos sonoros."
+  },
+  "O navegador precisa de um toque para liberar o áudio nesta tela.": {
+    "en": "Tap the screen to allow audio in this browser.",
+    "es": "Toca la pantalla para permitir el audio en este navegador."
+  },
+  "O navegador não liberou o áudio. Confira o volume e a permissão de som.": {
+    "en": "The browser blocked audio. Check volume and sound permissions.",
+    "es": "El navegador bloqueó el audio. Comprueba el volumen y los permisos."
+  },
+  "Não foi possível reproduzir o teste. Confira as permissões e o volume.": {
+    "en": "Could not play the test. Check permissions and volume.",
+    "es": "No se pudo reproducir la prueba. Revisa los permisos y el volumen."
+  },
+  "Não foi possível tocar o som. Confira as permissões de áudio do navegador.": {
+    "en": "Could not play the sound. Check browser audio permissions.",
+    "es": "No se pudo reproducir el sonido. Revisa los permisos de audio."
+  },
+  "Avisos neste dispositivo desativados.": {
+    "en": "Alerts disabled on this device.",
+    "es": "Avisos desactivados en este dispositivo."
+  },
+  "Dispositivo inscrito para receber os avisos do seu perfil.": {
+    "en": "This device is subscribed to alerts for your role.",
+    "es": "Este dispositivo está suscrito a los avisos de tu perfil."
+  },
+  "Este dispositivo está inscrito. A entrega depende da conexão e das permissões do sistema.": {
+    "en": "This device is subscribed. Delivery depends on connectivity and system permissions.",
+    "es": "Este dispositivo está suscrito. La recepción depende de la conexión y los permisos del sistema."
+  },
+  "Permissão de notificações não concedida. Ajuste a permissão nas configurações do navegador.": {
+    "en": "Notification permission was denied. Change it in browser settings.",
+    "es": "No se concedió permiso de notificaciones. Cámbialo en la configuración del navegador."
+  },
+  "Entrega atribuída com sucesso.": {
+    "en": "Delivery assigned.",
+    "es": "Entrega asignada."
+  },
+  "Entrega registrada. O recebimento ficará disponível para conferência.": {
+    "en": "Delivery recorded. The payment is available for review.",
+    "es": "Entrega registrada. El cobro estará disponible para revisión."
+  },
+  "Item marcado como entregue.": {
+    "en": "Item marked delivered.",
+    "es": "Artículo marcado como entregado."
+  },
+  "Item marcado como pronto.": {
+    "en": "Item marked ready.",
+    "es": "Artículo marcado como listo."
+  },
+  "Pizzas adicionadas separadamente ao pedido.": {
+    "en": "Pizzas added to the order separately.",
+    "es": "Pizzas añadidas al pedido por separado."
+  },
+  "Acesso expirado ou operação indisponível. Reabra a área fiscal pelo menu e confira sua senha.": {
+    "en": "Access expired or the action is unavailable. Reopen tax settings and confirm your password.",
+    "es": "El acceso caducó o la operación no está disponible. Abre el área fiscal y confirma tu contraseña."
+  },
+  "Enviar o certificado salvo à Focus NFe? Ele será usado pela empresa cadastrada também em produção.": {
+    "en": "Send the saved certificate to Focus NFe? The registered company will also use it in production.",
+    "es": "¿Enviar el certificado guardado a Focus NFe? La empresa registrada también lo usará en producción."
+  },
+  "Operação concluída.": {
+    "en": "Operation completed.",
+    "es": "Operación completada."
+  },
+  "Nenhuma opção cadastrada. Use o botão abaixo para adicionar.": {
+    "en": "No options yet. Use the button below to add one.",
+    "es": "Aún no hay opciones. Usa el botón inferior para añadir una."
+  },
+  "Este produto ainda não tem opções.": {
+    "en": "This product has no options yet.",
+    "es": "Este producto aún no tiene opciones."
+  },
+  "O cliente poderá escrever até 60 caracteres. Essa resposta não altera o preço.": {
+    "en": "Customers can enter up to 60 characters. The note does not affect price.",
+    "es": "El cliente puede escribir hasta 60 caracteres. La nota no cambia el precio."
+  },
+  "Escolha um dos blocos acima para começar. A observação livre pode ser usada sozinha.": {
+    "en": "Choose a group above to get started. You can also use a custom note on its own.",
+    "es": "Elige un bloque de arriba para empezar. También puedes usar una nota libre por separado."
+  },
+  "Escolha obrigatória na montagem da pizza": {
+    "en": "Required in the pizza builder",
+    "es": "Elección obligatoria al montar la pizza"
+  },
+  "Salvar": {
+    "en": "Save",
+    "es": "Guardar"
+  },
+  "Dia": {
+    "en": "Day",
+    "es": "Día"
+  },
+  "Semana": {
+    "en": "Week",
+    "es": "Semana"
+  },
+  "Mês": {
+    "en": "Month",
+    "es": "Mes"
+  },
+  "Ano": {
+    "en": "Year",
+    "es": "Año"
+  },
+  "Novo cadastro": {
+    "en": "New record",
+    "es": "Nuevo registro"
+  },
+  "Editar cadastro": {
+    "en": "Edit record",
+    "es": "Editar registro"
+  },
+  "Usuários": {
+    "en": "Users",
+    "es": "Usuarios"
+  },
+  "Equipe": {
+    "en": "Staff",
+    "es": "Equipo"
+  },
+  "Adicionar foto": {
+    "en": "Add photo",
+    "es": "Añadir foto"
+  },
+  "Trocar foto": {
+    "en": "Replace photo",
+    "es": "Cambiar foto"
+  },
+  "Configurar pizzas": {
+    "en": "Configure pizzas",
+    "es": "Configurar pizzas"
+  },
+  "garçom": {
+    "en": "server",
+    "es": "camarero"
+  },
+  "garcom": {
+    "en": "server",
+    "es": "camarero"
+  },
+  "cozinha": {
+    "en": "kitchen",
+    "es": "cocina"
+  },
+  "entregador": {
+    "en": "courier",
+    "es": "repartidor"
+  },
+  "admin": {
+    "en": "administrator",
+    "es": "administrador"
+  },
+  "pronto": {
+    "en": "ready",
+    "es": "listo"
+  },
+  "em_preparo": {
+    "en": "preparing",
+    "es": "en preparación"
+  },
+  "entregue": {
+    "en": "delivered",
+    "es": "entregado"
+  },
+  "aberto": {
+    "en": "open",
+    "es": "abierto"
+  },
+  "saiu_entrega": {
+    "en": "in transit",
+    "es": "en tránsito"
+  },
+  "pendente": {
+    "en": "pending",
+    "es": "pendiente"
+  },
+  "opção": {
+    "en": "option",
+    "es": "opción"
+  },
+  "opções": {
+    "en": "options",
+    "es": "opciones"
+  },
+  "sabor": {
+    "en": "flavor",
+    "es": "sabor"
+  },
+  "sabores": {
+    "en": "flavors",
+    "es": "sabores"
+  },
+  "fatias": {
+    "en": "slices",
+    "es": "porciones"
+  },
+  "itens": {
+    "en": "items",
+    "es": "artículos"
+  },
+  "Hoje": {
+    "en": "Today",
+    "es": "Hoy"
+  },
+  "Ano atual": {
+    "en": "Current year",
+    "es": "Año actual"
+  },
+  "Diário": {
+    "en": "Daily",
+    "es": "Diario"
+  },
+  "Semanal": {
+    "en": "Weekly",
+    "es": "Semanal"
+  },
+  "Mensal": {
+    "en": "Monthly",
+    "es": "Mensual"
+  },
+  "Anual": {
+    "en": "Yearly",
+    "es": "Anual"
+  },
+  "Fechado": {
+    "en": "Closed",
+    "es": "Cerrado"
+  },
+  "Entrada": {
+    "en": "Inflow",
+    "es": "Ingreso"
+  },
+  "Saída": {
+    "en": "Outflow",
+    "es": "Salida"
+  },
+  "Pagamento confirmado": {
+    "en": "Payment confirmed",
+    "es": "Pago confirmado"
+  },
+  "Nome no cardápio": {
+    "en": "Menu name",
+    "es": "Nombre en el menú"
+  },
+  "Voltar": {
+    "en": "Back",
+    "es": "Volver"
+  },
+  "Novo": {
+    "en": "New",
+    "es": "Nuevo"
+  },
+  "Sim": {
+    "en": "Yes",
+    "es": "Sí"
+  },
+  "Não": {
+    "en": "No",
+    "es": "No"
+  },
+  "por pizza": {
+    "en": "per pizza",
+    "es": "por pizza"
+  },
+  "pizza inteira": {
+    "en": "whole pizza",
+    "es": "pizza entera"
+  },
+  "sabor disponível": {
+    "en": "flavor available",
+    "es": "sabor disponible"
+  },
+  "sabores disponíveis": {
+    "en": "flavors available",
+    "es": "sabores disponibles"
+  },
+  "Até {count} sabores neste tamanho": {
+    "en": "Up to {count} flavors for this size",
+    "es": "Hasta {count} sabores en este tamaño"
+  },
+  "Pizza {current} de {total}": {
+    "en": "Pizza {current} of {total}",
+    "es": "Pizza {current} de {total}"
+  },
+  "Etapa {current} de {total}": {
+    "en": "Step {current} of {total}",
+    "es": "Paso {current} de {total}"
+  },
+  "Etapa {number}": {
+    "en": "Step {number}",
+    "es": "Paso {number}"
+  },
+  "Buscar em {group}…": {
+    "en": "Search {group}…",
+    "es": "Buscar en {group}…"
+  },
+  "Escolha exatamente {count} sabores para esta pizza. Limite do tamanho: {limit}.": {
+    "en": "Choose exactly {count} flavors for this pizza. Size limit: {limit}.",
+    "es": "Elige exactamente {count} sabores para esta pizza. Límite del tamaño: {limit}."
+  },
+  "Há {count} {label} no cardápio.": {
+    "en": "The menu has {count} {label}.",
+    "es": "Hay {count} {label} en el menú."
+  },
+  "Até {count} escolhas": {
+    "en": "Up to {count} choices",
+    "es": "Hasta {count} opciones"
+  },
+  "Nenhuma entrega concluída neste filtro.": {
+    "en": "No completed deliveries match this filter.",
+    "es": "No hay entregas completadas en este filtro."
+  },
+  "Sem entregas para exibir.": {
+    "en": "No deliveries to display.",
+    "es": "No hay entregas para mostrar."
+  },
+  "Contas": {
+    "en": "Accounts",
+    "es": "Cuentas"
+  },
+  "Entrega": {
+    "en": "Delivery",
+    "es": "Entrega"
+  },
+  "Nenhum pedido para exibir.": {
+    "en": "No orders to display.",
+    "es": "No hay pedidos para mostrar."
+  },
+  "Nenhum pedido corresponde aos filtros.": {
+    "en": "No orders match the filters.",
+    "es": "Ningún pedido coincide con los filtros."
+  },
+  "Nenhum pedido encontrado.": {
+    "en": "No orders found.",
+    "es": "No se encontraron pedidos."
+  },
+  "Fechar": {
+    "en": "Close",
+    "es": "Cerrar"
+  },
+  "Contato:": {
+    "en": "Contact:",
+    "es": "Contacto:"
+  },
+  "Troco para": {
+    "en": "Change for",
+    "es": "Cambio para"
+  },
+  "Troco": {
+    "en": "Change",
+    "es": "Cambio"
+  },
+  "Confirmar": {
+    "en": "Confirm",
+    "es": "Confirmar"
+  },
+  "Selecionar": {
+    "en": "Select",
+    "es": "Seleccionar"
+  },
+  "Alterar": {
+    "en": "Change",
+    "es": "Cambiar"
+  },
+  "Atendimento": {
+    "en": "Service",
+    "es": "Atención"
+  },
+  "Próximo": {
+    "en": "Next",
+    "es": "Siguiente"
+  },
+  "Anterior": {
+    "en": "Previous",
+    "es": "Anterior"
+  },
+  "Adicionar itens à comanda": {
+    "en": "Add items to tab",
+    "es": "Añadir artículos a la cuenta"
+  },
+  "+ Adicionar itens à comanda": {
+    "en": "+ Add items to tab",
+    "es": "+ Añadir artículos a la cuenta"
+  },
+  "Confira a mesa informada pelo cliente e defina a comanda ao atender. Depois, registre a entrega.": {
+    "en": "Check the customer's table and assign the tab. Record the delivery after serving.",
+    "es": "Comprueba la mesa del cliente y asigna la cuenta. Registra la entrega después de servir."
+  },
+  "Abra o caixa antes de confirmar o acerto.": {
+    "en": "Open the register before confirming the settlement.",
+    "es": "Abre la caja antes de confirmar la liquidación."
+  },
+  "Abra o caixa antes de registrar recebimentos.": {
+    "en": "Open the register before recording payments.",
+    "es": "Abre la caja antes de registrar cobros."
+  },
+  "Senha incorreta.": {
+    "en": "Incorrect password.",
+    "es": "Contraseña incorrecta."
+  },
+  "Sessão expirada. Atualize a página.": {
+    "en": "Session expired. Refresh the page.",
+    "es": "La sesión caducó. Actualiza la página."
+  },
+  "Faça login novamente.": {
+    "en": "Sign in again.",
+    "es": "Vuelve a iniciar sesión."
+  },
+  "Notificação não encontrada.": {
+    "en": "Notification not found.",
+    "es": "No se encontró la notificación."
+  },
+  "Notificação inválida.": {
+    "en": "Invalid notification.",
+    "es": "Notificación inválida."
+  },
+  "Cliente não encontrado.": {
+    "en": "Customer not found.",
+    "es": "Cliente no encontrado."
+  },
+  "Nenhum arquivo escolhido": {
+    "en": "No file selected",
+    "es": "Ningún archivo seleccionado"
+  },
+  "Escolher arquivo": {
+    "en": "Choose file",
+    "es": "Elegir archivo"
+  },
+  "Instalação": {
+    "en": "Installation",
+    "es": "Instalación"
+  },
+  "Para instalar, acesse o sistema por um endereço HTTPS. O endereço HTTP da rede local não permite instalar o PWA.": {
+    "en": "Open the system over HTTPS to install it. A local HTTP address cannot install the PWA.",
+    "es": "Accede al sistema por HTTPS para instalarlo. Una dirección HTTP local no permite instalar la PWA."
+  },
+  "No Safari, toque em Compartilhar e escolha “Adicionar à Tela de Início”. Depois, abra o Manager pelo ícone instalado.": {
+    "en": "In Safari, tap Share and choose “Add to Home Screen”. Then open Manager from its new icon.",
+    "es": "En Safari, toca Compartir y elige «Añadir a pantalla de inicio». Después abre Manager desde el nuevo icono."
+  },
+  "No menu do Chrome ou Edge, procure “Instalar aplicativo” ou “Adicionar à tela inicial”. Se a opção ainda não aparecer, o navegador pode não oferecer instalação ou o aplicativo já pode estar instalado.": {
+    "en": "In Chrome or Edge, look for “Install app” or “Add to Home screen”. If unavailable, installation may be unsupported or already complete.",
+    "es": "En Chrome o Edge, busca «Instalar aplicación» o «Añadir a pantalla de inicio». Si no aparece, puede que la instalación no sea compatible o que la app ya esté instalada."
+  },
+  "Avisos no dispositivo exigem HTTPS e navegador compatível. No iPhone, instale o app pela Tela de Início.": {
+    "en": "Device notifications require HTTPS and a compatible browser. On iPhone, install the app on the Home Screen.",
+    "es": "Los avisos requieren HTTPS y un navegador compatible. En iPhone, instala la app en la pantalla de inicio."
+  },
+  "Avisos na tela estão ativos. Para avisos com o app fechado, configure o serviço push no servidor (consulte o README).": {
+    "en": "On-screen alerts are enabled. Set up push on the server to receive alerts while the app is closed (see the README).",
+    "es": "Los avisos en pantalla están activos. Configura push en el servidor para recibirlos con la app cerrada (consulta el README)."
+  },
+  "O serviço push precisa ser configurado no servidor. Consulte setup_push.py e run.py no README.": {
+    "en": "Set up push on the server. See setup_push.py and run.py in the README.",
+    "es": "Configura push en el servidor. Consulta setup_push.py y run.py en el README."
+  },
+  "Use HTTPS e um navegador compatível. No iPhone, abra o aplicativo instalado pela Tela de Início.": {
+    "en": "Use HTTPS and a compatible browser. On iPhone, open the installed app from the Home Screen.",
+    "es": "Usa HTTPS y un navegador compatible. En iPhone, abre la app instalada desde la pantalla de inicio."
+  },
+  "Não foi possível ativar o aplicativo neste navegador.": {
+    "en": "Could not enable the app in this browser.",
+    "es": "No se pudo activar la app en este navegador."
+  },
+  "Não foi possível confirmar a resposta. Você pode reenviar a mesma tentativa com segurança ou conferir Meus pedidos.": {
+    "en": "Could not confirm the response. You can safely retry the same submission or check My orders.",
+    "es": "No se pudo confirmar la respuesta. Puedes reintentar el mismo envío de forma segura o consultar Mis pedidos."
+  },
+  "Recarregue a página para exibir os dados atualizados.": {
+    "en": "Reload the page to see updated data.",
+    "es": "Recarga la página para ver los datos actualizados."
+  },
+  "Ative para receber novos pedidos ou pedidos prontos, conforme seu perfil.": {
+    "en": "Enable alerts for new or ready orders, depending on your role.",
+    "es": "Activa los avisos de pedidos nuevos o listos según tu perfil."
+  },
+  "Acompanhe seu pedido.": {
+    "en": "Track your order.",
+    "es": "Sigue tu pedido."
+  }
+}

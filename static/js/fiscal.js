@@ -22,10 +22,10 @@
     const old = button?.textContent;
     if (button) {
       button.disabled = true;
-      button.textContent = "Aguarde…";
+      button.textContent = uiText("Aguarde…");
     }
     result.className = "";
-    result.textContent = "Processando…";
+    result.textContent = uiText("Processando…");
     try {
       const headers = { "X-CSRF-Token": root.dataset.csrf };
       if (!(body instanceof FormData)) {
@@ -44,15 +44,15 @@
       if (!response.ok)
         throw new Error(
           data.error ||
-            "Acesso expirado ou operação indisponível. Reabra a área fiscal pelo menu e confira sua senha.",
+            uiText("Acesso expirado ou operação indisponível. Reabra a área fiscal pelo menu e confira sua senha."),
         );
       result.className = "fiscal-success";
-      result.textContent = data.message || "Operação concluída.";
+      result.textContent = data.message || uiText("Operação concluída.");
       return true;
     } catch (error) {
       result.className = "fiscal-error";
       result.textContent =
-        error.message || "Não foi possível concluir a operação.";
+        error.message || uiText("Não foi possível concluir a operação.");
       return false;
     } finally {
       if (button) {
@@ -89,13 +89,13 @@
       form.elements.senha_certificado.value = "";
       form.elements.certificado.value = "";
       // Recarregar atualiza a série, o número e o botão do certificado.
-      result.append(" Recarregue a página para exibir os dados atualizados.");
+      result.append(uiText(" Recarregue a página para exibir os dados atualizados."));
     }
   };
   document.getElementById("fiscal-certificate-send").onclick = (event) => {
     if (
       confirm(
-        "Enviar o certificado salvo à Focus NFe? Ele será usado pela empresa cadastrada também em produção.",
+        uiText("Enviar o certificado salvo à Focus NFe? Ele será usado pela empresa cadastrada também em produção."),
       )
     )
       post(

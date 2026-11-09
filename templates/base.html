@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="{{ ui_language() }}" data-theme="{{ ui_theme() }}">
   <head>
     <meta name="restaurant-root" content="{{ request.script_root }}">
     <meta charset="utf-8" />
@@ -17,7 +17,8 @@
     <link rel="apple-touch-icon" href="{{ request.script_root }}/static/icons/icon-192.png" />
     <title>Restaurante Manager</title>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" />
-    <script defer src="{{ url_for('static',filename='js/restaurant_scope.js') }}"></script>
+    {% include '_ui_preferences_head.html' %}
+<script defer src="{{ url_for('static',filename='js/restaurant_scope.js') }}"></script>
     <script defer src="{{url_for('static',filename='js/sound.js')}}"></script>
     <script defer src="{{url_for('static',filename='js/app.js')}}"></script>
     <script defer src="{{url_for('static',filename='js/pwa.js')}}"></script>
@@ -123,20 +124,25 @@
             </form>
             <div class="header-user" title="{{ user.nome }}">
               <span class="header-user-role">
-                {{ {
+                {{ ui_text({
                   'admin': 'Administração',
                   'garcom': 'Atendimento no salão',
                   'cozinha': 'Operação da cozinha',
                   'cliente': 'Sua conta',
                   'visitante': 'Cliente no salão',
                   'entregador': 'Tele-entregas'
-                }[user.perfil] }}
+                }[user.perfil]) }}
               </span>
 
               <strong class="header-user-name">
                 {{ user.nome }}
               </strong>
             </div>
+            {% if user.perfil != 'admin' %}
+            <div class="ui-header-preferences">
+              {% with ui_compact=true %}{% include '_ui_preferences.html' %}{% endwith %}
+            </div>
+            {% endif %}
             <button
               class="icon-button"
               id="notifications-open"
@@ -167,6 +173,7 @@
 {% else %}
 
           <nav class="guest-nav" aria-label="Menu do cliente">
+            {% with ui_compact=true %}{% include '_ui_preferences.html' %}{% endwith %}
             <a href="{{ request.script_root }}/cardapio">Cardápio</a>
             <a href="{{ request.script_root }}/login">Entrar</a>
             <a href="{{ request.script_root }}/cadastro" class="guest-signup">Criar conta</a>
@@ -287,9 +294,9 @@
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/usuarios') }}">🔒 Equipe →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/clientes') }}">🔒 Clientes →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/fiscal') }}">🔒 Configuração fiscal e NFC-e →</a>
-  <a href="{{ url_for('management_access.security') }}">⚙ Bloquear menus de gestão →</a>
   <a href="{{ request.script_root }}/cardapio">↗ Ver cardápio público →</a>
   <a href="{{ url_for('salon_qr.qr_page') }}">▦ QR Code para pedidos no salão →</a>
+  <a href="{{ url_for('management_access.security') }}">⚙ Segurança dos menus →</a>
 {% endif %}
 
 {% if user.perfil=='cliente' %}
@@ -302,6 +309,9 @@
 {% endif %}
 
           <button class="install-trigger" hidden>↗ Instalar aplicativo</button>
+          <div class="ui-menu-preferences{% if user.perfil != 'admin' %} ui-mobile-preferences{% endif %}">
+            {% include '_ui_preferences.html' %}
+          </div>
           <button id="sound-toggle" aria-pressed="false" type="button">
             ♪ Ativar som dos avisos
           </button>
@@ -317,6 +327,7 @@
             <input type="hidden" name="csrf" value="{{ csrf }}" />
             <button class="danger secondary">Sair da conta</button>
           </form>
+
         </div>
       </dialog>
       <dialog id="notifications-dialog" class="app-dialog">

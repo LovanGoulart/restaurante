@@ -398,6 +398,9 @@ def create_platform(factory, root=None):
         SESSION_COOKIE_SECURE=Config.SESSION_COOKIE_SECURE,
         MAX_CONTENT_LENGTH=64 * 1024,
     )
+    from ui_preferences import init_ui_preferences
+
+    init_ui_preferences(app)
     dispatcher = RestaurantDispatcher(app.wsgi_app, factory, registry)
     app.extensions["restaurant_platform"] = dispatcher
     app.wsgi_app = dispatcher

@@ -4,13 +4,13 @@
   {% if user.perfil in ['garcom', 'cozinha'] %}
     <style>
       #orders:is([data-role="garcom"], [data-role="cozinha"]) .compact-order:not(.order-paid) {
-        background: #fff7e8;
+        background: var(--ui-surface, #fff7e8);
       }
       #orders:is([data-role="garcom"], [data-role="cozinha"]) .compact-order.entregue:not(.order-paid) {
-        background: #eef4ff;
+        background: var(--ui-surface-blue, #eef4ff);
       }
       #orders:is([data-role="garcom"], [data-role="cozinha"]) .compact-order.order-paid {
-        background: #edf7f0;
+        background: var(--ui-surface-green, #edf7f0);
       }
     </style>
   {% endif %}

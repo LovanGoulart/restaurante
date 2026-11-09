@@ -1,0 +1,32 @@
+{% if ui_compact|default(false) %}
+<div class="ui-preferences-icons">
+  <label class="ui-language-icon" title="{{ ui_text('Idioma') }}">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 6h14M5 18h14"/></svg>
+    <select data-ui-language aria-label="{{ ui_text('Idioma') }}">
+      <option value="pt-BR"{% if ui_language() == 'pt-BR' %} selected{% endif %}>Português (Brasil)</option>
+      <option value="en"{% if ui_language() == 'en' %} selected{% endif %}>English</option>
+      <option value="es"{% if ui_language() == 'es' %} selected{% endif %}>Español</option>
+    </select>
+  </label>
+  <button type="button" class="ui-theme-toggle" data-ui-theme-toggle aria-label="{{ ui_text('Tema') }}" title="{{ ui_text('Tema') }}" aria-pressed="{{ 'true' if ui_theme() == 'dark' else 'false' }}"><span class="ui-moon" aria-hidden="true">☾</span><span class="ui-sun" aria-hidden="true">☀</span></button>
+</div>
+{% else %}
+<details class="ui-preferences">
+  <summary>{{ ui_text('Aparência e idioma') }}</summary>
+  <div class="ui-preferences-form">
+    <label>{{ ui_text('Idioma') }}
+      <select data-ui-language name="language">
+        <option value="pt-BR" lang="pt-BR"{% if ui_language() == 'pt-BR' %} selected{% endif %}>Português (Brasil)</option>
+        <option value="en" lang="en"{% if ui_language() == 'en' %} selected{% endif %}>English</option>
+        <option value="es" lang="es"{% if ui_language() == 'es' %} selected{% endif %}>Español</option>
+      </select>
+    </label>
+    <label>{{ ui_text('Tema') }}
+      <select data-ui-theme name="theme">
+        <option value="light"{% if ui_theme() == 'light' %} selected{% endif %}>{{ ui_text('Modo diurno') }}</option>
+        <option value="dark"{% if ui_theme() == 'dark' %} selected{% endif %}>{{ ui_text('Modo noturno') }}</option>
+      </select>
+    </label>
+  </div>
+</details>
+{% endif %}

@@ -14,7 +14,7 @@ document.querySelectorAll('form').forEach(form => {
     try {
       const response=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{Accept:'application/json'}});
       if(response.redirected){ location.assign(response.url); return; }
-      if(!response.ok){ const data=await response.json(); throw new Error(data.error || 'Não foi possível salvar. Confira os campos.'); }
+      if(!response.ok){ const data=await response.json(); throw new Error(data.error || uiText("Não foi possível salvar. Confira os campos.")); }
       location.reload();
     } catch(err){error.textContent=err.message;error.hidden=false;error.scrollIntoView({block:'center'});}
     finally{if(button)button.disabled=false;}

@@ -21,20 +21,20 @@
     const running = context?.state === "running";
     toggle.setAttribute("aria-pressed", String(enabled));
     toggle.textContent = enabled
-      ? "♪ Som ativado · toque para silenciar"
-      : "♪ Ativar som dos avisos";
+      ? uiText("♪ Som ativado · toque para silenciar")
+      : uiText("♪ Ativar som dos avisos");
     status.textContent = !supported
-      ? "Este navegador não oferece áudio para os alertas."
+      ? uiText("Este navegador não oferece áudio para os alertas.")
       : !enabled
-        ? "Som desativado. Ative para ouvir novos avisos."
+        ? uiText("Som desativado. Ative para ouvir novos avisos.")
         : running
-          ? "Som liberado para os avisos desta sessão."
-          : "Som ativado. A liberação do áudio será tentada ao interagir com a página.";
+          ? uiText("Som liberado para os avisos desta sessão.")
+          : uiText("Som ativado. A liberação do áudio será tentada ao interagir com a página.");
     panel.hidden = !supported || enabled;
     panelMessage.textContent = enabled
-      ? "O navegador precisa de um toque para liberar o áudio nesta tela."
-      : "Ative para ouvir avisos de pedidos novos ou prontos, conforme seu perfil.";
-    enable.textContent = enabled ? "Liberar som ♪" : "Ativar som ♪";
+      ? uiText("O navegador precisa de um toque para liberar o áudio nesta tela.")
+      : uiText("Ative para ouvir avisos de pedidos novos ou prontos, conforme seu perfil.");
+    enable.textContent = enabled ? uiText("Liberar som ♪") : uiText("Ativar som ♪");
     test.disabled = !supported;
     toggle.disabled = !supported;
     enable.disabled = !supported;
@@ -87,7 +87,7 @@
       return true;
     } catch {
       status.textContent =
-        "Não foi possível tocar o som. Confira as permissões de áudio do navegador.";
+        uiText("Não foi possível tocar o som. Confira as permissões de áudio do navegador.");
       return false;
     }
   }
@@ -99,7 +99,7 @@
     if (ok) play();
     else
       status.textContent =
-        "O navegador não liberou o áudio. Confira o volume e a permissão de som.";
+        uiText("O navegador não liberou o áudio. Confira o volume e a permissão de som.");
   }
   toggle.onclick = async () => {
     if (enabled) {
@@ -113,11 +113,11 @@
     const ok = await unlock();
     if (ok && play())
       status.textContent = enabled
-        ? "Som de teste reproduzido. Alertas ativados."
-        : "Som de teste reproduzido. Ative os avisos para ouvir os próximos pedidos.";
+        ? uiText("Som de teste reproduzido. Alertas ativados.")
+        : uiText("Som de teste reproduzido. Ative os avisos para ouvir os próximos pedidos.");
     else
       status.textContent =
-        "Não foi possível reproduzir o teste. Confira as permissões e o volume.";
+        uiText("Não foi possível reproduzir o teste. Confira as permissões e o volume.");
   };
   // A preferência sobrevive à navegação; a liberação do navegador pode precisar de novo toque.
   function gesture() {

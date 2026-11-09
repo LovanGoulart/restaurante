@@ -18,11 +18,11 @@
     loading = false,
     pending = false;
   const forms = {
-    dinheiro: "Dinheiro",
+    dinheiro: uiText("Dinheiro"),
     pix: "Pix",
-    credito: "Crédito",
-    debito: "Débito",
-    antecipado: "Antecipado",
+    credito: uiText("Crédito"),
+    debito: uiText("Débito"),
+    antecipado: uiText("Antecipado"),
   };
   date.value = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Sao_Paulo",
@@ -82,31 +82,31 @@
                 <h2>${escapeHTML(r.nome)}</h2>
                 <p>${r.entregas} entrega(s) · ${money(r.total_pedidos)} em pedidos</p>
                 <div class="courier-cash">
-                  <span>Dinheiro a repassar</span>
+                  <span>${uiHtml("Dinheiro a repassar")}</span>
                   <strong>${money(r.dinheiro_repassar)}</strong>
                 </div>
                 <div class="fee-line">
-                  <span>Pix a conferir</span>
+                  <span>${uiHtml("Pix a conferir")}</span>
                   <b>${money(r.formas.pix)}</b>
                 </div>
                 <div class="fee-line">
-                  <span>Crédito a conferir</span>
+                  <span>${uiHtml("Crédito a conferir")}</span>
                   <b>${money(r.formas.credito)}</b>
                 </div>
                 <div class="fee-line">
-                  <span>Débito a conferir</span>
+                  <span>${uiHtml("Débito a conferir")}</span>
                   <b>${money(r.formas.debito)}</b>
                 </div>
                 <div class="fee-line">
-                  <span>Total recebido nas entregas</span>
+                  <span>${uiHtml("Total recebido nas entregas")}</span>
                   <b>${money(r.recebido_total)}</b>
                 </div>
                 <div class="fee-line">
-                  <span>Recebimentos já conferidos</span>
+                  <span>${uiHtml("Recebimentos já conferidos")}</span>
                   <b>${money(r.conferido)}</b>
                 </div>
                 <div class="fee-line">
-                  <span>Pagos antecipadamente</span>
+                  <span>${uiHtml("Pagos antecipadamente")}</span>
                   <b>${money(r.antecipado)}</b>
                 </div>
                 <p class="muted">
@@ -117,7 +117,7 @@
             `,
           )
           .join("") ||
-        '<section class="panel">Nenhuma entrega concluída neste filtro.</section>';
+        ("<section class=\"panel\">" + uiHtml("Nenhuma entrega concluída neste filtro.") + "</section>");
       const selectedIds = new Set(chosen());
       root.innerHTML =
         items
@@ -127,7 +127,7 @@
                 <label class="check">
                   ${!e.acertado ? `<input type="checkbox" data-select="${e.id}" ${selectedIds.has(e.id) ? "checked" : ""} aria-label="Conferir pedido ${e.pedido_id}">` : "<span>✓</span>"}
                   <span>
-                    <b>Pedido #${e.pedido_id} · ${escapeHTML(e.cliente)}</b>
+                    <b>${uiHtml("Pedido #")}${e.pedido_id} · ${escapeHTML(e.cliente)}</b>
                     <small>
                       ${escapeHTML(e.entregador)} ·
                       ${new Date(e.entregue_em).toLocaleString("pt-BR")}
@@ -140,13 +140,13 @@
                     ${forms[e.forma_pagamento]}${e.pago_antecipado ? " · já pago antes da entrega" : " · " + money(e.valor_recebido) + " recebido"}
                   </small>
                   <small>
-                    ${e.acertado ? "Acerto conferido" : "Pendente de conferência"}
+                    ${e.acertado ? uiText("Acerto conferido") : uiText("Pendente de conferência")}
                   </small>
                 </div>
               </div>
             `,
           )
-          .join("") || "<p>Sem entregas para exibir.</p>";
+          .join("") || ("<p>" + uiHtml("Sem entregas para exibir.") + "</p>");
       error.hidden = true;
       update();
     } catch (e) {
@@ -188,7 +188,7 @@
   };
   document.querySelector("#settlement-confirm").onclick = async (e) => {
     if (!document.querySelector("#settlement-confirm-check").checked) {
-      toast("Confirme que recebeu o dinheiro e conferiu os pagamentos.");
+      toast(uiText("Confirme que recebeu o dinheiro e conferiu os pagamentos."));
       return;
     }
     busy = true;
@@ -198,7 +198,7 @@
     try {
       await api("/api/acerto-entregadores", { entregas: ids, confirmado: true });
       dialog.close();
-      toast("Acerto registrado no caixa.");
+      toast(uiText("Acerto registrado no caixa."));
     } catch (err) {
       confirmError.textContent = err.message;
       confirmError.hidden = false;

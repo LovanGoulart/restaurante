@@ -54,7 +54,7 @@ try {
       .filter(Boolean);
     if (cart.length !== data.itens.length)
       toast(
-        "Alguns itens mudaram. Confira o cardápio e escolha as opções novamente.",
+        uiText("Alguns itens mudaram. Confira o cardápio e escolha as opções novamente."),
       );
     if ([...mode.options].some((o) => o.value === data.modalidade))
       mode.value = data.modalidade;
@@ -69,7 +69,7 @@ function setBag(open) {
   if (open) {
     bag.setAttribute("role", "dialog");
     bag.setAttribute("aria-modal", "true");
-    bag.setAttribute("aria-label", "Sua sacola e finalização");
+    bag.setAttribute("aria-label", uiText("Sua sacola e finalização"));
     document.querySelector(".bag-close").focus();
   } else {
     bag.removeAttribute("role");
@@ -132,12 +132,12 @@ function totals() {
       !navigator.onLine ||
       bag.dataset.active !== "yes";
     send.textContent = sending
-      ? "Enviando pedido…"
+      ? uiText("Enviando pedido…")
       : pending
-        ? "Reenviar a mesma tentativa →"
+        ? uiText("Reenviar a mesma tentativa →")
         : bag.dataset.customer === "yes"
-          ? "Confirmar meu pedido →"
-          : "Entrar para fazer o pedido →";
+          ? uiText("Confirmar meu pedido →")
+          : uiText("Entrar para fazer o pedido →");
   }
   return subtotal + fee;
 }
@@ -174,8 +174,8 @@ ProductPicker.bind({
       }, 0);
     toast(
       items.length > 1
-        ? "Pizzas adicionadas separadamente ao pedido."
-        : "Item adicionado ao pedido.",
+        ? uiText("Pizzas adicionadas separadamente ao pedido.")
+        : uiText("Item adicionado ao pedido."),
     );
     return true;
   },
@@ -346,7 +346,7 @@ if (send)
         toast(e.message);
       } else {
         toast(
-          "Não foi possível confirmar a resposta. Você pode reenviar a mesma tentativa com segurança ou conferir Meus pedidos.",
+          uiText("Não foi possível confirmar a resposta. Você pode reenviar a mesma tentativa com segurança ou conferir Meus pedidos."),
         );
       }
     } finally {

@@ -1,0 +1,123 @@
+.ui-preferences {
+  margin: 0 0 16px auto;
+  width: fit-content;
+  max-width: 100%;
+  color: var(--ink, var(--ui-text-neutral, #253a53));
+}
+.ui-preferences > summary {
+  width: fit-content;
+  min-height: 44px;
+  margin-left: auto;
+  padding: 14px 16px;
+  cursor: pointer;
+  border: 1px solid var(--line, var(--ui-border, #dce3ed));
+  border-radius: 12px;
+  background: var(--ui-surface-blue, #f0f3f8);
+  color: var(--ui-text-blue, #263c59);
+  font-size: 14px;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+.ui-preferences-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-top: 8px;
+  border: 1px solid var(--line, var(--ui-border, #dce3ed));
+  border-radius: 12px;
+  background: var(--ui-surface, #fff);
+}
+.ui-preferences-form label {
+  margin: 0;
+}
+.ui-preferences-form select,
+.ui-preferences-form button {
+  margin: 0;
+}
+@media (max-width: 720px) {
+  .ui-preferences-form {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .ui-preferences-form button {
+    grid-column: 1 / -1;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ui-surface: #192536;
+  --ui-surface-neutral: #223147;
+  --ui-surface-red: #3b252b;
+  --ui-surface-amber: #392d21;
+  --ui-surface-green: #173530;
+  --ui-surface-blue: #203450;
+  --ui-surface-violet: #322943;
+  --ui-text-neutral: #dce7f7;
+  --ui-text-red: #ffb1a8;
+  --ui-text-amber: #fbd09e;
+  --ui-text-green: #9ce7c5;
+  --ui-text-blue: #b0caff;
+  --ui-text-violet: #d9c1ff;
+  --ui-text-brand: #ffac8d;
+  --ui-border: #41536d;
+  --bg: #101925;
+  --ink: #f1f6ff;
+  --muted: #b5c3d6;
+  --line: #37475f;
+  --orange-soft: #3b2925;
+  --shadow: 0 8px 28px #060b1480;
+  background: var(--bg);
+  color: var(--ink);
+}
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder {
+  color: var(--muted);
+}
+:root[data-theme="dark"] input[type="checkbox"],
+:root[data-theme="dark"] input[type="radio"] {
+  accent-color: #fb956f;
+}
+
+.ui-preferences-form label { display: grid; gap: 6px; }
+.ui-menu-preferences .ui-preferences,
+.ui-menu-preferences .ui-preferences > summary { width: 100%; margin: 0; }
+.ui-menu-preferences .ui-preferences-form { grid-template-columns: 1fr; }
+.ui-header-preferences { display: flex; }
+.ui-preferences-icons { display: flex; align-items: center; gap: 6px; }
+.ui-language-icon, .ui-theme-toggle {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 44px; padding: 0; margin: 0; border-radius: 10px;
+  border: 1px solid #ffffff40; background: transparent; color: #fff; cursor: pointer;
+}
+.ui-language-icon select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; margin: 0; }
+.ui-language-icon:focus-within { outline: 2px solid var(--accent, #ffb454); outline-offset: 2px; }
+.ui-theme-toggle { font-size: 25px; }
+.ui-sun { display: none; }
+:root[data-theme="dark"] .ui-sun { display: inline; }
+:root[data-theme="dark"] .ui-moon { display: none; }
+@media (min-width: 851px) { .ui-mobile-preferences { display: none; } }
+@media (max-width: 850px) { .ui-header-preferences { display: none; } }
+
+/* Mesmo padrão dos demais controles do menu. */
+.menu-links > .ui-menu-preferences { margin: 0; padding: 0; }
+.ui-menu-preferences .ui-preferences { padding: 0; border: 0; background: transparent; }
+.ui-menu-preferences .ui-preferences > summary {
+  padding: 14px 16px;
+  background: var(--ui-surface-blue, #f0f3f8);
+  border: 1px solid var(--line);
+  color: var(--ui-text-blue, #263c59);
+  border-radius: 12px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+/* Preferências no cabeçalho público, inclusive em telas pequenas. */
+@media (max-width: 600px) {
+  .header-inner:has(.guest-nav) { flex-wrap: wrap; }
+  .guest-nav { flex-wrap: wrap; justify-content: flex-end; max-width: 100%; }
+  .guest-nav .ui-preferences-icons { flex-shrink: 0; }
+}

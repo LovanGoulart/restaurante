@@ -16,7 +16,7 @@
   max-width: 100%;
   margin: 0;
   border-color: var(--orange);
-  background: #fff;
+  background: var(--ui-surface, #fff);
 }
 .catalog-toolbar > span {
   color: var(--muted);
@@ -100,8 +100,8 @@ body.product-picker-open {
   padding: 0;
   border: 1px solid var(--line);
   border-radius: 20px;
-  background: white;
-  color: var(--ink, #17263d);
+  background: var(--ui-surface, white);
+  color: var(--ink, var(--ui-text-blue, #17263d));
   box-shadow: 0 24px 90px #101c3255;
   overflow: hidden;
 }
@@ -202,7 +202,7 @@ body.product-picker-open {
 }
 .picker-choice small {
   display: block;
-  color: var(--orange);
+  color: var(--ui-text-brand, var(--orange));
   font-size: 12px;
   margin-top: 4px;
 }
@@ -216,7 +216,7 @@ body.product-picker-open {
 .picker-clear,
 .cart-edit-options {
   background: transparent;
-  color: var(--orange);
+  color: var(--ui-text-brand, var(--orange));
   padding: 5px 0;
   min-height: 32px;
   font-size: 12px;
@@ -248,7 +248,7 @@ body.product-picker-open {
   height: 32px;
   min-height: 32px;
   padding: 0;
-  background: white;
+  background: var(--ui-surface, white);
   border: 1px solid var(--line);
   color: var(--ink);
   font-size: 21px;
@@ -267,8 +267,8 @@ body.product-picker-open {
 }
 #picker-error {
   padding: 12px;
-  background: #fff2e4;
-  color: #8c3a16;
+  background: var(--ui-surface-amber, #fff2e4);
+  color: var(--ui-text-red, #8c3a16);
   border-radius: 8px;
   font-size: 13px;
 }
@@ -328,7 +328,7 @@ body.product-picker-open {
   grid-template-columns: minmax(0, 1fr) 140px 80px 40px;
   gap: 12px;
   align-items: center;
-  background: white;
+  background: var(--ui-surface, white);
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 12px;
@@ -443,7 +443,7 @@ body.product-picker-open {
   max-width: 38%;
   margin: 0;
   flex-shrink: 0;
-  background: #fff;
+  background: var(--ui-surface, #fff);
 }
 .catalog-controls .catalog-chips {
   flex: 1;
@@ -464,7 +464,7 @@ body.product-picker-open {
   font-size: 13px;
 }
 .picker-unit-line > strong {
-  color: var(--orange);
+  color: var(--ui-text-brand, var(--orange));
   font-size: 21px;
   white-space: nowrap;
 }
@@ -517,7 +517,7 @@ body.product-picker-open {
 }
 .pizza-progress {
   background: var(--orange-soft);
-  color: var(--orange);
+  color: var(--ui-text-brand, var(--orange));
   padding: 10px 12px;
   border-radius: 10px;
   font-size: 13px;
@@ -532,7 +532,7 @@ body.product-picker-open {
 }
 #pizza-count-label select {
   margin-top: 8px;
-  background: white;
+  background: var(--ui-surface, white);
 }
 #pizza-count-help {
   display: block;
@@ -559,8 +559,8 @@ body.product-picker-open {
   width: 29px;
   height: 29px;
   min-height: 29px;
-  background: var(--soft, #e8edf5);
-  color: var(--ink, #18283e);
+  background: var(--soft, var(--ui-surface-blue, #e8edf5));
+  color: var(--ink, var(--ui-text-blue, #18283e));
   font-size: 12px;
 }
 .pizza-step-dot.active {
@@ -578,8 +578,8 @@ body.product-picker-open {
   margin: 0 0 14px;
 }
 .pizza-wizard .picker-count.incomplete {
-  background: #fff0dc;
-  color: #914700;
+  background: var(--ui-surface-amber, #fff0dc);
+  color: var(--ui-text-amber, #914700);
 }
 .pizza-wizard .picker-group {
   border-radius: 14px;
@@ -591,7 +591,7 @@ body.product-picker-open {
   gap: 12px;
 }
 .pizza-wizard .picker-choice.chosen {
-  background: #fff6ed;
+  background: var(--ui-surface-amber, #fff6ed);
   border-radius: 10px;
   padding-left: 10px;
   padding-right: 10px;
@@ -627,14 +627,14 @@ body.product-picker-open {
   width: 34px;
   height: 34px;
   flex: 0 0 34px;
-  border: 1px solid #e7caba;
+  border: 1px solid var(--ui-border, #e7caba);
   border-radius: 9px;
-  color: var(--orange);
+  color: var(--ui-text-brand, var(--orange));
   font-size: 23px;
-  background: #fff5ed;
+  background: var(--ui-surface-amber, #fff5ed);
 }
 .pizza-cart-item {
-  border: 1px solid var(--line, #d9e2f0);
+  border: 1px solid var(--line, var(--ui-border, #d9e2f0));
   padding: 14px;
   border-radius: 13px;
   margin: 10px 0;
@@ -717,12 +717,12 @@ body.product-picker-open {
 
 /* Descrições exibidas dentro da etapa de escolha, abaixo do nome. */
 #product-picker .picker-choice-description {display:block;margin:5px 0;color:var(--muted);font-size:13px;font-weight:400;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
-#product-picker .pizza-flavor-rule {margin:12px 0;padding:10px 12px;border-radius:9px;background:#f0f4fa;color:var(--muted);font-size:12px;line-height:1.5}
-#product-picker.pizza-wizard .picker-count.incomplete {color:#a73524;background:#fff0e9}
+#product-picker .pizza-flavor-rule {margin:12px 0;padding:10px 12px;border-radius:9px;background:var(--ui-surface-blue, #f0f4fa);color:var(--muted);font-size:12px;line-height:1.5}
+#product-picker.pizza-wizard .picker-count.incomplete {color:var(--ui-text-red, #a73524);background:var(--ui-surface-red, #fff0e9)}
 
 /* Escolha da imagem no cadastro do produto. */
-.catalog-image-picker {margin:18px 0;padding:16px;border:1px solid #cbd7e8;border-radius:14px;min-width:0}
-.catalog-image-preview {display:grid;place-items:center;min-height:150px;background:#f4f7fb;border-radius:10px;margin:4px 0 12px;padding:12px;text-align:center;color:var(--muted);font-size:13px}
+.catalog-image-picker {margin:18px 0;padding:16px;border:1px solid var(--ui-border, #cbd7e8);border-radius:14px;min-width:0}
+.catalog-image-preview {display:grid;place-items:center;min-height:150px;background:var(--ui-surface-blue, #f4f7fb);border-radius:10px;margin:4px 0 12px;padding:12px;text-align:center;color:var(--muted);font-size:13px}
 .catalog-image-preview img {display:block;max-width:100%;max-height:180px;object-fit:contain;border-radius:8px}
 .catalog-image-picker [hidden] {display:none!important}
 .catalog-image-button {display:inline-block!important;width:auto!important;margin:0 0 8px!important;background:var(--orange);color:#fff;padding:10px 14px;border-radius:9px;cursor:pointer;font-weight:700;font-size:13px}

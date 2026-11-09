@@ -126,6 +126,10 @@ def create_app(overrides=None):
 
     app.before_request(guard)
 
+    from ui_preferences import init_ui_preferences
+
+    init_ui_preferences(app)
+
     @app.context_processor
     def context():
         cursor = (

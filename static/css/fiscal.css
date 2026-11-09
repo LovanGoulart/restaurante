@@ -54,7 +54,7 @@
   padding: 16px 20px;
   border-left: 4px solid var(--orange, #c84419);
   border-radius: 12px;
-  background: #fff6e7;
+  background: var(--ui-surface-amber, #fff6e7);
 }
 #fiscal-rules,
 #fiscal-notes {
@@ -79,9 +79,9 @@
 }
 .fiscal-note {
   padding: 18px;
-  border: 1px solid #d7e0ef;
+  border: 1px solid var(--ui-border, #d7e0ef);
   border-radius: 14px;
-  background: #f7f9fc;
+  background: var(--ui-surface, #f7f9fc);
   overflow-wrap: anywhere;
 }
 .fiscal-note header {
@@ -95,19 +95,19 @@
 .fiscal-status {
   padding: 5px 10px;
   border-radius: 8px;
-  background: #fff0cc;
-  color: #725006;
+  background: var(--ui-surface-amber, #fff0cc);
+  color: var(--ui-text-amber, #725006);
   font-size: 0.85rem;
   font-weight: 700;
 }
 .fiscal-status.status-autorizada {
-  background: #def3e7;
-  color: #0b6544;
+  background: var(--ui-surface-green, #def3e7);
+  color: var(--ui-text-green, #0b6544);
 }
 .fiscal-status.status-rejeitada,
 .fiscal-status.status-erro_configuracao {
-  background: #ffe8e3;
-  color: #8d2f17;
+  background: var(--ui-surface-red, #ffe8e3);
+  color: var(--ui-text-red, #8d2f17);
 }
 .fiscal-key {
   font-family: monospace;
@@ -120,10 +120,10 @@
   text-decoration: none;
 }
 .fiscal-error {
-  color: #a82b1d;
+  color: var(--ui-text-red, #a82b1d);
 }
 .fiscal-success {
-  color: #096345;
+  color: var(--ui-text-green, #096345);
 }
 .fiscal-grid small {
   display: block;
@@ -150,15 +150,15 @@
   display: inline-flex;
   align-items: center;
   padding: 10px 16px;
-  border: 1px solid #d7e0ef;
+  border: 1px solid var(--ui-border, #d7e0ef);
   border-radius: 999px;
-  background: #fff;
-  color: var(--navy, #122038);
+  background: var(--ui-surface, #fff);
+  color: var(--ui-text-neutral, var(--navy, #122038));
   text-decoration: none;
   font-weight: 650;
 }
 .fiscal-tabs a:hover,
 .fiscal-tabs a:focus-visible {
   border-color: var(--orange, #c84419);
-  color: var(--orange, #c84419);
+  color: var(--orange, var(--ui-text-red, #c84419));
 }

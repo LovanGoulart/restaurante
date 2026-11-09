@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
       display.setAttribute(
         "aria-label",
         original.getAttribute("aria-label") ||
-          (date ? "Data (dd/mm/aaaa)" : "Valor em reais"),
+          (date ? uiText("Data (dd/mm/aaaa)") : uiText("Valor em reais")),
       );
       if (original.id) {
         display.id = original.id + "-br";
@@ -82,8 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
           valid
             ? ""
             : date
-              ? "Informe uma data válida: dd/mm/aaaa."
-              : "Use um valor como 1.234,56.",
+              ? uiText("Informe uma data válida: dd/mm/aaaa.")
+              : uiText("Use um valor como 1.234,56."),
         );
         d.set.call(original, valid ? v : "");
         original.dispatchEvent(new Event("input", { bubbles: true }));

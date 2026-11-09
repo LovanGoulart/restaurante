@@ -26,14 +26,14 @@ function updateInstall() {
   const banner = document.querySelector("#pwa-prompt");
   if (banner) {
     banner.hidden = standalone();
-    banner.querySelector("b").textContent = installed ? "Aplicativo instalado" : "Seu restaurante, sempre à mão.";
-    banner.querySelector("span").textContent = installed ? "Acesse seus pedidos e o cardápio." : "Instale o Manager no celular ou computador.";
+    banner.querySelector("b").textContent = installed ? uiText("Aplicativo instalado") : uiText("Seu restaurante, sempre à mão.");
+    banner.querySelector("span").textContent = installed ? uiText("Acesse seus pedidos e o cardápio.") : uiText("Instale o Manager no celular ou computador.");
     let open = banner.querySelector(".open-installed-app");
     if (installed && !open) {
       open = document.createElement("a");
       open.className = "button-link secondary open-installed-app";
       open.href = restaurantURL("/");
-      open.textContent = "Abrir app ↗";
+      open.textContent = uiText("Abrir app ↗");
       banner.append(open);
     }
     if (open) open.hidden = !installed;
@@ -51,7 +51,7 @@ window.addEventListener("appinstalled", () => {
   } catch {}
   installButtons.forEach((b) => (b.hidden = true));
   updateInstall();
-  toast("Aplicativo instalado com sucesso.");
+  toast(uiText("Aplicativo instalado com sucesso."));
 });
 window
   .matchMedia("(display-mode: standalone)")
@@ -71,10 +71,10 @@ installButtons.forEach(
         (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
       document.querySelector("#install-help").textContent =
         !window.isSecureContext
-          ? "Para instalar, acesse o sistema por um endereço HTTPS. O endereço HTTP da rede local não permite instalar o PWA."
+          ? uiText("Para instalar, acesse o sistema por um endereço HTTPS. O endereço HTTP da rede local não permite instalar o PWA.")
           : ios
-            ? "No Safari, toque em Compartilhar e escolha “Adicionar à Tela de Início”. Depois, abra o Manager pelo ícone instalado."
-            : "No menu do Chrome ou Edge, procure “Instalar aplicativo” ou “Adicionar à tela inicial”. Se a opção ainda não aparecer, o navegador pode não oferecer instalação ou o aplicativo já pode estar instalado.";
+            ? uiText("No Safari, toque em Compartilhar e escolha “Adicionar à Tela de Início”. Depois, abra o Manager pelo ícone instalado.")
+            : uiText("No menu do Chrome ou Edge, procure “Instalar aplicativo” ou “Adicionar à tela inicial”. Se a opção ainda não aparecer, o navegador pode não oferecer instalação ou o aplicativo já pode estar instalado.");
       document.querySelector("#install-dialog").showModal();
     }),
 );
@@ -122,13 +122,13 @@ if (pushButton) {
     try {
       if (!capable()) {
         pushHelp.textContent =
-          "Avisos no dispositivo exigem HTTPS e navegador compatível. No iPhone, instale o app pela Tela de Início.";
+          uiText("Avisos no dispositivo exigem HTTPS e navegador compatível. No iPhone, instale o app pela Tela de Início.");
         return;
       }
       config = await api("/api/push/config");
       if (!config.available) {
         pushHelp.textContent =
-          "Avisos na tela estão ativos. Para avisos com o app fechado, configure o serviço push no servidor (consulte o README).";
+          uiText("Avisos na tela estão ativos. Para avisos com o app fechado, configure o serviço push no servidor (consulte o README).");
         return;
       }
       const reg = await swReady;
@@ -137,11 +137,11 @@ if (pushButton) {
       if (sub && Notification.permission === "granted") {
         await api("/api/push/subscribe", sub.toJSON());
         subscribed = true;
-        pushButton.textContent = "🔔 Avisos ativados · desativar";
+        pushButton.textContent = uiText("🔔 Avisos ativados · desativar");
       }
       pushHelp.textContent = subscribed
-        ? "Este dispositivo está inscrito. A entrega depende da conexão e das permissões do sistema."
-        : "Ative para receber novos pedidos ou pedidos prontos, conforme seu perfil.";
+        ? uiText("Este dispositivo está inscrito. A entrega depende da conexão e das permissões do sistema.")
+        : uiText("Ative para receber novos pedidos ou pedidos prontos, conforme seu perfil.");
     } catch (e) {
       pushHelp.textContent = e.message;
     }
@@ -151,31 +151,31 @@ if (pushButton) {
     try {
       if (!capable())
         throw Error(
-          "Use HTTPS e um navegador compatível. No iPhone, abra o aplicativo instalado pela Tela de Início.",
+          uiText("Use HTTPS e um navegador compatível. No iPhone, abra o aplicativo instalado pela Tela de Início."),
         );
       if (!config?.available) {
         config = await api("/api/push/config");
         if (!config.available)
           throw Error(
-            "O serviço push precisa ser configurado no servidor. Consulte setup_push.py e run.py no README.",
+            uiText("O serviço push precisa ser configurado no servidor. Consulte setup_push.py e run.py no README."),
           );
       }
       const reg = await swReady;
       if (!reg)
-        throw Error("Não foi possível ativar o aplicativo neste navegador.");
+        throw Error(uiText("Não foi possível ativar o aplicativo neste navegador."));
       let sub = await reg.pushManager.getSubscription();
       if (subscribed && sub) {
         await api("/api/push/unsubscribe", { endpoint: sub.endpoint });
         await sub.unsubscribe();
         subscribed = false;
-        pushButton.textContent = "🔔 Ativar avisos no dispositivo";
-        toast("Avisos neste dispositivo desativados.");
+        pushButton.textContent = uiText("🔔 Ativar avisos no dispositivo");
+        toast(uiText("Avisos neste dispositivo desativados."));
         return;
       }
       const permission = await Notification.requestPermission();
       if (permission !== "granted")
         throw Error(
-          "Permissão de notificações não concedida. Ajuste a permissão nas configurações do navegador.",
+          uiText("Permissão de notificações não concedida. Ajuste a permissão nas configurações do navegador."),
         );
       sub ??= await reg.pushManager.subscribe({
         userVisibleOnly: true,
@@ -183,10 +183,10 @@ if (pushButton) {
       });
       await api("/api/push/subscribe", sub.toJSON());
       subscribed = true;
-      pushButton.textContent = "🔔 Avisos ativados · desativar";
+      pushButton.textContent = uiText("🔔 Avisos ativados · desativar");
       pushHelp.textContent =
-        "Dispositivo inscrito para receber os avisos do seu perfil.";
-      toast("Notificações ativadas neste dispositivo.");
+        uiText("Dispositivo inscrito para receber os avisos do seu perfil.");
+      toast(uiText("Notificações ativadas neste dispositivo."));
     } catch (e) {
       toast(e.message);
       pushHelp.textContent = e.message;

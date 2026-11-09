@@ -17,11 +17,11 @@
     loading = false,
     pending = false;
   const forms = {
-    dinheiro: "Dinheiro",
+    dinheiro: uiText("Dinheiro"),
     pix: "Pix",
-    credito: "Crédito",
-    debito: "Débito",
-    antecipado: "Pagamento antecipado",
+    credito: uiText("Crédito"),
+    debito: uiText("Débito"),
+    antecipado: uiText("Pagamento antecipado"),
   };
   date.value = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Sao_Paulo",
@@ -66,24 +66,22 @@
             >
               <div class="order-head">
                 <div class="table-badge">
-                  <small>TELE-ENTREGA</small>
-                  <strong class="online-title">Pedido #${p.id}</strong>
+                  <small>${uiHtml("TELE-ENTREGA")}</small>
+                  <strong class="online-title">${uiHtml("Pedido #")}${p.id}</strong>
                 </div>
                 <span class="pill"
-                  >${r.entregue_em ? "Entregue" : "Em entrega"}</span
+                  >${r.entregue_em ? uiText("Entregue") : uiText("Em entrega")}</span
                 >
               </div>
               <div class="order-body">
                 <h3>${escapeHTML(p.cliente)}</h3>
                 <div class="delivery-address">
-                  <b>Endereço</b>
+                  <b>${uiHtml("Endereço")}</b>
                   <p>
                     ${escapeHTML(a.endereco)}, ${escapeHTML(a.numero)}
                     <br />
                     ${escapeHTML(a.bairro)}
-                    <br />
-                    Referência:
-                    ${escapeHTML(a.referencia)}${a.telefone ? "<br>Contato: " + escapeHTML(a.telefone) : ""}
+                    <br />${uiHtml("\n                    Referência:\n                    ")}${escapeHTML(a.referencia)}${a.telefone ? "<br>Contato: " + escapeHTML(a.telefone) : ""}
                   </p>
                 </div>
                 <ul>
@@ -104,30 +102,24 @@
                 <div class="total">
                   <strong>${money(p.total)}</strong>
                   <span class="payment-state ${p.pago ? "paid" : ""}">
-                    ${r.entregue_em ? (r.acertado ? "Conferido" : "A conferir") : p.pago ? "Já pago" : "Cobrar na entrega"}
+                    ${r.entregue_em ? (r.acertado ? uiText("Conferido") : uiText("A conferir")) : p.pago ? uiText("Já pago") : uiText("Cobrar na entrega")}
                   </span>
                 </div>
                 ${
                   r.entregue_em
                     ? /* HTML */ `
-                        <p>
-                          Pagamento:
-                          <b>${forms[r.forma_pagamento]}</b>
+                        <p>${uiHtml("\n                          Pagamento:\n                          ")}<b>${forms[r.forma_pagamento]}</b>
                         </p>
                         <p class="muted">
-                          ${r.pago_antecipado ? "Pago antecipadamente · não cobrado pelo entregador" : money(r.valor_recebido) + " recebido"}
+                          ${r.pago_antecipado ? uiText("Pago antecipadamente · não cobrado pelo entregador") : money(r.valor_recebido) + " recebido"}
                           ·
-                          ${r.acertado ? "Acerto conferido" : "Aguardando conferência"}
+                          ${r.acertado ? uiText("Acerto conferido") : uiText("Aguardando conferência")}
                         </p>
                       `
                     : /* HTML */ `
-                        <p class="muted">
-                          Escolhido pelo cliente:
-                          ${forms[p.forma_pagamento] || "A combinar"}${p.troco_para ? " · Troco para " + money(p.troco_para) : ""}
+                        <p class="muted">${uiHtml("\n                          Escolhido pelo cliente:\n                          ")}${forms[p.forma_pagamento] || uiText("A combinar")}${p.troco_para ? " · Troco para " + money(p.troco_para) : ""}
                         </p>
-                        <button class="status-action" data-complete="${r.id}">
-                          ✓ Confirmar entrega e pagamento
-                        </button>
+                        <button class="status-action" data-complete="${r.id}">${uiHtml("\n                          ✓ Confirmar entrega e pagamento\n                        ")}</button>
                       `
                 }
               </div>
@@ -159,7 +151,7 @@
         if (!fresh || fresh.recebimento.entregue_em) {
           dialog.close();
           selected = null;
-          toast("A entrega foi atualizada. Confira a lista.");
+          toast(uiText("A entrega foi atualizada. Confira a lista."));
         } else {
           selected = fresh;
           document.querySelector("#delivery-form-label").hidden = selected.pago;
@@ -211,7 +203,7 @@
   document.querySelector("#delivery-confirm-button").onclick = async (e) => {
     if (!selected) return;
     if (!document.querySelector("#delivery-confirm-check").checked) {
-      toast("Confirme a entrega e a conferência do pagamento.");
+      toast(uiText("Confirme a entrega e a conferência do pagamento."));
       return;
     }
     busy = true;
@@ -223,7 +215,7 @@
       });
       dialog.close();
       toast(
-        "Entrega registrada. O recebimento ficará disponível para conferência.",
+        uiText("Entrega registrada. O recebimento ficará disponível para conferência."),
       );
     } catch (err) {
       toast(err.message);

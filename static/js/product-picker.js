@@ -37,7 +37,7 @@ window.ProductPicker = (() => {
   unitNav.id = "pizza-unit-nav";
   unitNav.className = "chips";
   unitNav.hidden = true;
-  unitNav.setAttribute("aria-label", "Escolher pizza para personalizar");
+  unitNav.setAttribute("aria-label", uiText("Escolher pizza para personalizar"));
   dots.after(unitNav);
   function read() {
     return Object.fromEntries(
@@ -154,11 +154,11 @@ window.ProductPicker = (() => {
     update();
   }
   function choicePrice(g, c, selected) {
-    if (g.type === "flavors" && current.pricing_mode === "fixed") return `<small>Incluído · ${money(sizeFor(selected)?.price || 0)} por pizza</small>`;
+    if (g.type === "flavors" && current.pricing_mode === "fixed") return `<small>${uiHtml("Incluído · ")}${money(sizeFor(selected)?.price || 0)} ${uiHtml("por pizza")}</small>`;
     if (g.type === "flavors")
-      return `<small>${money(c.price + (sizeFor(selected)?.price || 0))} · pizza inteira</small>`;
+      return `<small>${money(c.price + (sizeFor(selected)?.price || 0))} · ${uiHtml("pizza inteira")}</small>`;
     if (g.type === "sizes")
-      return `<small>A partir de ${money((current.pricing_mode === "fixed" ? 0 : Math.min(...pizza.flavors.choices.map((c) => c.price))) + c.price)} · Até ${c.max_flavors || 1} sabores</small>`;
+      return `<small>${uiHtml("A partir de ")}${money((current.pricing_mode === "fixed" ? 0 : Math.min(...pizza.flavors.choices.map((c) => c.price))) + c.price)} · ${uiHtml("Até")} ${c.max_flavors || 1} ${uiHtml("sabores")}</small>`;
     if (/tamanho|fatias/.test(normal(g.title)))
       return `<small>${money(current.preco + c.price)}</small>`;
     return c.price ? `<small>+ ${money(c.price)}</small>` : "";
@@ -166,8 +166,10 @@ window.ProductPicker = (() => {
   function update() {
     const selected = read();
     capture();
-    if (pizza) document.querySelector("#picker-description").textContent =
-      `Até ${limitFor(selected)} sabores neste tamanho${pizza.flavors.choices.length < limitFor(selected) ? ` · ${pizza.flavors.choices.length} ${pizza.flavors.choices.length === 1 ? "sabor disponível" : "sabores disponíveis"}` : ""}`;
+    if (pizza) {
+      document.querySelector("#picker-description").textContent =
+        uiText("Até {count} sabores neste tamanho", { count: limitFor(selected) });
+    }
     dialog.classList.toggle("pizza-wizard", !!pizza);
     const step = pizza
       ? stepIndex === -1
@@ -204,21 +206,24 @@ window.ProductPicker = (() => {
     }
     const last = pizza && stepIndex === steps.length - 1;
     document.querySelector("#picker-name").textContent = pizza
-      ? (stepIndex === -1 ? "Escolha o tamanho da pizza" : sizeFor(selected)?.label || current.nome)
+      ? (stepIndex === -1 ? uiText("Escolha o tamanho da pizza") : sizeFor(selected) ? uiSize(sizeFor(selected).label) : current.nome)
       : current.nome;
     document.querySelector("#picker-photo").hidden = !!pizza && stepIndex > 0;
     document.querySelector("#picker-description").hidden =
       !!pizza && stepIndex > 0;
     document.querySelector("#pizza-progress").hidden = !pizza;
     document.querySelector("#pizza-progress").textContent = pizza
-      ? `Pizza ${unitIndex + 1} de ${quantity} · ${stepIndex === -1 ? "Escolha o tamanho" : `Etapa ${stepIndex + 1} de ${steps.length} · ${step.title}`}`
+      ? uiText("Pizza {current} de {total}", { current: unitIndex + 1, total: quantity }) + " · " +
+        (stepIndex === -1 ? uiText("Escolha o tamanho") :
+          uiText("Etapa {current} de {total}", { current: stepIndex + 1, total: steps.length }) +
+          " · " + uiText(step.title))
       : "";
     dots.hidden = !pizza;
     if (pizza)
       dots.innerHTML = steps
         .map(
           (s, i) =>
-            `<button type="button" data-step="${i}" class="pizza-step-dot ${i === stepIndex ? "active" : ""}" aria-label="Etapa ${i + 1}: ${safe(s.title)}" aria-current="${i === stepIndex ? "step" : "false"}" ${i > stepIndex ? "disabled" : ""}>${i + 1}</button>`,
+            `<button type="button" data-step="${i}" class="pizza-step-dot ${i === stepIndex ? "active" : ""}" aria-label="${uiHtml("Etapa {number}", { number: i + 1 })}: ${uiHtml(s.title)}" aria-current="${i === stepIndex ? "step" : "false"}" ${i > stepIndex ? "disabled" : ""}>${i + 1}</button>`,
         )
         .join("");
     unitNav.hidden = !pizza || quantity === 1;
@@ -226,15 +231,15 @@ window.ProductPicker = (() => {
       unitNav.innerHTML = units
         .map(
           (u, i) =>
-            `<button type="button" class="chip ${i === unitIndex ? "active" : ""}" data-pizza-unit="${i}" aria-pressed="${i === unitIndex}">Pizza ${i + 1}${!current.groups.some(g => invalidGroup(g, u.selected, u.count)) ? " ✓" : ""}</button>`,
+            `<button type="button" class="chip ${i === unitIndex ? "active" : ""}" data-pizza-unit="${i}" aria-pressed="${i === unitIndex}">${uiHtml("Pizza ")}${i + 1}${!current.groups.some(g => invalidGroup(g, u.selected, u.count)) ? " ✓" : ""}</button>`,
         )
         .join("");
     search.hidden =
       !pizza || !step || step.type === "text" || step.id === "__notes";
-    search.placeholder = step ? `Buscar em ${step.title}…` : "Buscar opções…";
+    search.placeholder = step ? uiText("Buscar em {group}…", { group: uiText(step.title) }) : uiText("Buscar opções…");
     document.querySelector("#picker-back").hidden = !pizza;
     document.querySelector("#picker-back").textContent =
-      stepIndex > 0 ? "← Etapa anterior" : "← Alterar tamanho";
+      stepIndex > 0 ? uiText("← Etapa anterior") : uiText("← Alterar tamanho");
     document.querySelector("#picker-back").disabled = stepIndex === -1;
     document.querySelector("#picker-note-label").hidden =
       !current.notes.enabled || (!!pizza && step?.id !== "__notes");
@@ -250,31 +255,40 @@ window.ProductPicker = (() => {
       count.innerHTML = Array.from(
         { length: max },
         (_, i) =>
-          `<option value="${i + 1}">${i + 1} ${i ? "sabores" : "sabor"}</option>`,
+          `<option value="${i + 1}">${i + 1} ${uiHtml(i ? "sabores" : "sabor")}</option>`,
       ).join("");
       count.value = String(units[unitIndex].count);
+      const limit = limitFor(selected);
+      const instructions = uiText("Escolha exatamente {count} sabores para esta pizza. Limite do tamanho: {limit}.",
+        { count: units[unitIndex].count, limit });
+      const availability = max < limit
+        ? uiText("Há {count} {label} no cardápio.", { count: max, label: uiText(max === 1 ? "sabor disponível" : "sabores disponíveis") })
+        : "";
+      const priceRule = uiText(current.pricing_mode === "fixed"
+        ? "O preço é o do tamanho, mais os complementos."
+        : "O valor final é a média dos sabores escolhidos, mais os complementos.");
       document.querySelector("#pizza-count-help").textContent =
-        `Escolha exatamente ${units[unitIndex].count} sabores para esta pizza. Limite do tamanho: ${limitFor(selected)}. ${max < limitFor(selected) ? `Há ${max} ${max === 1 ? "sabor disponível" : "sabores disponíveis"} no cardápio. ` : ""}${current.pricing_mode === "fixed" ? "O preço é o do tamanho, mais os complementos." : "O valor final é a média dos sabores escolhidos, mais os complementos."}`;
+        [instructions, availability, priceRule].filter(Boolean).join(" ");
     }
     document.querySelector("#picker-submit").firstChild.textContent = pizza
       ? !last
-        ? "Próximo · "
+        ? uiText("Próximo · ")
         : unitIndex < quantity - 1
-          ? "Próxima pizza · "
+          ? uiText("Próxima pizza · ")
           : editing
-            ? "Salvar · "
-            : "Inserir · "
+            ? uiText("Salvar · ")
+            : uiText("Inserir · ")
       : editing
-        ? "Salvar · "
-        : "Adicionar · ";
+        ? uiText("Salvar · ")
+        : uiText("Adicionar · ");
     document.querySelector("#picker-quantity").textContent = quantity;
     document.querySelector("#picker-unit-price").textContent = money(
       price(current, selected),
     );
     document.querySelector(".picker-unit-line > span").textContent =
       pizza && current.pricing_mode !== "fixed" && !(selected[pizza.flavors.id] || []).length
-        ? "A partir de, por pizza"
-        : "Valor por unidade";
+        ? uiText("A partir de, por pizza")
+        : uiText("Valor por unidade");
     document.querySelector("#picker-total").textContent = money(
       pizza
         ? units.reduce((sum, u) => sum + price(current, u.selected), 0)
@@ -315,7 +329,7 @@ window.ProductPicker = (() => {
       steps.push({
         id: "__notes",
         type: "notes",
-        title: current.notes.label || "Observação",
+        title: current.notes.label || uiText("Observação"),
       });
     units = pizza
       ? Array.from({ length: quantity }, (_, i) => ({
@@ -345,7 +359,7 @@ window.ProductPicker = (() => {
     groups.innerHTML = current.groups
       .map(
         (g) =>
-          `<fieldset class="picker-group" data-group="${g.id}"><legend>${safe(g.title)} <span class="picker-count">${g.type === "text" ? "Texto" : "0 / " + g.max}</span></legend><small>${g.required ? "Obrigatório" : "Opcional"}${g.type === "multiple" ? " · Até " + g.max + " escolhas" : ""}</small>${g.type === "flavors" ? `<p class="pizza-flavor-rule">${current.pricing_mode === "fixed" ? "O preço é definido pelo tamanho. Os sabores estão incluídos." : "O valor final será a média dos preços dos sabores escolhidos."}</p>` : ""}${g.type === "text" ? `<input type="text" maxlength="60" aria-label="${safe(g.title)}">` : g.choices.map((c) => `<label class="picker-choice ${pizza && ["flavors", "multiple"].includes(g.type) ? "pizza-counter-choice" : ""}"><span class="picker-choice-caption">${c.photo ? `<img class="pizza-flavor-photo" src="${safe(restaurantURL("/media/" + encodeURIComponent(c.photo)))}" alt="${safe(c.label)}" loading="lazy">` : ""}${safe(c.label)}${c.description ? `<small class="picker-choice-description">${safe(c.description)}</small>` : ""}<span class="picker-choice-price"></span></span><input type="${["single", "sizes"].includes(g.type) ? "radio" : "checkbox"}" name="${g.id}" value="${c.id}">${pizza && ["flavors", "multiple"].includes(g.type) ? '<span class="picker-choice-toggle" aria-hidden="true">+</span>' : ""}</label>`).join("") + (!g.required && g.type === "single" ? `<button type="button" class="picker-clear" data-clear="${g.id}">Limpar escolha</button>` : "")}</fieldset>`,
+          `<fieldset class="picker-group" data-group="${g.id}"><legend>${uiHtml(g.title)} <span class="picker-count">${g.type === "text" ? uiText("Texto") : "0 / " + g.max}</span></legend><small>${g.required ? uiText("Obrigatório") : uiText("Opcional")}${g.type === "multiple" ? " · " + uiHtml("Até {count} escolhas", { count: g.max }) : ""}</small>${g.type === "flavors" ? `<p class="pizza-flavor-rule">${current.pricing_mode === "fixed" ? uiText("O preço é definido pelo tamanho. Os sabores estão incluídos.") : uiText("O valor final será a média dos preços dos sabores escolhidos.")}</p>` : ""}${g.type === "text" ? `<input type="text" maxlength="60" aria-label="${safe(g.title)}">` : g.choices.map((c) => `<label class="picker-choice ${pizza && ["flavors", "multiple"].includes(g.type) ? "pizza-counter-choice" : ""}"><span class="picker-choice-caption">${c.photo ? `<img class="pizza-flavor-photo" src="${safe(restaurantURL("/media/" + encodeURIComponent(c.photo)))}" alt="${safe(c.label)}" loading="lazy">` : ""}${safe(g.type === "sizes" ? uiSize(c.label) : c.label)}${c.description ? `<small class="picker-choice-description">${safe(c.description)}</small>` : ""}<span class="picker-choice-price"></span></span><input type="${["single", "sizes"].includes(g.type) ? "radio" : "checkbox"}" name="${g.id}" value="${c.id}">${pizza && ["flavors", "multiple"].includes(g.type) ? '<span class="picker-choice-toggle" aria-hidden="true">+</span>' : ""}</label>`).join("") + (!g.required && g.type === "single" ? `<button type="button" class="picker-clear" data-clear="${g.id}">${uiHtml("Limpar escolha")}</button>` : "")}</fieldset>`,
       )
       .join("");
     for (const g of current.groups) {
@@ -676,9 +690,9 @@ window.ProductPicker = (() => {
             : "";
         })
         .join("");
-      return `<article class="cart-item pizza-cart-item"><div class="pizza-cart-top"><div><h3>${item.quantidade}× ${safe(size?.label || p.nome)}</h3><small>${safe(p.nome)}</small></div>${photo ? `<img src="${safe(photo.src)}" alt="" loading="lazy">` : '<span class="pizza-cart-emoji" aria-hidden="true">🍕</span>'}</div><div class="pizza-cart-options">${sections}${item.observacao ? `<div><strong>${safe(p.notes.label)}</strong><p>${safe(item.observacao)}</p></div>` : ""}</div><div class="pizza-cart-actions"><button type="button" class="cart-edit-options" data-edit="${index}">✎ Editar</button><button type="button" class="cart-edit-options" data-remove="${index}">Remover</button><strong>${money(item.preco * item.quantidade)}</strong></div></article>`;
+      return `<article class="cart-item pizza-cart-item"><div class="pizza-cart-top"><div><h3>${item.quantidade}× ${safe(size?.label || p.nome)}</h3><small>${safe(p.nome)}</small></div>${photo ? `<img src="${safe(photo.src)}" alt="" loading="lazy">` : '<span class="pizza-cart-emoji" aria-hidden="true">🍕</span>'}</div><div class="pizza-cart-options">${sections}${item.observacao ? `<div><strong>${safe(p.notes.label)}</strong><p>${safe(item.observacao)}</p></div>` : ""}</div><div class="pizza-cart-actions"><button type="button" class="cart-edit-options" data-edit="${index}">✎ Editar</button><button type="button" class="cart-edit-options" data-remove="${index}">${uiHtml("Remover")}</button><strong>${money(item.preco * item.quantidade)}</strong></div></article>`;
     }
-    return `<div class="cart-item"><b>${safe(item.nome)}</b>${item.resumo ? `<p class="cart-options-summary">${safe(item.resumo)}</p>` : ""}${item.observacao ? `<p class="cart-options-summary">${safe(p?.notes.label || "Observação")}: ${safe(item.observacao)}</p>` : ""}<div class="quantity"><button data-change="-1" data-index="${index}" aria-label="Diminuir ${safe(item.nome)}">−</button><span>${item.quantidade}</span><button data-change="1" data-index="${index}" aria-label="Aumentar ${safe(item.nome)}">+</button><strong>${money(item.preco * item.quantidade)}</strong></div><button type="button" class="cart-edit-options" data-edit="${index}">Editar opções e observação</button></div>`;
+    return `<div class="cart-item"><b>${safe(item.nome)}</b>${item.resumo ? `<p class="cart-options-summary">${safe(item.resumo)}</p>` : ""}${item.observacao ? `<p class="cart-options-summary">${safe(p?.notes.label || uiText("Observação"))}: ${safe(item.observacao)}</p>` : ""}<div class="quantity"><button data-change="-1" data-index="${index}" aria-label="Diminuir ${safe(item.nome)}">−</button><span>${item.quantidade}</span><button data-change="1" data-index="${index}" aria-label="Aumentar ${safe(item.nome)}">+</button><strong>${money(item.preco * item.quantidade)}</strong></div><button type="button" class="cart-edit-options" data-edit="${index}">${uiHtml("Editar opções e observação")}</button></div>`;
   }
   return {
     bind,

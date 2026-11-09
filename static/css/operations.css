@@ -25,7 +25,7 @@ body #main #orders .order.entregue.order-paid,
 body #main #orders .compact-order.entregue.order-paid,
 #order-detail #order-detail-content .order.entregue.order-paid,
 #delivery-orders .order.entregue.order-paid {
-  background: #fff !important;
+  background: var(--ui-surface, #fff) !important;
   border-top-color: #08744f !important;
 }
 body #main #orders .order.pronto .order-head,
@@ -33,25 +33,25 @@ body #main #orders .order.pronto .order-head,
 body #main #orders .order.entregue.order-paid .order-head,
 #order-detail #order-detail-content .order.entregue.order-paid .order-head,
 #delivery-orders .order.entregue.order-paid .order-head {
-  background: #edf9f2 !important;
+  background: var(--ui-surface-green, #edf9f2) !important;
 }
 body #main #orders .order.pronto .order-body,
 #order-detail #order-detail-content .order.pronto .order-body,
 body #main #orders .order.entregue.order-paid .order-body,
 #order-detail #order-detail-content .order.entregue.order-paid .order-body,
 #delivery-orders .order.entregue.order-paid .order-body {
-  background: #fff !important;
+  background: var(--ui-surface, #fff) !important;
 }
 body
   #main
   #orders:is([data-role="cozinha"], [data-role="garcom"])
   .compact-order.em_preparo {
-  background: #eef4ff !important;
+  background: var(--ui-surface-blue, #eef4ff) !important;
 }
 body:has(#orders:is([data-role="cozinha"], [data-role="garcom"]))
   #order-detail
   .order.em_preparo {
-  background: #eef4ff !important;
+  background: var(--ui-surface-blue, #eef4ff) !important;
 }
 body:has(#orders:is([data-role="cozinha"], [data-role="garcom"]))
   #order-detail
@@ -178,7 +178,7 @@ body:has([data-role="cozinha"])
   #order-detail
   #order-detail-content
   .order.em_preparo {
-  background: #fff !important;
+  background: var(--ui-surface, #fff) !important;
   border-top: 4px solid #2563eb !important;
 }
 
@@ -187,7 +187,7 @@ body:has([data-role="cozinha"])
   #order-detail-content
   .order.em_preparo
   .order-head {
-  background: #eef4ff !important;
+  background: var(--ui-surface-blue, #eef4ff) !important;
 }
 
 body:has([data-role="cozinha"])
@@ -195,18 +195,18 @@ body:has([data-role="cozinha"])
   #order-detail-content
   .order.em_preparo
   .order-body {
-  background: #fff !important;
+  background: var(--ui-surface, #fff) !important;
 }
 
 /* Administrador: cards em preparo em azul claro */
 body:has([data-role="admin"]) .compact-order.em_preparo {
-  background: #eef4ff !important;
+  background: var(--ui-surface-blue, #eef4ff) !important;
   border-top-color: #2563eb !important;
 }
 
 /* Administrador: entregues e não pagos em vermelho claro */
 body:has([data-role="admin"]) .compact-order.entregue:not(.order-paid) {
-  background: #fff0f0 !important;
+  background: var(--ui-surface-red, #fff0f0) !important;
   border-top-color: #dc2626 !important;
 }
 
@@ -220,12 +220,16 @@ body:has([data-role="admin"]) .compact-order.entregue:not(.order-paid) {
     order: 1;
   }
 
-  .header-tools #notifications-open {
+  .header-tools .ui-header-preferences {
     order: 2;
   }
 
-  .header-tools .desktop-logout {
+  .header-tools #notifications-open {
     order: 3;
+  }
+
+  .header-tools .desktop-logout {
+    order: 4;
     margin: 0;
   }
 }
@@ -235,7 +239,7 @@ body:has([data-role="garcom"])
   #order-detail
   #order-detail-content
   .order.em_preparo {
-  background: #fff !important;
+  background: var(--ui-surface, #fff) !important;
   border-top-color: #2563eb !important;
 }
 
@@ -244,7 +248,7 @@ body:has([data-role="garcom"])
   #order-detail-content
   .order.em_preparo
   .order-head {
-  background: #eef4ff !important;
+  background: var(--ui-surface-blue, #eef4ff) !important;
 }
 
 body:has([data-role="garcom"])
@@ -252,12 +256,12 @@ body:has([data-role="garcom"])
   #order-detail-content
   .order.em_preparo
   .order-body {
-  background: #fff !important;
+  background: var(--ui-surface, #fff) !important;
 }
 
 /* Garçom: entregues não pagos com fundo branco na lista */
 body:has([data-role="garcom"]) .compact-order.entregue:not(.order-paid) {
-  background: #fff !important;
+  background: var(--ui-surface, #fff) !important;
 }
 
 /* Busca de comanda alinhada aos filtros */
@@ -355,7 +359,7 @@ body:has([data-role="admin"])
 }
 
 .clientes-header .excel-export-button:focus-visible {
-  outline: 3px solid #9bd4b2;
+  outline: 3px solid var(--ui-border, #9bd4b2);
   outline-offset: 3px;
 }
 
@@ -371,8 +375,8 @@ body:has([data-role="admin"])
 }
 .qr-assignment {
   padding: 12px;
-  background: #fff6e4;
-  border: 1px solid #e6d6b2;
+  background: var(--ui-surface-amber, #fff6e4);
+  border: 1px solid var(--ui-border, #e6d6b2);
   border-radius: 12px;
   display: grid;
   gap: 10px;
@@ -396,10 +400,10 @@ body:has([data-role="admin"])
   min-height: 42px;
   padding: 8px 10px;
   margin: 0;
-  border: 1px solid #d5dfeb;
+  border: 1px solid var(--ui-border, #d5dfeb);
   border-radius: 9px;
-  background: #f6f9fd;
-  color: #243b55;
+  background: var(--ui-surface, #f6f9fd);
+  color: var(--ui-text-blue, #243b55);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -413,8 +417,8 @@ body:has([data-role="admin"])
   cursor: pointer;
 }
 .item-checklist .item-check:has(input:checked) {
-  background: #e8f6ed;
-  border-color: #aacdb8;
+  background: var(--ui-surface-green, #e8f6ed);
+  border-color: var(--ui-border, #aacdb8);
 }
 .item-checklist .item-check:has(input:disabled) {
   cursor: default;
@@ -427,20 +431,20 @@ body:has([data-role="admin"])
   border-radius: 7px;
   font-size: 12px;
   font-weight: 600;
-  background: #fff3d7;
-  color: #85600a;
+  background: var(--ui-surface-amber, #fff3d7);
+  color: var(--ui-text-amber, #85600a);
 }
 .order .item-stage-pronto {
-  background: #e7f5eb;
-  color: #176c47;
+  background: var(--ui-surface-green, #e7f5eb);
+  color: var(--ui-text-green, #176c47);
 }
 .order .item-stage-entregue {
-  background: #edf1f5;
-  color: #526171;
+  background: var(--ui-surface-blue, #edf1f5);
+  color: var(--ui-text-neutral, #526171);
 }
 .order .item-stage-em_preparo {
-  background: #e8f0ff;
-  color: #285799;
+  background: var(--ui-surface-blue, #e8f0ff);
+  color: var(--ui-text-blue, #285799);
 }
 
 /* Checklist ao lado do produto; observações continuam abaixo. */
@@ -533,7 +537,7 @@ body:has([data-role="admin"])
   padding: 14px 16px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #fff;
+  background: var(--ui-surface, #fff);
   font-size: 13px;
 }
 #order-detail .order-item-content {
@@ -601,7 +605,7 @@ body:has([data-role="admin"])
   content: "•";
   position: absolute;
   left: 0;
-  color: var(--orange);
+  color: var(--ui-text-brand, var(--orange));
 }
 #order-detail .order-item-footer {
   display: flex;
@@ -696,7 +700,7 @@ body:has([data-role="admin"])
   overflow-wrap: anywhere;
 }
 .delivery-settings {margin:20px 0;padding:20px}
-.delivery-settings>summary {font-size:16px;color:var(--navy)}
+.delivery-settings>summary {font-size:16px;color: var(--ui-text-neutral, var(--navy))}
 .delivery-settings .management {margin-top:18px;gap:24px}
 .delivery-settings .management>form,.delivery-settings .management>div {min-width:0}
 .delivery-settings a {overflow-wrap:anywhere}
