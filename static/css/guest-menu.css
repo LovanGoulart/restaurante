@@ -1,0 +1,24 @@
+/* Menu exclusivo do cliente de casa antes do login. */
+.guest-nav.home-guest-header > a:first-child { display: inline-flex; }
+.home-guest-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 75;
+  display: flex; align-items: stretch; justify-content: space-around;
+  background: var(--navy); border-top: 1px solid #40506a;
+  padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
+  min-height: var(--bottom, 70px); box-shadow: 0 -3px 15px #10243c1a;
+}
+.home-guest-nav a, .home-guest-nav button {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex: 1; max-width: 180px; min-height: 52px; gap: 1px;
+  background: transparent; border: 0; border-radius: 10px;
+  color: #b4c3d9; padding: 5px 12px; font-size: 12px; font-weight: 700;
+  text-align: center;
+}
+.home-guest-nav a span, .home-guest-nav button span { font-size: 23px; line-height: 1.2; }
+.home-guest-nav .selected { background: #ffffff10; color: #ffa977; }
+body:has(.home-guest-nav) main { padding-bottom: calc(var(--bottom, 70px) + 30px + env(safe-area-inset-bottom)); }
+@media (max-width: 850px) {
+  body:has(.home-guest-nav):has(.mobile-cart:not([hidden])) main {
+    padding-bottom: calc(var(--bottom, 70px) + 105px + env(safe-area-inset-bottom));
+  }
+}

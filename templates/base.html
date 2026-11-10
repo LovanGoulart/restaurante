@@ -26,6 +26,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/appearance.css') }}">
     <script defer src="{{ url_for('static', filename='js/br-fields.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/operations.css') }}">
+    {% if not user and request.blueprint != 'salon_qr' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/guest-menu.css') }}">
+    {% endif %}
   </head>
   <body data-qr-guest="{{ '1' if user and user.perfil == 'visitante' else '' }}" data-user="{{ user.id if user else '' }}" data-cursor="{{ event_cursor }}">
     <a class="skip-link" href="#main">Ir ao conteúdo</a>
@@ -185,9 +188,7 @@
 
 {% else %}
 
-          <nav class="guest-nav" aria-label="Menu do cliente">
-            {% with ui_compact=true %}{% include '_ui_preferences.html' %}{% endwith %}
-            <a href="{{ request.script_root }}/cardapio">Cardápio</a>
+          <nav class="guest-nav home-guest-header" aria-label="Menu do cliente">
             <a href="{{ request.script_root }}/login">Entrar</a>
             <a href="{{ request.script_root }}/cadastro" class="guest-signup">Criar conta</a>
           </nav>
@@ -357,6 +358,24 @@
       </dialog>
 
 {% endif %}
+
+    {% if not user and request.blueprint != 'salon_qr' %}
+    <nav class="mobile-nav home-guest-nav" aria-label="Menu do cliente">
+      <a href="{{ request.script_root }}/cardapio" class="{{ 'selected' if request.endpoint == 'customers.menu' else '' }}"><span>▦</span>Cardápio</a>
+      <a href="{{ url_for('customers.my_orders') }}"><span>▤</span>Pedidos</a>
+      <button type="button" data-open="guest-more-dialog"><span>☰</span>Ver mais</button>
+    </nav>
+    <dialog id="guest-more-dialog" class="app-dialog">
+      <div class="dialog-head">
+        <h2>Ver mais</h2>
+        <button type="button" class="icon-button" data-close aria-label="Fechar menu">×</button>
+      </div>
+      <div class="menu-links">
+        <button type="button" class="install-trigger" hidden>↗ Instalar aplicativo</button>
+        <div class="ui-menu-preferences">{% include '_ui_preferences.html' %}</div>
+      </div>
+    </dialog>
+    {% endif %}
 
     <dialog id="install-dialog" class="app-dialog">
       <div class="dialog-head">
