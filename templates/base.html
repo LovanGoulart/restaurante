@@ -308,9 +308,9 @@
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/usuarios') }}">🔒 Equipe →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/clientes') }}">🔒 Clientes →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/fiscal') }}">🔒 Configuração fiscal e NFC-e →</a>
+  <a href="{{ url_for('management_access.security') }}">⚙ Bloqueio dos menus →</a>
   <a href="{{ request.script_root }}/cardapio">↗ Ver cardápio público →</a>
   <a href="{{ url_for('salon_qr.qr_page') }}">▦ QR Code para pedidos no salão →</a>
-  <a href="{{ url_for('management_access.security') }}">⚙ Segurança dos menus →</a>
 {% endif %}
 
 {% if user.perfil=='cliente' %}
