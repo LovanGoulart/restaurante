@@ -350,7 +350,7 @@ if (orders) {
     return /* HTML */ `
       <article
         data-order-id="${p.id}"
-        class="panel order ${p.status} ${p.pago ? "order-paid" : ""} ${online ? "online-order" : ""}"
+        class="panel order ${p.status} ${p.aguardando_comanda ? "awaiting-comanda" : ""} ${p.pago ? "order-paid" : ""} ${online ? "online-order" : ""}"
       >
         <div class="order-head">
           <div class="table-badge">
@@ -500,6 +500,7 @@ if (orders) {
         card.type = "button";
         card.className =
           "compact-order " + p.status + (p.pago ? " order-paid" : "");
+        card.classList.toggle("awaiting-comanda", Boolean(p.aguardando_comanda));
         card.dataset.detail = p.id;
         const aguardandoEntregador =
           role === "admin" &&

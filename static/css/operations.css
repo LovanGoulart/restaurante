@@ -705,3 +705,19 @@ body:has([data-role="admin"])
 .delivery-settings .management>form,.delivery-settings .management>div {min-width:0}
 .delivery-settings a {overflow-wrap:anywhere}
 .delivery-settings .check {display:flex;align-items:center;gap:8px}
+
+/* Aguardando comanda: prioridade visual em todos os perfis e detalhes. */
+body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda {
+  background: #f0e6ff !important;
+  border-top-color: #ac83db !important;
+  --ink: #172a43;
+  --muted: #59677b;
+  --ui-text-neutral: #253a53;
+  --ui-text-blue: #263c59;
+  color: #172a43 !important;
+}
+body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda .order-head,
+body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda .order-body {
+  background: #f0e6ff !important;
+  color: #172a43 !important;
+}
