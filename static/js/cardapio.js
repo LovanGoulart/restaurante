@@ -75,7 +75,8 @@ function setBag(open) {
     bag.removeAttribute("role");
     bag.removeAttribute("aria-modal");
     document.querySelector("#bag-backdrop").hidden = true;
-    mobileCart.focus();
+    if (mobileCart.hidden) document.querySelector("#search")?.focus();
+    else mobileCart.focus();
   }
 }
 mobileCart.onclick = () => setBag(true);
@@ -124,6 +125,7 @@ function totals() {
   document.querySelector("#total").textContent = money(subtotal + fee);
   document.querySelector("#mobile-total").textContent = money(subtotal + fee);
   document.querySelector("#mobile-count").textContent = count;
+  mobileCart.hidden = count === 0;
   document.querySelector("#cart-count").textContent = count;
   if (send) {
     send.disabled =

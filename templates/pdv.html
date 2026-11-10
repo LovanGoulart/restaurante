@@ -51,15 +51,6 @@
         {% endif %}
       {% endfor %}
       {% set categorias = ordered.pizzas + ordered.others %}
-      {% set ordem = namespace(pizzas=[], outros=[]) %}
-      {% for c in categorias %}
-        {% if 'pizza' in c.nome|lower %}
-          {% set ordem.pizzas = ordem.pizzas + [c] %}
-        {% else %}
-          {% set ordem.outros = ordem.outros + [c] %}
-        {% endif %}
-      {% endfor %}
-      {% set categorias = ordem.pizzas + ordem.outros %}
       {% include '_catalog_products.html' %}
     </section>
     <aside class="panel bag" id="bag" data-qr="{{ 'yes' if qr_customer else 'no' }}">
@@ -116,6 +107,7 @@
   </div>
   <button
     id="mobile-cart"
+    hidden
     class="mobile-cart"
     aria-expanded="false"
     aria-controls="bag"

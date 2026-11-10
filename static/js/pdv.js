@@ -18,7 +18,8 @@ function setBag(open) {
     bag.removeAttribute("role");
     bag.removeAttribute("aria-modal");
     bag.removeAttribute("aria-label");
-    mobileCart.focus();
+    if (mobileCart.hidden) document.querySelector("#search")?.focus();
+    else mobileCart.focus();
   }
 }
 mobileCart.onclick = () => setBag(true);
@@ -65,6 +66,7 @@ function updateTotals() {
   document.querySelector("#mobile-total").textContent = total;
   document.querySelector("#cart-count").textContent = count;
   document.querySelector("#mobile-count").textContent = count;
+  mobileCart.hidden = count === 0;
   send.disabled = !cart.length || sending || !navigator.onLine;
   send.textContent = sending ? uiText("Enviando pedido…") : uiText("Enviar para a cozinha →");
 }
