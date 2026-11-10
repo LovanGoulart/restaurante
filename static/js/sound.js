@@ -66,23 +66,23 @@
       return false;
     }
     try {
-      [0, 0.25, 0.5].forEach((delay, index) => {
+      [0, 0.3, 0.6, 1.05, 1.35, 1.65].forEach((delay, index) => {
         const oscillator = context.createOscillator(),
           gain = context.createGain(),
           at = context.currentTime + delay;
-        oscillator.type = "sine";
-        oscillator.frequency.value = index === 1 ? 880 : 660;
+        oscillator.type = "triangle";
+        oscillator.frequency.value = index % 2 ? 1046 : 784;
         oscillator.connect(gain);
         gain.connect(context.destination);
         gain.gain.setValueAtTime(0.0001, at);
-        gain.gain.exponentialRampToValueAtTime(0.17, at + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.2);
+        gain.gain.exponentialRampToValueAtTime(0.45, at + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.24);
         oscillator.onended = () => {
           oscillator.disconnect();
           gain.disconnect();
         };
         oscillator.start(at);
-        oscillator.stop(at + 0.22);
+        oscillator.stop(at + 0.26);
       });
       return true;
     } catch {
@@ -132,6 +132,12 @@
   document.addEventListener("visibilitychange", update);
   window.RestaurantSound = {
     notify() {
+      // Não há API web para detectar o modo silencioso; a vibração é solicitada
+      // também quando o som está desativado, respeitando o sistema operacional.
+      try {
+        if (document.visibilityState === "visible" && navigator.vibrate)
+          navigator.vibrate([250, 100, 250, 100, 450]);
+      } catch {}
       if (!enabled) return false;
       return play();
     },

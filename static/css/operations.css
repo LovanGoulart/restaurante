@@ -721,3 +721,20 @@ body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda .order-
   background: #f0e6ff !important;
   color: #172a43 !important;
 }
+
+/* Notificações flutuantes no topo, sem retirar o foco do atendimento. */
+#notification-heads-up {
+  position: fixed; inset: max(12px, env(safe-area-inset-top)) 12px auto auto;
+  margin: 0; width: min(420px, calc(100vw - 24px)); box-sizing: border-box;
+  display: flex; align-items: flex-start; gap: 14px; padding: 18px;
+  border: 1px solid var(--ui-border, #dce3ed); border-left: 5px solid #ed963e;
+  border-radius: 14px; background: var(--ui-surface, #fff);
+  color: var(--ink, #172a43); box-shadow: 0 8px 32px #0004; z-index: 10000;
+}
+#notification-heads-up > div { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+#notification-heads-up strong { font-size: 16px; }
+#notification-heads-up p { margin: 6px 0 0; font-size: 14px; white-space: pre-line; }
+#notification-heads-up button {
+  flex: 0 0 36px; min-height: 36px; padding: 0; font-size: 24px;
+  background: transparent; color: inherit; border: 0;
+}

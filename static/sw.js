@@ -1,6 +1,6 @@
 const ROOT = new URL(self.registration.scope).pathname.replace(/\/$/, "");
 const CACHE_PREFIX = "restaurant-scope-" + ROOT + "-";
-const CACHE = CACHE_PREFIX + "v37";
+const CACHE = CACHE_PREFIX + "v38";
 function safeOrderURL(value) {
   try {
     const url = new URL(value, self.location.origin);
@@ -104,7 +104,6 @@ self.addEventListener("push", (e) => {
       const scopedWindows = windows.filter((c) =>
         new URL(c.url).pathname.startsWith(ROOT + "/"),
       );
-      const shown = scopedWindows.some((c) => c.visibilityState === "visible");
       scopedWindows.forEach((c) =>
         c.postMessage({ type: "push-update", data }),
       );
@@ -119,7 +118,10 @@ self.addEventListener("push", (e) => {
           data: {
             url: safeOrderURL(data.url),
           },
-          silent: shown,
+          silent: false,
+          vibrate: [250, 100, 250, 100, 450],
+          renotify: true,
+          requireInteraction: true,
         },
       );
     })(),

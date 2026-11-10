@@ -19,6 +19,45 @@ function toast(message) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => (el.hidden = true), 7000);
 }
+// Aviso flutuante no aplicativo, inclusive quando um diálogo estiver aberto.
+let headsUpTimer;
+function notificationHeadsUp(title, message) {
+  let box = document.getElementById("notification-heads-up");
+  if (!box) {
+    box = document.createElement("section");
+    box.id = "notification-heads-up";
+    box.setAttribute("role", "status");
+    box.setAttribute("aria-live", "polite");
+    box.setAttribute("popover", "manual");
+    const content = document.createElement("div");
+    content.append(document.createElement("strong"), document.createElement("p"));
+    const close = document.createElement("button");
+    close.type = "button";
+    close.textContent = "×";
+    close.setAttribute("aria-label", uiText("Fechar"));
+    close.onclick = () => {
+      clearTimeout(headsUpTimer);
+      if (typeof box.hidePopover === "function" && box.matches(":popover-open")) box.hidePopover();
+      box.hidden = true;
+    };
+    box.append(content, close);
+    document.body.append(box);
+  }
+  box.querySelector("strong").textContent = uiText(title);
+  box.querySelector("p").textContent = uiText(message);
+  box.hidden = false;
+  if (typeof box.showPopover === "function") {
+    try { box.showPopover(); } catch {}
+  } else {
+    box.removeAttribute("popover");
+  }
+  clearTimeout(headsUpTimer);
+  headsUpTimer = setTimeout(() => {
+    if (typeof box.hidePopover === "function" && box.matches(":popover-open"))
+      box.hidePopover();
+    box.hidden = true;
+  }, 10000);
+}
 async function api(url, data) {
   const response = await fetch(restaurantURL(url), {
     method: data === undefined ? "GET" : "POST",
@@ -884,7 +923,7 @@ if (document.body.dataset.user) {
     window.dispatchEvent(new Event("orders-updated"));
     loadInbox();
     if (n.alerta) {
-      toast(uiText(n.titulo) + "\n" + uiText(n.mensagem));
+      notificationHeadsUp(n.titulo, n.mensagem);
       window.RestaurantSound?.notify();
     }
   }
