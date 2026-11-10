@@ -336,3 +336,25 @@ def qr_image():
     output = io.BytesIO()
     image.save(output)
     return Response(output.getvalue(), mimetype="image/svg+xml")
+
+
+@bp.get("/qr-code.pdf")
+def qr_poster():
+    if not g.user or g.user.perfil != "admin":
+        abort(403)
+    from flask import Response
+    from customers import store
+    from qr_poster import poster_pdf
+
+    size = request.args.get("formato", "10x15").lower()
+    if size != "10x15":
+        abort(400, "Escolha o formato 10 x 15 cm.")
+    pdf = poster_pdf(url_for("salon_qr.enter", _external=True), store().nome, size)
+    return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="cartaz-salao-{size}.pdf"',
+            "Cache-Control": "no-store",
+        },
+    )

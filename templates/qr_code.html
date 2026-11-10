@@ -2,6 +2,11 @@
 <section class="panel"><h1>QR Code para pedidos no salão</h1><p>Imprima e coloque nas mesas. O cliente escolhe os produtos sem senha e o garçom vincula a comanda ao atender.</p>
 <img src="{{ url_for('salon_qr.qr_image') }}" width="280" height="280" style="max-width:100%;height:auto" alt="QR Code do cardápio para clientes do salão">
 <label>Link do cardápio no salão<input readonly value="{{ link }}"></label>
-<a href="{{ url_for('salon_qr.qr_image') }}" download="qr-code-salao.svg" class="button-link">Baixar QR Code para impressão</a>
+<form method="get" action="{{ url_for('salon_qr.qr_poster') }}">
+<input type="hidden" name="formato" value="10x15">
+<p><strong>Plaquinha vertical: 10 × 15 cm</strong></p>
+<button type="submit">Baixar cartaz pronto em PDF</button>
+</form>
+<p>O cartaz inclui o nome do restaurante e QR Code de pelo menos 5 × 5 cm. Imprima em papel A4, com escala 100% / tamanho real. Recorte na linha pontilhada para obter a plaquinha de 10 × 15 cm.</p>
 <p class="muted">O código usa o endereço pelo qual você acessou o sistema. Gere na URL pública com HTTPS para funcionar nos celulares dos clientes.</p></section>
 {% endblock %}
