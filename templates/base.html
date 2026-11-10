@@ -40,8 +40,10 @@
 
 {% if (user and user.perfil == 'visitante') or (not user and request.blueprint == 'salon_qr') %}
           <nav class="guest-nav qr-guest-nav" aria-label="Menu do cliente">
-            <a href="{{ url_for('salon_qr.menu') if user else url_for('salon_qr.enter') }}">Cardápio</a>
+            {% if not user %}
+            <a href="{{ url_for('salon_qr.enter') }}">Cardápio</a>
             {% with ui_compact=true %}{% include '_ui_preferences.html' %}{% endwith %}
+            {% endif %}
             {% if user and user.perfil == 'visitante' and session.get('qr_numero_mesa') %}
             <div class="header-user" title="{{ user.nome }} · {{ ui_text('Mesa') }} {{ session.get('qr_numero_mesa') }}">
               <span class="header-user-role">{{ ui_text('Mesa') }} <span data-qr-table>{{ session.get('qr_numero_mesa') }}</span></span>
