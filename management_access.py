@@ -42,6 +42,8 @@ for _code in (400, 401, 403, 404, 409, 429, 503):
 
 
 def scope_for(path):
+    if path.startswith("/fidelidade-admin"):
+        return "fidelidade"
     if path == "/fiscal" or path.startswith("/fiscal/"):
         return "fiscal"
     if path.startswith("/relatorios"):
@@ -73,6 +75,7 @@ def safe_destination(value):
         abort(400, "Destino inválido.")
     # Só páginas conhecidas; exportação exige liberação da área correspondente.
     allowed = {
+        "/fidelidade-admin",
         "/relatorios-vendas",
         "/loja",
         "/fiscal",
@@ -110,6 +113,8 @@ def guard():
                 )
             abort(403, "Confirme a senha do administrador para acessar esta área.")
         path = request.path
+        if scope == "fidelidade":
+            path = "/fidelidade-admin"
         if scope == "fiscal":
             path = "/fiscal"
         if scope == "produtos":

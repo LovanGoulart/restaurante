@@ -42,6 +42,8 @@ def create_app(overrides=None):
     db.init_app(app)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(customers_bp)
+    from loyalty import bp as loyalty_bp
+    app.register_blueprint(loyalty_bp)
     app.register_blueprint(leads_export_bp)
     app.register_blueprint(sales_reports_bp)
     app.register_blueprint(couriers_bp)
@@ -620,6 +622,8 @@ def create_app(overrides=None):
         db.session.rollback()
         db.session.execute(db.text("BEGIN IMMEDIATE"))
         p = db.get_or_404(Pedido, id)
+        if p.status == "cancelado":
+            abort(409, "Pedido cancelado não pode ser recebido.")
         caixa = current_cash()
         forma = (request.get_json(silent=True) or {}).get("forma")
         if not caixa:

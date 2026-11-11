@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/loyalty.css') }}">
+<div class="section-head"><div><h1>Fidelidade</h1><p>Seus pedidos podem render a próxima refeição.</p></div><a href="{{ url_for('customers.my_orders') }}">Meus pedidos →</a></div>
+<section class="panel loyalty-balance"><span>Seu saldo</span><strong><span id="loyalty-balance">{{ saldo }}</span> pontos</strong>
+<p>A cada {{ cfg.valor_base|brl }} em produtos por pedido, você ganha {{ cfg.pontos_base }} pontos.</p>
+<small>Crédito após pagamento e entrega ou retirada. Taxa de entrega e resgates não geram pontos. Valores inferiores a um bloco não acumulam para o próximo pedido.</small></section>
+<h2>Produtos para resgate</h2>
+<div class="loyalty-grid">
+{% for r in recompensas %}
+<article class="panel loyalty-reward" data-cost="{{ r.pontos }}">
+{% set photo = appearance.photos.get(r.produto_id|string) %}
+{% if photo %}<img src="{{ url_for('appearance.media', name=photo) }}" alt="{{ r.produto.nome }}" loading="lazy">{% endif %}
+<h3>{{ r.produto.nome }}</h3><p>{{ r.descricao or r.produto.descricao }}</p><strong>{{ r.pontos }} pontos</strong>
+<p data-availability>{{ 'Você já pode resgatar!' if saldo >= r.pontos else 'Faltam ' ~ (r.pontos-saldo) ~ ' pontos' }}</p>
+<a class="button-link" data-redeem href="{{ url_for('loyalty.checkout',id=r.id) }}" {% if saldo < r.pontos %}hidden{% endif %}>Resgatar produto</a>
+</article>
+{% else %}<p>O restaurante ainda não disponibilizou produtos para resgate.</p>{% endfor %}
+</div>
+<section class="panel"><h2>Histórico de pontos</h2>{% include '_fidelidade_historico.html' %}</section>
+<p id="loyalty-update-status" class="muted" role="status"></p>
+{% endblock %}
+{% block scripts %}<script defer src="{{ url_for('static',filename='js/loyalty.js') }}"></script>{% endblock %}

@@ -358,7 +358,12 @@ def place_order():
         taxa_entrega=loja.taxa_entrega if modalidade == "entrega" else 0,
         **addr,
     )
-    add_items(p, d.get("itens"))
+    reward = None
+    if "resgate_id" in d:
+        from loyalty import reward_item
+        reward = reward_item(p, d, c)
+    else:
+        add_items(p, d.get("itens"))
     if d.get("total_previsto") is not None and (
         type(d["total_previsto"]) is not int or d["total_previsto"] != p.total
     ):
@@ -374,6 +379,14 @@ def place_order():
             usuario_id=uid, chave=token, conteudo_hash=fingerprint, pedido_id=p.id
         )
     )
+    if reward:
+        from loyalty import record_redemption
+        record_redemption(p, reward, c)
+        if p.total == 0:
+            p.online.forma_pagamento = "pontos"
+    else:
+        from loyalty import capture_order
+        capture_order(p)
     if modalidade == "entrega":
         for k, v in addr.items():
             setattr(c, k, v)

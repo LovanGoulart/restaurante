@@ -27,6 +27,9 @@
     </div>-->
     <button hidden id="orders-refresh" class="secondary">↻ Atualizar agora</button>
   </div>
+  {% if user.perfil == 'cliente' and loyalty_enabled %}
+  <p><a class="button-link secondary" href="{{ url_for('loyalty.page') }}">★ Fidelidade · saldo e resgates</a></p>
+  {% endif %}
   <div class="status-summary" id="status-summary"></div>
   <div class="orders-toolbar orders-filters">
     {% if user.perfil in ['admin', 'garcom'] %}

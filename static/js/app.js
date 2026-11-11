@@ -209,6 +209,7 @@ if (orders) {
   let requestedOrder =
     Number(new URLSearchParams(location.search).get("pedido")) || null;
   const labels = {
+      cancelado: uiText("Cancelado"),
       aberto: ["admin", "garcom"].includes(orders.dataset.role)
         ? uiText("Enviado à cozinha")
         : orders.dataset.role === "cozinha"
@@ -222,6 +223,7 @@ if (orders) {
       entregue: uiText("Entregue"),
     },
     paymentLabels = {
+      pontos: uiText("Pontos de fidelidade"),
       pix: "Pix",
       dinheiro: uiText("Dinheiro"),
       credito: uiText("Cartão de crédito"),
@@ -451,8 +453,8 @@ if (orders) {
                   </button>
                 `
               : ""
-          }${assignmentHTML(p, role)}${role === "admin" && !p.pago && p.entregador?.concluida ? '<a class="button-link" href="' + restaurantURL("/acerto-entregadores") + '">Conferir acerto do entregador →</a>' : ""}${
-            role === "admin" && !p.pago && !p.entregador?.concluida
+          }${assignmentHTML(p, role)}${role === "admin" && !p.pago && p.status !== "cancelado" && p.entregador?.concluida ? '<a class="button-link" href="' + restaurantURL("/acerto-entregadores") + '">Conferir acerto do entregador →</a>' : ""}${
+            role === "admin" && !p.pago && p.status !== "cancelado" && !p.entregador?.concluida
               ? /* HTML */ `
                   <button class="secondary" data-pay="${p.id}">${uiHtml("\n                    Registrar pagamento\n                  ")}</button>
                 `

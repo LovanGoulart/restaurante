@@ -32,10 +32,14 @@ bp = Blueprint("notifications", __name__)
 
 
 def emit_order(pedido, tipo, item=None):
+    if tipo in {"pago", "entregue"}:
+        from loyalty import credit_completed
+        credit_completed(pedido)
 
     users = db.session.scalars(db.select(Usuario).where(Usuario.ativo.is_(True))).all()
 
     titles = {
+        "cancelado": "Resgate cancelado: pontos devolvidos",
         "atribuida": "Nova entrega atribuída",
         "novo": "Novo pedido na cozinha",
         "vinculado": "Comanda definida pelo atendimento",

@@ -160,6 +160,8 @@ def update_item_checklist(pedido, item, user, action, checked, expected):
             403,
             "Nos pedidos online, utilize a confirmação de retirada ou entrega do pedido.",
         )
+    if pedido.status == "cancelado":
+        abort(409, "Pedido cancelado não pode ser preparado.")
     if pedido.status == "saiu_entrega" or (
         pedido.entrega and pedido.entrega.entregue_em
     ):

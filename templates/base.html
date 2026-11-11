@@ -76,6 +76,9 @@
               >
                 Meus pedidos
               </a>
+              {% if user.perfil=='cliente' and loyalty_enabled %}
+              <a href="{{ url_for('loyalty.page') }}" class="{{ 'selected' if request.blueprint=='loyalty' else '' }}">Fidelidade</a>
+              {% endif %}
               {% if user.perfil=='cliente' %}<a href="{{ request.script_root }}/minha-conta">Minha conta</a>{% endif %}
 
 {% else %}
@@ -301,6 +304,7 @@
         </div>
         <div class="menu-links">
 {% if user.perfil=='admin' %}
+  <a href="{{ url_for('management_access.unlock', destino=request.script_root+'/fidelidade-admin') }}">★ Fidelidade →</a>
   <a href="{{ request.script_root }}/personalizacao">🎨 Personalização e fotos</a>
   <p class="muted">Áreas de gestão</p>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/categorias') }}">🔒 Categorias →</a>
@@ -315,6 +319,7 @@
 
 {% if user.perfil=='cliente' %}
 
+            {% if loyalty_enabled %}<a href="{{ url_for('loyalty.page') }}">★ Fidelidade <span>→</span></a>{% endif %}
             <a href="{{ request.script_root }}/minha-conta">
               👤 Minha conta e endereço
               <span>→</span>
