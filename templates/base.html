@@ -305,17 +305,18 @@
         </div>
         <div class="menu-links">
 {% if user.perfil=='admin' %}
-  <a href="{{ url_for('management_access.unlock', destino=request.script_root+'/fidelidade-admin') }}">★ Fidelidade →</a>
   <a href="{{ request.script_root }}/personalizacao">🎨 Personalização e fotos</a>
-  <p class="muted">Áreas de gestão</p>
+  <a href="{{ request.script_root }}/cardapio">↗ Ver cardápio público →</a>
+  <a href="{{ url_for('salon_qr.qr_page') }}">▦ QR Code para pedidos no salão →</a>
+  <p class="muted" style="margin: 0; font-size: 12px;">Área de gestão</p>
+  <a href="{{ url_for('management_access.security') }}">⚙ Bloqueio dos menus →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/categorias') }}">🔒 Categorias →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/produtos') }}">🔒 Produtos →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/usuarios') }}">🔒 Equipe →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/clientes') }}">🔒 Clientes →</a>
+  <a href="{{ url_for('management_access.unlock', destino=request.script_root+'/fidelidade-admin') }}">🔒 Fidelidade →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/fiscal') }}">🔒 Configuração fiscal e NFC-e →</a>
-  <a href="{{ url_for('management_access.security') }}">⚙ Bloqueio dos menus →</a>
-  <a href="{{ request.script_root }}/cardapio">↗ Ver cardápio público →</a>
-  <a href="{{ url_for('salon_qr.qr_page') }}">▦ QR Code para pedidos no salão →</a>
+  <p class="muted" style="margin: 0; font-size: 12px;">Configurações</p>
 {% endif %}
 
 {% if user.perfil=='cliente' %}
