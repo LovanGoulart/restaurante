@@ -71,6 +71,9 @@
 
 {% endif %}
 
+    {% if user.perfil == 'admin' %}
+    <a class="button-link secondary" style="align-self: flex-end;" href="{{ url_for('order_history.page') }}">Pedidos finalizados →</a>
+    {% endif %}
     <span id="last-updated" class="muted"></span>
   </div>
   <p id="poll-error" class="error" role="alert" hidden></p>

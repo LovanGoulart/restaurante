@@ -229,6 +229,30 @@ if (orders) {
       credito: uiText("Cartão de crédito"),
       debito: uiText("Cartão de débito"),
     };
+  const adminSummary = [
+    { key: "a_receber", label: uiText("A receber"), css: "entregue" },
+    { key: "pronto", label: uiText("Pronto"), css: "pronto" },
+    { key: "em_preparo", label: uiText("Em preparo"), css: "em_preparo" },
+    { key: "aberto", label: uiText("Enviado à cozinha"), css: "aberto" },
+    { key: "saiu_entrega", label: uiText("Saiu para entrega"), css: "saiu_entrega" },
+    { key: "aguardando_comanda", label: uiText("Aguardando comanda"), css: "awaiting-comanda" },
+  ];
+  if (orders.dataset.role === "admin") {
+    const statusSelect = document.querySelector("#status-filter");
+    for (const key of ["a_receber", "aguardando_comanda"]) {
+      if (!statusSelect.querySelector('option[value="' + key + '"]'))
+        statusSelect.add(new Option(adminSummary.find(s => s.key === key).label, key));
+    }
+  }
+  function matchesStatus(p, filter, role) {
+    if (!filter) return true;
+    if (filter === "a_receber") return p.status === "entregue" && !p.pago;
+    if (filter === "aguardando_comanda") return Boolean(p.aguardando_comanda);
+    if (filter === "nao_pago") return !p.pago;
+    if (role === "admin" && filter === "aberto")
+      return p.status === "aberto" && !p.aguardando_comanda;
+    return p.status === filter;
+  }
   function nextFor(p) {
     return {
       aberto: "em_preparo",
@@ -500,13 +524,15 @@ if (orders) {
       "cliente",
       "visitante",
     ].includes(role);
-    document.querySelector("#status-summary").innerHTML = Object.keys(labels)
+    const summary = role === "admin" ? adminSummary : Object.keys(labels)
       .filter((status) => role !== "garcom" || status !== "saiu_entrega")
+      .map(key => ({ key, label: labels[key], css: key }));
+    document.querySelector("#status-summary").innerHTML = summary
       .map(
         (s) => /* HTML */ `
-          <button class="status-card ${s}" data-filter="${s}">
-            <span>${labels[s]}</span>
-            <b>${list.filter((p) => p.status === s).length}</b>
+          <button class="status-card ${s.css}" data-filter="${s.key}">
+            <span>${s.label}</span>
+            <b>${list.filter((p) => matchesStatus(p, s.key, role)).length}</b>
           </button>
         `,
       )
@@ -515,8 +541,7 @@ if (orders) {
       list
         .filter(
           (p) =>
-            (!filter ||
-              (filter === "nao_pago" ? !p.pago : p.status === filter)) &&
+            matchesStatus(p, filter, role) &&
             (!channel || p.modalidade === channel) &&
             correspondeComanda(p),
         )
@@ -528,8 +553,7 @@ if (orders) {
       fullCards.clear();
       const visible = list.filter(
         (p) =>
-          (!filter ||
-            (filter === "nao_pago" ? !p.pago : p.status === filter)) &&
+          matchesStatus(p, filter, role) &&
           (!channel || p.modalidade === channel) &&
           correspondeComanda(p),
       );
@@ -559,7 +583,7 @@ if (orders) {
                 ? uiText("Definir entregador")
                 : uiText("Em trânsito")
               : labels[p.status];
-        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${statusDoCard}</span></span><span>${uiHtml("Pedido #")}${p.id} · ${escapeHTML(p.cliente || p.garcom)}</span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? uiText("Pago") : uiText("Não pago")}</b></span><small>${p.itens.filter((i) => i.etapa === "pronto").length} item(ns) pronto(s) · ${p.itens.filter((i) => i.etapa === "entregue").length}/${p.itens.length} entregue(s) · Ver detalhes →</small>`;
+        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${statusDoCard}</span></span><span>${uiHtml("Pedido #")}${p.id} · <span class="compact-person">${escapeHTML(p.cliente || p.garcom)}</span></span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? uiText("Pago") : uiText("Não pago")}</b></span><small>${p.itens.filter((i) => i.etapa === "pronto").length} item(ns) pronto(s) · ${p.itens.filter((i) => i.etapa === "entregue").length}/${p.itens.length} entregue(s) · Ver detalhes →</small>`;
         article.replaceWith(card);
       });
       if (detail.open && selectedOrder !== null) {

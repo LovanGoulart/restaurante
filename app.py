@@ -44,6 +44,8 @@ def create_app(overrides=None):
     app.register_blueprint(customers_bp)
     from loyalty import bp as loyalty_bp
     app.register_blueprint(loyalty_bp)
+    from order_history import bp as order_history_bp
+    app.register_blueprint(order_history_bp)
     app.register_blueprint(leads_export_bp)
     app.register_blueprint(sales_reports_bp)
     app.register_blueprint(couriers_bp)
@@ -387,6 +389,8 @@ def create_app(overrides=None):
     def list_orders():
         q = db.select(Pedido)
         if g.user.perfil == "admin":
+            from order_history import current_admin_orders
+            q = current_admin_orders(q)
             priority = case(
                 (Pedido.status == "entregue", 0),
                 (Pedido.status == "pronto", 1),

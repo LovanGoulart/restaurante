@@ -738,3 +738,29 @@ body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda .order-
   flex: 0 0 36px; min-height: 36px; padding: 0; font-size: 24px;
   background: transparent; color: inherit; border: 0;
 }
+/* Resumo administrativo: faixa lateral na cor dos pedidos de cada situação. */
+body:has(#orders[data-role="admin"]) #status-summary .status-card[data-filter="a_receber"] {
+  border-left-color: #dc2626;
+}
+body:has(#orders[data-role="admin"]) #status-summary .status-card[data-filter="pronto"] {
+  border-left-color: #08744f;
+}
+body:has(#orders[data-role="admin"]) #status-summary .status-card[data-filter="em_preparo"] {
+  border-left-color: #2563eb;
+}
+body:has(#orders[data-role="admin"]) #status-summary .status-card[data-filter="aberto"] {
+  border-left-color: #c58b26;
+}
+body:has(#orders[data-role="admin"]) #status-summary .status-card[data-filter="saiu_entrega"] {
+  border-left-color: #687380;
+}
+body:has(#orders[data-role="admin"]) #status-summary .status-card[data-filter="aguardando_comanda"] {
+  border-left-color: #ac83db;
+}
+
+/* Informações secundárias dos cards, em todos os perfis. */
+.compact-order .compact-person,
+.compact-order .compact-items,
+.compact-order > small {
+  font-weight: 400;
+}
