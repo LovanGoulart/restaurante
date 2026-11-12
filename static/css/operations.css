@@ -708,17 +708,25 @@ body:has([data-role="admin"])
 
 /* Aguardando comanda: prioridade visual em todos os perfis e detalhes. */
 body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda {
-  background: #f0e6ff !important;
+  background: var(--ui-surface, #fff) !important;
   border-top-color: #ac83db !important;
+  color: var(--ink, #172a43) !important;
+}
+body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda .order-body {
+  background: var(--ui-surface, #fff) !important;
+  color: var(--ink, #172a43) !important;
+}
+body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda .order-head {
+  background: var(--ui-surface-violet, #f0e6ff) !important;
+  color: var(--ink, #172a43) !important;
+}
+/* Na lista, preservar o card compacto inteiro lilás como anteriormente. */
+body #main #orders .compact-order.awaiting-comanda {
+  background: #eae2f5 !important;
   --ink: #172a43;
   --muted: #59677b;
   --ui-text-neutral: #253a53;
   --ui-text-blue: #263c59;
-  color: #172a43 !important;
-}
-body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda .order-head,
-body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda .order-body {
-  background: #f0e6ff !important;
   color: #172a43 !important;
 }
 
@@ -764,3 +772,4 @@ body:has(#orders[data-role="admin"]) #status-summary .status-card[data-filter="a
 .compact-order > small {
   font-weight: 400;
 }
+

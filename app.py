@@ -404,13 +404,19 @@ def create_app(overrides=None):
             tele_entrega_pronta = (Pedido.status == "pronto") & Pedido.online.has(
                 modalidade="entrega"
             )
+            from loyalty_models import FidelidadePedido
+            resgate_em_andamento = Pedido.status.in_(
+                ["aberto", "em_preparo", "pronto", "saiu_entrega"]
+            ) & Pedido.id.in_(db.select(FidelidadePedido.pedido_id).where(
+                FidelidadePedido.recompensa_id.is_not(None)))
 
             q = q.order_by(
                 case(
                     (tele_entrega_pronta, 0),
                     else_=1,
                 ),
-                Pedido.pago.asc(),
+                # Resgate quitado com pontos acompanha a fila do seu status.
+                case((Pedido.pago.is_(True) & ~resgate_em_andamento, 1), else_=0),
                 priority,
                 Pedido.id.desc(),
             )

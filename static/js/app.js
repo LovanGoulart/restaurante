@@ -253,6 +253,10 @@ if (orders) {
       return p.status === "aberto" && !p.aguardando_comanda;
     return p.status === filter;
   }
+  function matchesChannel(p, channel) {
+    if (channel === "fidelidade") return Boolean(p.fidelidade_resgate);
+    return !channel || p.modalidade === channel;
+  }
   function nextFor(p) {
     return {
       aberto: "em_preparo",
@@ -542,7 +546,7 @@ if (orders) {
         .filter(
           (p) =>
             matchesStatus(p, filter, role) &&
-            (!channel || p.modalidade === channel) &&
+            matchesChannel(p, channel) &&
             correspondeComanda(p),
         )
         .map((p) => orderHTML(p, role))
@@ -554,7 +558,7 @@ if (orders) {
       const visible = list.filter(
         (p) =>
           matchesStatus(p, filter, role) &&
-          (!channel || p.modalidade === channel) &&
+          matchesChannel(p, channel) &&
           correspondeComanda(p),
       );
       const articles = [...orders.querySelectorAll("article.order")];

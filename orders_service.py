@@ -59,6 +59,8 @@ def add_items(pedido, itens):
 
 def serialize_order(p, user):
     online = p.online
+    from loyalty_models import FidelidadePedido
+    fidelity = db.session.get(FidelidadePedido, p.id) if online else None
     status = customer_order_status(p, user)
     hide_ready = user.perfil in {"cliente", "visitante"} and (
         not online or online.modalidade == "entrega"
@@ -85,6 +87,7 @@ def serialize_order(p, user):
         aguardando_comanda=bool(p.qr and not p.mesa),
         status=status,
         pago=p.pago,
+        fidelidade_resgate=bool(fidelity and fidelity.recompensa_id is not None),
         subtotal=sum(i.preco * i.quantidade for i in items) if guest else p.subtotal,
         taxa_entrega=online.taxa_entrega if online else 0,
         total=sum(i.preco * i.quantidade for i in items) if guest else p.total,
