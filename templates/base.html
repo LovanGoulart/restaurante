@@ -192,9 +192,9 @@
 {% else %}
 
           <nav class="guest-nav home-guest-header" aria-label="Menu do cliente">
-            <div class="ui-header-preferences">{% with ui_compact=true %}{% include '_ui_preferences.html' %}{% endwith %}</div>
             <a href="{{ request.script_root }}/login">Entrar</a>
             <a href="{{ request.script_root }}/cadastro" class="guest-signup">Criar conta</a>
+            <div class="ui-header-preferences">{% with ui_compact=true %}{% include '_ui_preferences.html' %}{% endwith %}</div>
           </nav>
 
 {% endif %}
