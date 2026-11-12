@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static',filename='css/loyalty.css', v='3') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/loyalty.css', v='4') }}">
 <h1>Programa de fidelidade</h1>
 <p>Exclusivo para pedidos feitos pelo cliente na própria conta, com retirada ou tele-entrega.</p>
 {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
@@ -13,7 +13,7 @@
 {% for id, titulo in abas %}<a href="{{ url_for('loyalty.admin', aba=id) }}" {% if aba == id %}aria-current="page"{% endif %}>{{ titulo }}</a>{% endfor %}
 </nav>
 {% if aba == 'programa' %}
-<section class="panel"><h2></h2>
+<section class="panel"><h2>Programa e pontuação</h2>
 <form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="acao" value="config">
 <label class="loyalty-enable"><input type="checkbox" name="ativo" {% if cfg and cfg.ativo %}checked{% endif %}><span>Habilitar fidelidade</span></label>
 <label>A cada valor gasto em produtos (R$)<input name="valor_base" inputmode="decimal" required value="{{ '%.2f'|format((cfg.valor_base if cfg else 2000)/100) }}"></label>
@@ -45,9 +45,20 @@
 {% endif %}
 {% if aba == 'resgates' %}
 <section class="panel"><h2>Resgates recentes</h2><p>O cancelamento antes do preparo devolve os pontos uma única vez. Não cancela taxas já recebidas.</p>
-{% for r in resgates %}<div class="loyalty-admin-row"><div><strong>Pedido #{{ r.pedido_id }} · {{ r.cliente.usuario.nome }}</strong><p>{{ r.pontos_resgatados }} pontos · {{ r.pedido.status }}</p></div>
+{% for r in resgates %}<div class="loyalty-admin-row"><div><strong>Pedido #{{ r.pedido_id }} · {{ r.cliente.usuario.nome }}</strong><p>{{ r.pontos_resgatados }} pontos · {{ r.pedido.status }}</p>
+<details class="loyalty-order-details"><summary>Ver detalhes do pedido</summary>
+<p>Criado em {{ r.pedido.criado|data_br }}</p>
+<ul>{% for item in r.pedido.itens %}<li><strong>{{ item.quantidade }}× {{ item.nome }}</strong>{% if item.observacao %}<br><small>{{ item.observacao }}</small>{% endif %}</li>{% endfor %}</ul>
+{% if r.pedido.online %}
+<p><strong>{{ 'Tele-entrega' if r.pedido.online.modalidade == 'entrega' else 'Retirada no estabelecimento' }}</strong></p>
+{% if r.pedido.online.modalidade == 'entrega' %}<p>{{ r.pedido.online.endereco }}, {{ r.pedido.online.numero }} · {{ r.pedido.online.bairro }}{% if r.pedido.online.referencia %}<br>Referência: {{ r.pedido.online.referencia }}{% endif %}{% if r.pedido.online.telefone %}<br>Telefone: {{ r.pedido.online.telefone }}{% endif %}</p>
+<p>Taxa de entrega: {{ r.pedido.online.taxa_entrega|brl }}</p>{% endif %}
+{% endif %}
+<p>Produto resgatado: {{ r.pontos_resgatados }} pontos<br>Total em dinheiro: {{ r.pedido.total|brl }} · {{ 'Pago' if r.pedido.pago else 'A receber' }}</p>
+{% if r.pedido.online %}<p>Forma de pagamento: {{ {'pontos':'Pontos de fidelidade','pix':'Pix','dinheiro':'Dinheiro','credito':'Cartão de crédito','debito':'Cartão de débito'}.get(r.pedido.online.forma_pagamento, r.pedido.online.forma_pagamento) }}</p>{% endif %}
+</details></div>
 {% if r.pedido.status == 'aberto' and not r.pedido.entrega and not (r.pedido.pago and r.pedido.total > 0) %}
-<form method="post" action="{{ url_for('loyalty.cancel', id=r.pedido_id) }}"><input type="hidden" name="csrf" value="{{ csrf }}"><label><input type="checkbox" required> Confirmo o cancelamento</label><button class="secondary danger">Cancelar e devolver pontos</button></form>
+<form method="post" action="{{ url_for('loyalty.cancel', id=r.pedido_id) }}"><input type="hidden" name="csrf" value="{{ csrf }}"><label class="loyalty-confirm"><input type="checkbox" required><span>Confirmo o cancelamento</span></label><button class="secondary danger">Cancelar e devolver pontos</button></form>
 {% endif %}</div>{% else %}<p>Nenhum resgate realizado.</p>{% endfor %}
 </section>
 {% endif %}

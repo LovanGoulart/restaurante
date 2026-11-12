@@ -19,3 +19,9 @@
 @media (max-width: 600px) { .loyalty-tabs a { flex: 1 1 auto; justify-content: center; padding: 8px 10px; font-size: 12px; } }
 .loyalty-enable { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; font-size: 20px; font-weight: 700; cursor: pointer; }
 .loyalty-enable input[type="checkbox"] { width: 24px; height: 24px; min-width: 24px; min-height: 24px; margin: 0; padding: 0; flex: 0 0 24px; accent-color: var(--orange); }
+.loyalty-confirm { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; font-size: 14px; cursor: pointer; }
+.loyalty-confirm input[type="checkbox"] { width: 24px; height: 24px; min-width: 24px; min-height: 24px; margin: 0; padding: 0; flex: 0 0 24px; accent-color: var(--orange); }
+.loyalty-order-details { margin: 10px 0; }
+.loyalty-order-details > summary { display: list-item; width: fit-content; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--ui-surface-blue, #f0f3f8); color: var(--ui-text-blue, #263c59); cursor: pointer; font-size: 14px; font-weight: 600; }
+.loyalty-order-details li { margin-bottom: 10px; overflow-wrap: anywhere; }
+.loyalty-order-details p { overflow-wrap: anywhere; }
