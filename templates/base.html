@@ -27,7 +27,7 @@
     <script defer src="{{ url_for('static', filename='js/br-fields.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/operations.css') }}">
     {% if not user and request.blueprint != 'salon_qr' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/guest-menu.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/guest-menu.css', v='2') }}">
     {% endif %}
   </head>
   <body data-qr-guest="{{ '1' if user and user.perfil == 'visitante' else '' }}" data-user="{{ user.id if user else '' }}" data-cursor="{{ event_cursor }}">
@@ -192,6 +192,7 @@
 {% else %}
 
           <nav class="guest-nav home-guest-header" aria-label="Menu do cliente">
+            <div class="ui-header-preferences">{% with ui_compact=true %}{% include '_ui_preferences.html' %}{% endwith %}</div>
             <a href="{{ request.script_root }}/login">Entrar</a>
             <a href="{{ request.script_root }}/cadastro" class="guest-signup">Criar conta</a>
           </nav>
