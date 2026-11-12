@@ -722,7 +722,7 @@ body :is(#orders, #order-detail #order-detail-content) .awaiting-comanda .order-
 }
 /* Na lista, preservar o card compacto inteiro lilás como anteriormente. */
 body #main #orders .compact-order.awaiting-comanda {
-  background: #eae2f5 !important;
+  background: #f1ecf8 !important;
   --ink: #172a43;
   --muted: #59677b;
   --ui-text-neutral: #253a53;
