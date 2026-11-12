@@ -183,7 +183,8 @@ def admin():
             else:
                 raise ValueError("Ação inválida.")
             db.session.commit()
-            return redirect(url_for("loyalty.admin", salvo=1))
+            return redirect(url_for("loyalty.admin", salvo=1,
+                aba="programa" if action == "config" else "produtos"))
         except ValueError as exc:
             db.session.rollback()
             error = str(exc)
@@ -211,7 +212,7 @@ def cancel(id):
     if not row.recompensa_id:
         abort(400, "Este pedido não é um resgate.")
     if p.status == "cancelado":
-        return redirect(url_for("loyalty.admin"))
+        return redirect(url_for("loyalty.admin", aba="resgates"))
     if p.status != "aberto" or p.entrega or (p.pago and p.total > 0):
         abort(409, "Só é possível cancelar resgates aguardando preparo e sem taxa já recebida.")
     if any(i.etapa != "aberto" for i in p.itens):
@@ -223,4 +224,4 @@ def cancel(id):
     from notifications import emit_order
     emit_order(p, "cancelado")
     db.session.commit()
-    return redirect(url_for("loyalty.admin", salvo=1))
+    return redirect(url_for("loyalty.admin", salvo=1, aba="resgates"))

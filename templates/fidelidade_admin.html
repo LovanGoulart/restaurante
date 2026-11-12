@@ -1,39 +1,54 @@
 {% extends 'base.html' %}
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static',filename='css/loyalty.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/loyalty.css', v='3') }}">
 <h1>Programa de fidelidade</h1>
 <p>Exclusivo para pedidos feitos pelo cliente na própria conta, com retirada ou tele-entrega.</p>
 {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
 {% if request.args.get('salvo') %}<p role="status">Alterações salvas.</p>{% endif %}
-<div class="loyalty-grid">
-<section class="panel"><h2>1. Programa e pontuação</h2>
+{% set abas = [('programa','Programa e pontuação'),('cadastro','Cadastrar recompensa'),('produtos','Produtos disponíveis'),('historico','Saldo e histórico'),('resgates','Resgates recentes')] %}
+{% set aba = 'cadastro' if editar else request.args.get('aba', 'historico' if selecionado else 'programa') %}
+{% if request.method == 'POST' and error %}{% set aba = 'cadastro' if request.form.get('acao') == 'recompensa' else 'produtos' if request.form.get('acao') == 'excluir' else 'programa' %}{% endif %}
+{% if aba not in ['programa','cadastro','produtos','historico','resgates'] %}{% set aba = 'programa' %}{% endif %}
+<nav class="loyalty-tabs" aria-label="Seções da fidelidade">
+{% for id, titulo in abas %}<a href="{{ url_for('loyalty.admin', aba=id) }}" {% if aba == id %}aria-current="page"{% endif %}>{{ titulo }}</a>{% endfor %}
+</nav>
+{% if aba == 'programa' %}
+<section class="panel"><h2></h2>
 <form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="acao" value="config">
-<label><input type="checkbox" name="ativo" {% if cfg and cfg.ativo %}checked{% endif %}> Habilitar fidelidade</label>
+<label class="loyalty-enable"><input type="checkbox" name="ativo" {% if cfg and cfg.ativo %}checked{% endif %}><span>Habilitar fidelidade</span></label>
 <label>A cada valor gasto em produtos (R$)<input name="valor_base" inputmode="decimal" required value="{{ '%.2f'|format((cfg.valor_base if cfg else 2000)/100) }}"></label>
 <label>O cliente recebe quantos pontos?<input name="pontos_base" type="number" min="1" max="1000000" step="1" required value="{{ cfg.pontos_base if cfg else 3 }}"></label>
 <p class="muted">Blocos completos por pedido, sem taxa de entrega. Crédito após pagamento e entrega/retirada. A regra da compra é preservada mesmo se você mudar ou desativar o programa depois.</p>
 <button>Salvar programa</button></form></section>
-<section class="panel"><h2>2. {{ 'Editar recompensa' if editar else 'Adicionar produto para resgate' }}</h2>
+{% endif %}
+{% if aba == 'cadastro' %}
+<section class="panel"><h2>{{ 'Editar recompensa' if editar else 'Adicionar produto para resgate' }}</h2>
 <form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="acao" value="recompensa">
 {% if editar %}<input type="hidden" name="id" value="{{ editar.id }}">{% endif %}
 <label>Produto cadastrado<select name="produto_id" required>{% for p in produtos %}<option value="{{ p.id }}" {% if editar and editar.produto_id==p.id %}selected{% endif %}>{{ p.nome }}</option>{% endfor %}</select></label>
 <label>Pontos necessários<input name="pontos" type="number" min="1" max="1000000" step="1" required value="{{ editar.pontos if editar else '' }}"></label>
 <label>Apresentação do produto incluído no resgate<textarea name="descricao" maxlength="500" placeholder="Ex.: Xis Carne tradicional, sem adicionais.">{{ editar.descricao if editar else '' }}</textarea></label>
 <p class="muted">Uma unidade por resgate, sem cobrança pelo produto. Para pizzas e produtos com opções, descreva exatamente o tamanho, sabor e demais opções incluídos. O resgate não abre o personalizador do cardápio.</p>
-<button>{{ 'Salvar edição' if editar else 'Adicionar recompensa' }}</button>{% if editar %}<a href="{{ url_for('loyalty.admin') }}">Cancelar edição</a>{% endif %}</form></section>
-</div>
-<section class="panel"><h2>3. Produtos disponíveis</h2>
+<button>{{ 'Salvar edição' if editar else 'Adicionar recompensa' }}</button>{% if editar %}<a href="{{ url_for('loyalty.admin', aba='produtos') }}">Cancelar edição</a>{% endif %}</form></section>
+{% endif %}
+{% if aba == 'produtos' %}
+<section class="panel"><h2>Produtos disponíveis</h2>
 {% for r in recompensas %}<div class="loyalty-admin-row"><div><strong>{{ r.produto.nome }}</strong><p>{{ r.pontos }} pontos · {{ r.descricao }}</p>{% if not r.produto.ativo or r.produto.excluido %}<small>Produto indisponível no cadastro: oculto para clientes.</small>{% endif %}</div>
-<a href="{{ url_for('loyalty.admin',editar=r.id) }}">Editar</a><form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="acao" value="excluir"><input type="hidden" name="id" value="{{ r.id }}"><button class="secondary danger">Excluir da lista</button></form></div>
+<a href="{{ url_for('loyalty.admin',aba='cadastro',editar=r.id) }}">Editar</a><form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="acao" value="excluir"><input type="hidden" name="id" value="{{ r.id }}"><button class="secondary danger">Excluir da lista</button></form></div>
 {% else %}<p>Nenhuma recompensa cadastrada.</p>{% endfor %}</section>
-<section class="panel"><h2>4. Saldo e histórico por cliente</h2>
-<form method="get"><label>Cliente<select name="cliente" required><option value="">Selecione</option>{% for c in clientes %}<option value="{{ c.id }}" {% if selecionado and selecionado.id == c.id %}selected{% endif %}>{{ c.usuario.nome }} · {{ c.usuario.login }}</option>{% endfor %}</select></label><button class="secondary">Consultar</button></form>
+{% endif %}
+{% if aba == 'historico' %}
+<section class="panel"><h2>Saldo e histórico por cliente</h2>
+<form method="get"><input type="hidden" name="aba" value="historico"><label>Cliente<select name="cliente" required><option value="">Selecione</option>{% for c in clientes %}<option value="{{ c.id }}" {% if selecionado and selecionado.id == c.id %}selected{% endif %}>{{ c.usuario.nome }} · {{ c.usuario.login }}</option>{% endfor %}</select></label><button class="secondary">Consultar</button></form>
 {% if selecionado %}<h3>{{ selecionado.usuario.nome }} · {{ saldo }} pontos</h3>{% include '_fidelidade_historico.html' %}{% endif %}
 </section>
-<section class="panel"><h2>5. Resgates recentes</h2><p>O cancelamento antes do preparo devolve os pontos uma única vez. Não cancela taxas já recebidas.</p>
+{% endif %}
+{% if aba == 'resgates' %}
+<section class="panel"><h2>Resgates recentes</h2><p>O cancelamento antes do preparo devolve os pontos uma única vez. Não cancela taxas já recebidas.</p>
 {% for r in resgates %}<div class="loyalty-admin-row"><div><strong>Pedido #{{ r.pedido_id }} · {{ r.cliente.usuario.nome }}</strong><p>{{ r.pontos_resgatados }} pontos · {{ r.pedido.status }}</p></div>
 {% if r.pedido.status == 'aberto' and not r.pedido.entrega and not (r.pedido.pago and r.pedido.total > 0) %}
 <form method="post" action="{{ url_for('loyalty.cancel', id=r.pedido_id) }}"><input type="hidden" name="csrf" value="{{ csrf }}"><label><input type="checkbox" required> Confirmo o cancelamento</label><button class="secondary danger">Cancelar e devolver pontos</button></form>
 {% endif %}</div>{% else %}<p>Nenhum resgate realizado.</p>{% endfor %}
 </section>
+{% endif %}
 {% endblock %}

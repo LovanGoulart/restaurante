@@ -11,3 +11,11 @@
 .loyalty-table-wrap th,.loyalty-table-wrap td { padding: 12px; text-align: left; border-bottom: 1px solid var(--line); }
 .loyalty-checkout { max-width: 650px; margin: 0 auto; }
 #loyalty-error { background: var(--ui-surface-red,#fff0f0); color: var(--ui-text-red,#9b201c); padding: 14px; border-radius: 10px; }
+.loyalty-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin: 0 0 12px; }
+.loyalty-tabs a { display: inline-flex; align-items: center; min-height: 39px; box-sizing: border-box; padding: 9px 15px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--ui-text-neutral, #64748b); font-size: 13px; font-weight: 600; text-decoration: none; }
+.loyalty-tabs a[aria-current="page"] { border-color: var(--ui-border, #cddff3); color: var(--ui-text-blue, #2454a4); background: var(--ui-surface-blue, #eaf2fb); }
+.loyalty-tabs a:hover { background: var(--ui-surface-blue, #f1f5f9); }
+.loyalty-tabs a:focus-visible { outline: 3px solid var(--accent, #ffb454); outline-offset: 3px; }
+@media (max-width: 600px) { .loyalty-tabs a { flex: 1 1 auto; justify-content: center; padding: 8px 10px; font-size: 12px; } }
+.loyalty-enable { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; font-size: 20px; font-weight: 700; cursor: pointer; }
+.loyalty-enable input[type="checkbox"] { width: 24px; height: 24px; min-width: 24px; min-height: 24px; margin: 0; padding: 0; flex: 0 0 24px; accent-color: var(--orange); }
