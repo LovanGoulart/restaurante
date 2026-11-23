@@ -15,6 +15,9 @@ body {
   margin: 0;
 }
 header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   min-height: 80px;
   padding: 18px max(22px, calc((100vw - 1250px) / 2));
   background: #101c32;
@@ -373,12 +376,31 @@ select:focus-visible {
 
 .form-grid > label {align-content:start;}
 
+/* Separate action buttons from the fields directly above them. */
+main .site-grid form > label + button,
+main .admin-group form > label + button,
+main form > .form-grid + button {
+  margin-top: 18px;
+}
+
 .platform-tabs {
   display: flex;
   gap: 6px;
   overflow-x: auto;
   margin: 0 0 12px;
   padding: 3px;
+}
+
+.admin-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 22px;
+}
+.admin-group > .panel { margin-bottom: 0; }
+@media (max-width: 700px) {
+  .admin-group { grid-template-columns: 1fr; }
 }
 .platform-tabs a {
   flex: 0 0 auto;

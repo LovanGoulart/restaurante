@@ -720,7 +720,10 @@ def create_platform(factory, root=None):
         site = registry.site(id=id)
         if not site:
             abort(404)
-        return_path = url_for("admins", id=id, saved=1)
+        tab = request.args.get("aba", "dados")
+        if tab not in {"dados", "acesso", "cadastro"}:
+            tab = "dados"
+        return_path = url_for("admins", id=id, saved=1, aba=tab)
         users = []
         with dispatcher.application(site).app_context():
             if request.method == "POST":
