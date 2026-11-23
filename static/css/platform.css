@@ -372,3 +372,27 @@ select:focus-visible {
 .form-grid small {font-weight:400;line-height:1.5;}
 
 .form-grid > label {align-content:start;}
+
+.platform-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin: 0 0 12px;
+  padding: 3px;
+}
+.platform-tabs a {
+  flex: 0 0 auto;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--ui-text-neutral, #617187);
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.platform-tabs a:hover,
+.platform-tabs a[aria-current="page"] {
+  background: var(--ui-surface-blue, #eaf2ff);
+  border-color: var(--ui-border, #cbdfff);
+  color: var(--ui-text-blue, #2454a4);
+}

@@ -1,11 +1,13 @@
 {% extends 'geral_base.html' %}{% block content %}
+{% set aba = request.args.get('aba', 'acessos') %}
+{% if aba not in ['acessos', 'cadastro', 'historico'] %}{% set aba = 'acessos' %}{% endif %}
 <div class="page-head">
 <div>
 <div class="eyebrow">CONTROLE DA PLATAFORMA</div>
 <h1>Seus restaurantes.</h1>
 <p>Você controla quem acessa, por quanto tempo e quando renovar.</p>
 </div>
-<a class="button" href="#novo">+ Cadastrar restaurante</a>
+<a class="button" href="{{ url_for('owner_panel', aba='cadastro') }}">+ Cadastrar restaurante</a>
 </div>
 <div class="metrics">
 <div>
@@ -21,7 +23,13 @@
 <strong>{{ sites|length - active_count }}</strong>
 </div>
 </div>
-<section class="panel">
+<nav class="platform-tabs" aria-label="Seções da administração geral">
+{% for key, label in [('acessos', 'Acessos e planos'), ('cadastro', 'Cadastrar restaurante'), ('historico', 'Histórico de acessos')] %}
+<a href="{{ url_for('owner_panel', aba=key) }}"{% if aba == key %} aria-current="page"{% endif %}>{{ label }}</a>
+{% endfor %}
+</nav>
+{% if aba == 'acessos' %}
+<section class="panel" id="acessos">
 <h2>Acessos e planos</h2>
 <div class="site-grid">{% for site in sites %}<article class="site-card">
 <div class="card-heading">
@@ -50,8 +58,10 @@
 <input type="hidden" name="acao" value="{{ 'suspender' if site.enabled else 'ativar' }}">
 <button class="outline">{{ 'Suspender acesso' if site.enabled else 'Reativar plano vigente' }}</button>
 </form>
-</article>{% else %}<p>Cadastre seu primeiro restaurante abaixo.</p>{% endfor %}</div>
+</article>{% else %}<p>Cadastre seu primeiro restaurante na aba <a href="{{ url_for('owner_panel', aba='cadastro') }}">Cadastrar restaurante</a>.</p>{% endfor %}</div>
 </section>
+<p class="muted">Planos são controlados manualmente. Não há cobrança ou renovação automática. A renovação de um plano vigente soma o período ao vencimento atual; se vencido, conta a partir de agora.</p>
+{% elif aba == 'cadastro' %}
 <section id="novo" class="panel">
 <div class="eyebrow">NOVO ACESSO</div>
 <h2>Cadastrar restaurante e administrador</h2>
@@ -73,8 +83,9 @@
 </div>
 </form>
 </section>
-<details class="panel">
-<summary>Últimas alterações de acesso</summary>
+{% elif aba == 'historico' %}
+<section class="panel" id="historico">
+<h2>Últimas alterações de acesso</h2>
 <div class="table-wrap">
 <table>
 <thead>
@@ -88,9 +99,9 @@
 <td>{{ row.created|plan_date }}</td>
 <td>{{ row.name or 'Plataforma' }}</td>
 <td>{{ row.action }}{% if row.details %}<small>{{ row.details }}</small>{% endif %}</td>
-</tr>{% endfor %}</tbody>
+</tr>{% else %}<tr><td colspan="3">Nenhuma alteração de acesso registrada.</td></tr>{% endfor %}</tbody>
 </table>
 </div>
-</details>
-<p class="muted">Planos são controlados manualmente. Não há cobrança ou renovação automática. A renovação de um plano vigente soma o período ao vencimento atual; se vencido, conta a partir de agora.</p>
+</section>
+{% endif %}
 {% endblock %}
