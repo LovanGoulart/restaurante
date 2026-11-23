@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="{{ ui_language() }}" data-theme="{{ ui_theme() }}">
   <head>
     <meta name="restaurant-root" content="{{ request.script_root }}">
     <meta charset="utf-8" />
@@ -17,7 +17,8 @@
     <link rel="apple-touch-icon" href="{{ request.script_root }}/static/icons/icon-192.png" />
     <title>Restaurante Manager</title>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" />
-    <script defer src="{{ url_for('static',filename='js/restaurant_scope.js') }}"></script>
+    {% include '_ui_preferences_head.html' %}
+<script defer src="{{ url_for('static',filename='js/restaurant_scope.js') }}"></script>
     <script defer src="{{url_for('static',filename='js/sound.js')}}"></script>
     <script defer src="{{url_for('static',filename='js/app.js')}}"></script>
     <script defer src="{{url_for('static',filename='js/pwa.js')}}"></script>
@@ -25,8 +26,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/appearance.css') }}">
     <script defer src="{{ url_for('static', filename='js/br-fields.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/operations.css') }}">
+    {% if not user and request.blueprint != 'salon_qr' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/guest-menu.css', v='2') }}">
+    {% endif %}
   </head>
-  <body data-user="{{ user.id if user else '' }}" data-cursor="{{ event_cursor }}">
+  <body data-qr-guest="{{ '1' if user and user.perfil == 'visitante' else '' }}" data-user="{{ user.id if user else '' }}" data-cursor="{{ event_cursor }}">
     <a class="skip-link" href="#main">Ir ao conteúdo</a>
     <header class="app-header">
       <div class="header-inner">
@@ -37,7 +41,20 @@
           </span>
         </a>
 
-{% if user %}
+{% if (user and user.perfil == 'visitante') or (not user and request.blueprint == 'salon_qr') %}
+          <nav class="guest-nav qr-guest-nav" aria-label="Menu do cliente">
+            {% if not user %}
+            <a href="{{ url_for('salon_qr.enter') }}">Cardápio</a>
+            {% with ui_compact=true %}{% include '_ui_preferences.html' %}{% endwith %}
+            {% endif %}
+            {% if user and user.perfil == 'visitante' and session.get('qr_numero_mesa') %}
+            <div class="header-user" title="{{ user.nome }} · {{ ui_text('Mesa') }} {{ session.get('qr_numero_mesa') }}">
+              <span class="header-user-role">{{ ui_text('Mesa') }} <span data-qr-table>{{ session.get('qr_numero_mesa') }}</span></span>
+              <strong class="header-user-name">{{ user.nome }}</strong>
+            </div>
+            {% endif %}
+          </nav>
+{% elif user %}
 
           <nav class="desktop-nav" aria-label="Navegação principal">
 
@@ -59,6 +76,9 @@
               >
                 Meus pedidos
               </a>
+              {% if user.perfil=='cliente' and loyalty_enabled %}
+              <a href="{{ url_for('loyalty.page') }}" class="{{ 'selected' if request.blueprint=='loyalty' else '' }}">Fidelidade</a>
+              {% endif %}
               {% if user.perfil=='cliente' %}<a href="{{ request.script_root }}/minha-conta">Minha conta</a>{% endif %}
 
 {% else %}
@@ -99,7 +119,7 @@
                   href="{{ request.script_root }}/acerto-entregadores"
                   class="{{ 'selected' if request.endpoint == 'couriers.settlement' else '' }}"
                 >
-                  Saldo Delivery
+                  Tele-Entrega
                 </a>
                 <a
                   href="{{ url_for('management_access.unlock',destino=request.script_root+'/relatorios-vendas') }}"
@@ -108,7 +128,7 @@
                   Relatórios
                 </a>
                 <button class="nav-more" data-open="more-dialog">
-                  Painel de controle ▾
+                  Painel de Controle ▾
                 </button>
 
 {% endif %}
@@ -123,20 +143,25 @@
             </form>
             <div class="header-user" title="{{ user.nome }}">
               <span class="header-user-role">
-                {{ {
+                {{ ui_text({
                   'admin': 'Administração',
                   'garcom': 'Atendimento no salão',
                   'cozinha': 'Operação da cozinha',
                   'cliente': 'Sua conta',
                   'visitante': 'Cliente no salão',
                   'entregador': 'Tele-entregas'
-                }[user.perfil] }}
+                }[user.perfil]) }}
               </span>
 
               <strong class="header-user-name">
                 {{ user.nome }}
               </strong>
             </div>
+            {% if user.perfil != 'admin' %}
+            <div class="ui-header-preferences">
+              {% with ui_compact=true %}{% include '_ui_preferences.html' %}{% endwith %}
+            </div>
+            {% endif %}
             <button
               class="icon-button"
               id="notifications-open"
@@ -166,10 +191,10 @@
 
 {% else %}
 
-          <nav class="guest-nav" aria-label="Menu do cliente">
-            <a href="{{ request.script_root }}/cardapio">Cardápio</a>
+          <nav class="guest-nav home-guest-header" aria-label="Menu do cliente">
             <a href="{{ request.script_root }}/login">Entrar</a>
             <a href="{{ request.script_root }}/cadastro" class="guest-signup">Criar conta</a>
+            <div class="ui-header-preferences">{% with ui_compact=true %}{% include '_ui_preferences.html' %}{% endwith %}</div>
           </nav>
 
 {% endif %}
@@ -281,19 +306,22 @@
         <div class="menu-links">
 {% if user.perfil=='admin' %}
   <a href="{{ request.script_root }}/personalizacao">🎨 Personalização e fotos</a>
-  <p class="muted">🔒 Gestão protegida — confirme sua senha</p>
-  <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/loja') }}">🔒 Loja e entregas →</a>
+  <a href="{{ request.script_root }}/cardapio">↗ Ver cardápio público →</a>
+  <a href="{{ url_for('salon_qr.qr_page') }}">▦ QR Code para pedidos no salão →</a>
+  <p class="muted" style="margin: 0; font-size: 12px;">Área de gestão</p>
+  <a href="{{ url_for('management_access.security') }}">⚙ Bloqueio dos menus →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/categorias') }}">🔒 Categorias →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/produtos') }}">🔒 Produtos →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/cadastros/usuarios') }}">🔒 Equipe →</a>
   <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/clientes') }}">🔒 Clientes →</a>
-  <a href="{{ request.script_root }}/cardapio">↗ Ver cardápio público →</a>
-  <a href="{{ url_for('salon_qr.qr_page') }}">▦ QR Code para pedidos no salão →</a>
-  <form method="post" action="{{ url_for('management_access.lock') }}"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="secondary">Bloquear áreas de gestão</button></form>
+  <a href="{{ url_for('management_access.unlock', destino=request.script_root+'/fidelidade-admin') }}">🔒 Fidelidade →</a>
+  <a href="{{ url_for('management_access.unlock',destino=request.script_root+'/fiscal') }}">🔒 Configuração fiscal e NFC-e →</a>
+  <p class="muted" style="margin: 0; font-size: 12px;">Configurações</p>
 {% endif %}
 
 {% if user.perfil=='cliente' %}
 
+            {% if loyalty_enabled %}<a href="{{ url_for('loyalty.page') }}">★ Fidelidade <span>→</span></a>{% endif %}
             <a href="{{ request.script_root }}/minha-conta">
               👤 Minha conta e endereço
               <span>→</span>
@@ -302,6 +330,9 @@
 {% endif %}
 
           <button class="install-trigger" hidden>↗ Instalar aplicativo</button>
+          <div class="ui-menu-preferences{% if user.perfil != 'admin' %} ui-mobile-preferences{% endif %}">
+            {% include '_ui_preferences.html' %}
+          </div>
           <button id="sound-toggle" aria-pressed="false" type="button">
             ♪ Ativar som dos avisos
           </button>
@@ -317,6 +348,7 @@
             <input type="hidden" name="csrf" value="{{ csrf }}" />
             <button class="danger secondary">Sair da conta</button>
           </form>
+
         </div>
       </dialog>
       <dialog id="notifications-dialog" class="app-dialog">
@@ -333,6 +365,24 @@
       </dialog>
 
 {% endif %}
+
+    {% if not user and request.blueprint != 'salon_qr' %}
+    <nav class="mobile-nav home-guest-nav" aria-label="Menu do cliente">
+      <a href="{{ request.script_root }}/cardapio" class="{{ 'selected' if request.endpoint == 'customers.menu' else '' }}"><span>▦</span>Cardápio</a>
+      <a href="{{ url_for('customers.my_orders') }}"><span>▤</span>Pedidos</a>
+      <button type="button" data-open="guest-more-dialog"><span>☰</span>Ver mais</button>
+    </nav>
+    <dialog id="guest-more-dialog" class="app-dialog">
+      <div class="dialog-head">
+        <h2>Ver mais</h2>
+        <button type="button" class="icon-button" data-close aria-label="Fechar menu">×</button>
+      </div>
+      <div class="menu-links">
+        <button type="button" class="install-trigger" hidden>↗ Instalar aplicativo</button>
+        <div class="ui-menu-preferences">{% include '_ui_preferences.html' %}</div>
+      </div>
+    </dialog>
+    {% endif %}
 
     <dialog id="install-dialog" class="app-dialog">
       <div class="dialog-head">

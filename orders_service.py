@@ -1,5 +1,21 @@
 from flask import abort
 from models import db, Produto, Item
+from product_options import resolve_item, ordering_settings
+from datetime import datetime, timezone, timedelta
+
+
+def customer_order_status(p, user, at=None):
+    if user.perfil not in {"cliente", "visitante"}:
+        return p.status
+    delivery = p.online and p.online.modalidade == "entrega"
+    if p.status == "pronto" and (not p.online or delivery):
+        return "em_preparo"
+    if delivery and p.status == "saiu_entrega":
+        assigned = p.entrega.atribuido_em if p.entrega else None
+        at = at or datetime.now(timezone.utc)
+        if not assigned or at.replace(tzinfo=None) < assigned.replace(tzinfo=None) + timedelta(minutes=5):
+            return "em_preparo"
+    return p.status
 
 
 def add_items(pedido, itens):
@@ -15,12 +31,26 @@ def add_items(pedido, itens):
             abort(400, "Item ou quantidade inválida.")
         prod = db.session.get(Produto, item["id"])
         obs = item.get("observacao", "")
-        if not isinstance(obs, str) or len(obs) > 300 or not prod or not prod.ativo:
+        if (
+            not isinstance(obs, str)
+            or len(obs) > 300
+            or not prod
+            or not prod.ativo
+            or prod.excluido
+        ):
             abort(400, "Produto indisponível ou observação inválida.")
+        price, obs = resolve_item(prod, item)
+        config = ordering_settings(prod)
+        name = prod.nome
+        if any(g["id"] == "pizzasize" for g in config["groups"]):
+            size_group = next(g for g in config["groups"] if g["id"] == "pizzasize")
+            selected = item.get("opcoes", {}).get("pizzasize", [])
+            choice = next(c for c in size_group["choices"] if c["id"] in selected)
+            name = "Pizza · " + choice["label"]
         pedido.itens.append(
             Item(
-                nome=prod.nome,
-                preco=prod.preco,
+                nome=name,
+                preco=price,
                 quantidade=item["quantidade"],
                 observacao=obs.strip(),
             )
@@ -29,6 +59,12 @@ def add_items(pedido, itens):
 
 def serialize_order(p, user):
     online = p.online
+    from loyalty_models import FidelidadePedido
+    fidelity = db.session.get(FidelidadePedido, p.id) if online else None
+    status = customer_order_status(p, user)
+    hide_ready = user.perfil in {"cliente", "visitante"} and (
+        not online or online.modalidade == "entrega"
+    )
     guest = user.perfil == "visitante"
     if guest and not any(q.usuario_id == user.id for q in p.qr):
         abort(403)
@@ -49,8 +85,9 @@ def serialize_order(p, user):
         numero_mesa=p.numero_mesa if not online else "",
         pedido_qr=bool(p.qr),
         aguardando_comanda=bool(p.qr and not p.mesa),
-        status=p.status,
+        status=status,
         pago=p.pago,
+        fidelidade_resgate=bool(fidelity and fidelity.recompensa_id is not None),
         subtotal=sum(i.preco * i.quantidade for i in items) if guest else p.subtotal,
         taxa_entrega=online.taxa_entrega if online else 0,
         total=sum(i.preco * i.quantidade for i in items) if guest else p.total,
@@ -64,7 +101,9 @@ def serialize_order(p, user):
                 quantidade=i.quantidade,
                 preco=i.preco,
                 observacao=i.observacao,
-                etapa="entregue" if p.status == "entregue" else i.etapa,
+                etapa=("entregue" if p.status == "entregue" else
+                       ("saiu_entrega" if status == "saiu_entrega" else "em_preparo")
+                       if hide_ready and i.etapa == "pronto" else i.etapa),
             )
             for i in items
         ],
@@ -124,6 +163,8 @@ def update_item_checklist(pedido, item, user, action, checked, expected):
             403,
             "Nos pedidos online, utilize a confirmação de retirada ou entrega do pedido.",
         )
+    if pedido.status == "cancelado":
+        abort(409, "Pedido cancelado não pode ser preparado.")
     if pedido.status == "saiu_entrega" or (
         pedido.entrega and pedido.entrega.entregue_em
     ):

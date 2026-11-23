@@ -6,7 +6,7 @@ import json
 
 import time
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from urllib.parse import urlsplit
 
@@ -24,7 +24,7 @@ from flask import (
 
 from sqlalchemy import update
 
-from models import db, Notificacao, PushSubscription, PushDelivery, Usuario
+from models import db, Notificacao, PushSubscription, PushDelivery, Usuario, Pedido
 
 from config import DATA, data_dir
 
@@ -32,10 +32,14 @@ bp = Blueprint("notifications", __name__)
 
 
 def emit_order(pedido, tipo, item=None):
+    if tipo in {"pago", "entregue"}:
+        from loyalty import credit_completed
+        credit_completed(pedido)
 
     users = db.session.scalars(db.select(Usuario).where(Usuario.ativo.is_(True))).all()
 
     titles = {
+        "cancelado": "Resgate cancelado: pontos devolvidos",
         "atribuida": "Nova entrega atribuída",
         "novo": "Novo pedido na cozinha",
         "vinculado": "Comanda definida pelo atendimento",
@@ -60,6 +64,26 @@ def emit_order(pedido, tipo, item=None):
             and pedido.entrega
             and pedido.entrega.entregador_id == u.id
         )
+
+        customer = u.perfil in {"cliente", "visitante"} and u.id in owners
+        delivery_customer = customer and pedido.online and pedido.online.modalidade == "entrega"
+        if customer and tipo in {"pronto", "item_pronto"} and (
+            not pedido.online or pedido.online.modalidade == "entrega"
+        ):
+            continue
+        if delivery_customer and tipo in {"saiu_entrega", "atribuida"}:
+            db.session.execute(update(Notificacao).where(
+                Notificacao.usuario_id == u.id,
+                Notificacao.pedido_id == pedido.id,
+                Notificacao.tipo == "transito_agendado",
+            ).values(tipo="transito_cancelado"))
+            db.session.add(Notificacao(
+                usuario_id=u.id, pedido_id=pedido.id,
+                titulo="Seu pedido está em trânsito!",
+                mensagem="Seu pedido está indo até você.",
+                tipo="transito_agendado", alerta=False,
+            ))
+            continue
 
         if tipo == "atribuida" and not (u.perfil == "admin" or is_driver):
 
@@ -119,6 +143,9 @@ def emit_order(pedido, tipo, item=None):
             or (tipo == "novo" and u.perfil in ["cozinha", "admin"])
         )
 
+        if customer and not pedido.online and tipo != "em_preparo":
+            alerta = False
+
         label = (
             (
                 "Entrega"
@@ -149,11 +176,24 @@ def emit_order(pedido, tipo, item=None):
                 "pago": "Pagamento do seu pedido confirmado!",
             }.get(tipo, title)
 
+        customer_message = None
+        if u.perfil in {"cliente", "visitante"} and tipo == "pronto":
+            if pedido.online and pedido.online.modalidade == "entrega":
+                title = "Seu pedido está indo até você."
+                customer_message = title
+            elif pedido.online:
+                title = "Seu pedido está pronto."
+                customer_message = "Seu pedido está pronto. Você pode ficar a vontade para vir retirar!\nVem rapidinho para não esfriar viu!"
+            else:
+                title = "Seu pedido está pronto."
+                customer_message = title
+
         n = Notificacao(
             usuario_id=u.id,
             pedido_id=pedido.id,
             titulo=title,
-            mensagem=(
+            mensagem=customer_message
+            or (
                 f"{label} · Pedido #{pedido.id}"
                 + (f" · {item.quantidade}× {item.nome}" if item else "")
             )[:250],
@@ -177,6 +217,40 @@ def emit_order(pedido, tipo, item=None):
                 db.session.add(
                     PushDelivery(notificacao_id=n.id, subscription_id=sub.id)
                 )
+
+
+def process_scheduled(now=None):
+    """Libera avisos após cinco minutos; a fila sobrevive a reinícios."""
+    now = now or datetime.utcnow()
+    rows = db.session.scalars(db.select(Notificacao).where(
+        Notificacao.tipo == "transito_agendado",
+        Notificacao.criado <= now - timedelta(minutes=5),
+    )).all()
+    for queued in rows:
+        claimed = db.session.execute(update(Notificacao).where(
+            Notificacao.id == queued.id,
+            Notificacao.tipo == "transito_agendado",
+        ).values(tipo="transito_cancelado"))
+        if not claimed.rowcount:
+            continue
+        pedido = db.session.get(Pedido, queued.pedido_id)
+        user = db.session.get(Usuario, queued.usuario_id)
+        if not (pedido and user and user.ativo and user.perfil == "cliente"
+                and pedido.usuario_id == user.id and pedido.status == "saiu_entrega"
+                and pedido.online and pedido.online.modalidade == "entrega"
+                and pedido.entrega and not pedido.entrega.entregue_em):
+            continue
+        n = Notificacao(usuario_id=user.id, pedido_id=pedido.id,
+            titulo="Seu pedido está em trânsito!",
+            mensagem="Seu pedido está indo até você.", tipo="saiu_entrega", alerta=True)
+        db.session.add(n)
+        db.session.flush()
+        for sub in db.session.scalars(db.select(PushSubscription).where(
+            PushSubscription.usuario_id == user.id, PushSubscription.ativo.is_(True)
+        )):
+            db.session.add(PushDelivery(notificacao_id=n.id, subscription_id=sub.id))
+    if rows:
+        db.session.commit()
 
 
 def as_dict(n):
@@ -218,6 +292,8 @@ def auth():
 @bp.get("/api/notificacoes")
 def inbox():
 
+    process_scheduled()
+
     q = db.select(Notificacao).where(
         Notificacao.usuario_id == g.user.id, Notificacao.alerta.is_(True)
     )
@@ -241,6 +317,19 @@ def inbox():
 def read():
 
     data = request.get_json(silent=True) or {}
+
+    if "id" in data:
+        id = data["id"]
+        if type(id) is not int or id <= 0:
+            abort(400, "Notificação inválida.")
+        n = db.session.scalar(db.select(Notificacao).where(
+            Notificacao.id == id, Notificacao.usuario_id == g.user.id,
+        ))
+        if not n:
+            abort(404, "Notificação não encontrada.")
+        n.lida = True
+        db.session.commit()
+        return jsonify(ok=True)
 
     ate = data.get("ate")
 
@@ -303,9 +392,12 @@ def events():
                 ):
                     return
 
+                process_scheduled()
+
                 rows = db.session.scalars(
                     db.select(Notificacao)
-                    .where(Notificacao.usuario_id == uid, Notificacao.id > cursor)
+                    .where(Notificacao.usuario_id == uid, Notificacao.id > cursor,
+                        Notificacao.tipo.notin_(["transito_agendado", "transito_cancelado"]))
                     .order_by(Notificacao.id)
                     .limit(100)
                 ).all()

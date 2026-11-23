@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .history-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+  .history-heading h1 { margin-bottom: 6px; }
+  .history-filter { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .history-filter label { margin: 0; }
+  .history-filter input { margin: 0; }
+  .history-orders { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,300px),1fr)); gap: 18px; }
+  .history-card { border-top: 4px solid var(--ui-text-green,#28734e); }
+  .history-card h2 { font-size: 20px; }
+  .history-card li { margin-bottom: 8px; }
+  .history-pagination { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 22px; }
+</style>
+<div class="history-heading">
+  <div><h1>Pedidos finalizados</h1><p class="muted">Pedidos entregues e pagos · {{ 'Data selecionada' if data else 'Todas as datas' }}</p></div>
+  <a class="button-link secondary" href="{{ url_for('pedidos') }}">← Voltar aos pedidos</a>
+</div>
+<form class="history-filter" method="get">
+  <label>Data da finalização<input type="date" data-native-date name="data" value="{{ data }}" max="9999-12-30" onchange="this.form.requestSubmit()"></label>
+  <a class="button-link secondary" href="{{ url_for('order_history.page', todas=1) }}">Ver todas as datas</a>
+</form>
+<p class="muted">Horário de Brasília. Em pedidos antigos sem registro de pagamento ou conclusão, a data de criação é usada como referência.</p>
+<div class="history-orders">
+{% for p, finalizado_em in registros %}
+  <article class="panel history-card">
+    <h2>Pedido #{{ p.id }} · Finalizado</h2>
+    {% if p.online %}
+    <p><strong>{{ 'Tele-entrega' if p.online.modalidade == 'entrega' else 'Retirada' }}</strong> · {{ p.online.destinatario }}</p>
+    {% else %}
+    <p><strong>Salão</strong> · Comanda {{ p.mesa }}{% if p.numero_mesa %} · Mesa {{ p.numero_mesa }}{% endif %}</p>
+    {% endif %}
+    <p class="muted">Criado: {{ p.criado|data_br }}<br>Finalizado: {{ finalizado_em|data_br }}</p>
+    <ul>{% for item in p.itens %}<li>{{ item.quantidade }}× {{ item.nome }}{% if item.observacao %}<br><small>{{ item.observacao }}</small>{% endif %}</li>{% endfor %}</ul>
+    <p><strong>{{ p.total|brl }}</strong> · Pago</p>
+    <button type="button" class="secondary" data-open="history-detail-{{ p.id }}">Ver detalhes do pedido →</button>
+  </article>
+  <dialog id="history-detail-{{ p.id }}" class="app-dialog order-detail" aria-labelledby="history-title-{{ p.id }}">
+    <div class="dialog-head">
+      <h2 id="history-title-{{ p.id }}">Pedido #{{ p.id }} · Finalizado</h2>
+      <button type="button" class="icon-button" data-close aria-label="Fechar detalhes">×</button>
+    </div>
+    {% if p.online %}
+    <p><strong>{{ 'Tele-entrega' if p.online.modalidade == 'entrega' else 'Retirada no estabelecimento' }}</strong> · {{ p.online.destinatario }}</p>
+    {% if p.online.modalidade == 'entrega' %}
+    <p>{{ p.online.endereco }}, {{ p.online.numero }} · {{ p.online.bairro }}<br>Referência: {{ p.online.referencia }}{% if p.online.telefone %}<br>Telefone: {{ p.online.telefone }}{% endif %}</p>
+    {% endif %}
+    {% else %}
+    <p><strong>Salão · Comanda {{ p.mesa }}</strong>{% if p.numero_mesa %} · Mesa {{ p.numero_mesa }}{% endif %}</p>
+    {% endif %}
+    <p class="muted">Criado: {{ p.criado|data_br }}<br>Finalizado: {{ finalizado_em|data_br }}</p>
+    <ul>{% for item in p.itens %}
+      <li><strong>{{ item.quantidade }}× {{ item.nome }}</strong><br>{{ item.preco|brl }} por unidade · {{ (item.preco * item.quantidade)|brl }}{% if item.observacao %}<br><small>{{ item.observacao }}</small>{% endif %}</li>
+    {% endfor %}</ul>
+    <p>Produtos: {{ p.subtotal|brl }}{% if p.online and p.online.taxa_entrega %}<br>Taxa de entrega: {{ p.online.taxa_entrega|brl }}{% endif %}</p>
+    <p><strong>Total: {{ p.total|brl }} · Pago</strong></p>
+  </dialog>
+{% else %}
+  <div class="panel">Nenhum pedido finalizado{% if data %} nesta data{% endif %}.</div>
+{% endfor %}
+</div>
+<nav class="history-pagination" aria-label="Páginas do histórico">
+  {% if pagina > 1 %}<a class="button-link secondary" href="{{ anterior }}">← Anterior</a>{% endif %}
+  <span>Página {{ pagina }}</span>
+  {% if mais %}<a class="button-link secondary" href="{{ proxima }}">Próxima →</a>{% endif %}
+</nav>
+{% endblock %}

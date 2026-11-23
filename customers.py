@@ -63,6 +63,7 @@ def store():
         taxa_entrega=0,
         entrega_ativa=True,
         pedidos_ativos=True,
+        bloquear_menus=True,
     )
 
 
@@ -122,9 +123,13 @@ def menu():
         "cardapio.html",
         loja=store(),
         cliente=c,
-        categorias=db.session.scalars(db.select(Categoria)).all(),
+        categorias=db.session.scalars(
+            db.select(Categoria).where(Categoria.excluido.is_(False))
+        ).all(),
         produtos=db.session.scalars(
-            db.select(Produto).where(Produto.ativo.is_(True))
+            db.select(Produto).where(
+                Produto.ativo.is_(True), Produto.excluido.is_(False)
+            )
         ).all(),
     )
 
@@ -353,7 +358,12 @@ def place_order():
         taxa_entrega=loja.taxa_entrega if modalidade == "entrega" else 0,
         **addr,
     )
-    add_items(p, d.get("itens"))
+    reward = None
+    if "resgate_id" in d:
+        from loyalty import reward_item
+        reward = reward_item(p, d, c)
+    else:
+        add_items(p, d.get("itens"))
     if d.get("total_previsto") is not None and (
         type(d["total_previsto"]) is not int or d["total_previsto"] != p.total
     ):
@@ -369,6 +379,14 @@ def place_order():
             usuario_id=uid, chave=token, conteudo_hash=fingerprint, pedido_id=p.id
         )
     )
+    if reward:
+        from loyalty import record_redemption
+        record_redemption(p, reward, c)
+        if p.total == 0:
+            p.online.forma_pagamento = "pontos"
+    else:
+        from loyalty import capture_order
+        capture_order(p)
     if modalidade == "entrega":
         for k, v in addr.items():
             setattr(c, k, v)
@@ -394,6 +412,8 @@ def sent_attempt(chave):
 @bp.route("/loja", methods=["GET", "POST"])
 @role("admin")
 def settings():
+    if request.method == "GET":
+        return redirect(url_for("couriers.settlement", configuracoes=1))
     loja = store()
     error = None
     if request.method == "POST":
@@ -406,11 +426,15 @@ def settings():
             loja.pedidos_ativos = request.form.get("pedidos_ativos") == "on"
             db.session.add(loja)
             db.session.commit()
-            return redirect(url_for("customers.settings", salvo=1))
+            picked=request.form.get("data_referencia", "")
+            from datetime import date
+            try:picked=date.fromisoformat(picked).isoformat()
+            except ValueError:picked=None
+            return redirect(url_for("couriers.settlement", salvo=1, configuracoes=1, data=picked))
         except ValueError as exc:
             db.session.rollback()
             error = str(exc)
-    return render_template("loja.html", loja=loja, error=error)
+    return render_template("acerto_entregadores.html", loja=loja, delivery_settings_error=error, can_edit_delivery=True)
 
 
 @bp.route("/clientes", methods=["GET", "POST"])

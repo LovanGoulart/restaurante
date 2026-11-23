@@ -22,11 +22,23 @@ function save() {
     sessionStorage.setItem(
       storageKey,
       JSON.stringify({
-        itens: cart.map(({ id, quantidade, observacao }) => ({
-          id,
-          quantidade,
-          observacao,
-        })),
+        itens: cart.map(
+          ({
+            id,
+            quantidade,
+            observacao,
+            opcoes,
+            opcoes_versao,
+            quantidade_sabores,
+          }) => ({
+            id,
+            quantidade,
+            observacao,
+            opcoes,
+            opcoes_versao,
+            quantidade_sabores,
+          }),
+        ),
         modalidade: mode.value,
         pagamento: payment.value,
       }),
@@ -37,19 +49,13 @@ try {
   const data = JSON.parse(sessionStorage.getItem(storageKey) || "null");
   if (data && Array.isArray(data.itens)) {
     cart = data.itens
-      .filter(
-        (i) =>
-          catalog.has(i.id) &&
-          Number.isInteger(i.quantidade) &&
-          i.quantidade > 0 &&
-          i.quantidade <= 99,
-      )
       .slice(0, 100)
-      .map((i) => ({
-        ...catalog.get(i.id),
-        quantidade: i.quantidade,
-        observacao: String(i.observacao || "").slice(0, 300),
-      }));
+      .map((i) => ProductPicker.restore(i))
+      .filter(Boolean);
+    if (cart.length !== data.itens.length)
+      toast(
+        uiText("Alguns itens mudaram. Confira o cardápio e escolha as opções novamente."),
+      );
     if ([...mode.options].some((o) => o.value === data.modalidade))
       mode.value = data.modalidade;
     if ([...payment.options].some((o) => o.value === data.pagamento))
@@ -63,22 +69,31 @@ function setBag(open) {
   if (open) {
     bag.setAttribute("role", "dialog");
     bag.setAttribute("aria-modal", "true");
-    bag.setAttribute("aria-label", "Sua sacola e finalização");
+    bag.setAttribute("aria-label", uiText("Sua sacola e finalização"));
     document.querySelector(".bag-close").focus();
   } else {
     bag.removeAttribute("role");
     bag.removeAttribute("aria-modal");
     document.querySelector("#bag-backdrop").hidden = true;
-    mobileCart.focus();
+    if (mobileCart.hidden) document.querySelector("#search")?.focus();
+    else mobileCart.focus();
   }
 }
 mobileCart.onclick = () => setBag(true);
 document.querySelector(".bag-close").onclick = () => setBag(false);
 document.querySelector("#bag-backdrop").onclick = () => setBag(false);
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && document.body.classList.contains("bag-open"))
+  if (
+    !document.querySelector("#product-picker").open &&
+    e.key === "Escape" &&
+    document.body.classList.contains("bag-open")
+  )
     setBag(false);
-  if (e.key === "Tab" && document.body.classList.contains("bag-open")) {
+  if (
+    !document.querySelector("#product-picker").open &&
+    e.key === "Tab" &&
+    document.body.classList.contains("bag-open")
+  ) {
     const nodes = [
       ...bag.querySelectorAll(
         "button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a",
@@ -110,6 +125,7 @@ function totals() {
   document.querySelector("#total").textContent = money(subtotal + fee);
   document.querySelector("#mobile-total").textContent = money(subtotal + fee);
   document.querySelector("#mobile-count").textContent = count;
+  mobileCart.hidden = count === 0;
   document.querySelector("#cart-count").textContent = count;
   if (send) {
     send.disabled =
@@ -118,52 +134,21 @@ function totals() {
       !navigator.onLine ||
       bag.dataset.active !== "yes";
     send.textContent = sending
-      ? "Enviando pedido…"
+      ? uiText("Enviando pedido…")
       : pending
-        ? "Reenviar a mesma tentativa →"
+        ? uiText("Reenviar a mesma tentativa →")
         : bag.dataset.customer === "yes"
-          ? "Confirmar meu pedido →"
-          : "Entrar para fazer o pedido →";
+          ? uiText("Confirmar meu pedido →")
+          : uiText("Entrar para fazer o pedido →");
   }
   return subtotal + fee;
 }
 function draw() {
+  document.querySelector(".pizza-continue").hidden = !cart.some((item) =>
+    ProductPicker.isPizza(item),
+  );
   cartEl.innerHTML =
-    cart
-      .map(
-        (i, k) => /* HTML */ `
-          <div class="cart-item">
-            <b>${escapeHTML(i.nome)}</b>
-            <div class="quantity">
-              <button
-                data-change="-1"
-                data-index="${k}"
-                aria-label="Diminuir ${escapeHTML(i.nome)}"
-              >
-                −
-              </button>
-              <span>${i.quantidade}</span>
-              <button
-                data-change="1"
-                data-index="${k}"
-                aria-label="Aumentar ${escapeHTML(i.nome)}"
-              >
-                +
-              </button>
-              <strong>${money(i.preco * i.quantidade)}</strong>
-            </div>
-            <textarea
-              rows="1"
-              data-note="${k}"
-              maxlength="300"
-              placeholder="Observação (ex.: sem cebola)"
-              aria-label="Observação para ${escapeHTML(i.nome)}"
-            >
-${escapeHTML(i.observacao)}</textarea>
-          </div>
-        `,
-      )
-      .join("") ||
+    cart.map((i, k) => ProductPicker.line(i, k)).join("") ||
     '<p class="empty">Sua sacola está vazia.<br>Escolha algo gostoso no cardápio.</p>';
   totals();
   save();
@@ -175,33 +160,82 @@ function lock(value) {
     )
     .forEach((e) => (e.disabled = value));
 }
-document.querySelectorAll(".add").forEach(
-  (b) =>
-    (b.onclick = () => {
-      if (sending || pending) {
-        toast(
-          "Conclua a tentativa atual ou confira seus pedidos antes de alterar a sacola.",
-        );
-        return;
-      }
-      const item = cart.find((i) => i.id === +b.dataset.id);
-      if (item) item.quantidade = Math.min(99, item.quantidade + 1);
-      else
-        cart.push({
-          ...catalog.get(+b.dataset.id),
-          quantidade: 1,
-          observacao: "",
-        });
-      draw();
-      b.textContent = "✓";
-      setTimeout(() => (b.textContent = "+"), 600);
-    }),
-);
+ProductPicker.bind({
+  canEdit: () => !sending && !pending,
+  onAdd: (item) => {
+    const items = Array.isArray(item) ? item : [item];
+    if (cart.length + items.length > 100) {
+      toast("Use até 100 linhas por envio.");
+      return false;
+    }
+    cart.push(...items);
+    draw();
+    if (items.some((item) => ProductPicker.isPizza(item)))
+      setTimeout(() => {
+        if (window.matchMedia("(max-width:850px)").matches) setBag(true);
+      }, 0);
+    toast(
+      items.length > 1
+        ? uiText("Pizzas adicionadas separadamente ao pedido.")
+        : uiText("Item adicionado ao pedido."),
+    );
+    return true;
+  },
+});
+document.querySelector(".pizza-continue").onclick = () => {
+  setBag(false);
+  document.querySelector("#search").focus();
+};
 cartEl.onclick = (e) => {
+  const remove = e.target.closest("[data-remove]");
+  if (remove && !sending && !pending) {
+    cart.splice(Number(remove.dataset.remove), 1);
+    draw();
+    return;
+  }
   if (sending || pending) return;
+  const edit = e.target.closest("[data-edit]");
+  if (edit && !sending && !pending) {
+    const index = +edit.dataset.edit;
+    ProductPicker.edit(cart[index], (item) => {
+      const items = Array.isArray(item) ? item : [item];
+      if (cart.length - 1 + items.length > 100) {
+        toast("Use até 100 linhas por envio.");
+        return false;
+      }
+      cart.splice(index, 1, ...items);
+      draw();
+      return true;
+    });
+    return;
+  }
   const b = e.target.closest("[data-change]");
   if (!b) return;
   const k = +b.dataset.index;
+  if (
+    +b.dataset.change === 1 &&
+    cart[k].quantidade < 99 &&
+    ProductPicker.isPizza(cart[k])
+  ) {
+    ProductPicker.edit(
+      {
+        ...cart[k],
+        quantidade: cart[k].quantidade + 1,
+        quantidade_original: cart[k].quantidade,
+      },
+      (item) => {
+        const items = Array.isArray(item) ? item : [item];
+        if (cart.length - 1 + items.length > 100) {
+          toast("Use até 100 linhas por envio.");
+          return false;
+        }
+        cart.splice(k, 1, ...items);
+        draw();
+        return true;
+      },
+    );
+    return;
+  }
   cart[k].quantidade = Math.min(99, cart[k].quantidade + +b.dataset.change);
   if (cart[k].quantidade <= 0) cart.splice(k, 1);
   draw();
@@ -227,29 +261,6 @@ function checkout() {
 }
 mode.onchange = checkout;
 payment.onchange = checkout;
-function filter() {
-  const q = document.querySelector("#search").value.toLocaleLowerCase("pt-BR");
-  let count = 0;
-  document.querySelectorAll(".product").forEach((p) => {
-    p.hidden =
-      !(category === "all" || p.dataset.category === category) ||
-      !p.dataset.name.includes(q);
-    if (!p.hidden) count++;
-  });
-  document.querySelector("#empty-search").hidden = !!count;
-}
-document.querySelector("#search").oninput = filter;
-document.querySelectorAll(".chip").forEach(
-  (b) =>
-    (b.onclick = () => {
-      category = b.dataset.category;
-      document.querySelectorAll(".chip").forEach((c) => {
-        c.classList.toggle("active", c === b);
-        c.setAttribute("aria-pressed", String(c === b));
-      });
-      filter();
-    }),
-);
 function token() {
   try {
     let t = sessionStorage.getItem(tokenKey);
@@ -292,11 +303,23 @@ if (send)
             ? document.querySelector("#change-for").value
             : "",
         total_previsto: totals(),
-        itens: cart.map(({ id, quantidade, observacao }) => ({
-          id,
-          quantidade,
-          observacao,
-        })),
+        itens: cart.map(
+          ({
+            id,
+            quantidade,
+            observacao,
+            opcoes,
+            opcoes_versao,
+            quantidade_sabores,
+          }) => ({
+            id,
+            quantidade,
+            observacao,
+            opcoes,
+            opcoes_versao,
+            quantidade_sabores,
+          }),
+        ),
       };
       if (mode.value === "entrega") {
         const fields = [
@@ -325,7 +348,7 @@ if (send)
         toast(e.message);
       } else {
         toast(
-          "Não foi possível confirmar a resposta. Você pode reenviar a mesma tentativa com segurança ou conferir Meus pedidos.",
+          uiText("Não foi possível confirmar a resposta. Você pode reenviar a mesma tentativa com segurança ou conferir Meus pedidos."),
         );
       }
     } finally {

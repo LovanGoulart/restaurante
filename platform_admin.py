@@ -398,6 +398,9 @@ def create_platform(factory, root=None):
         SESSION_COOKIE_SECURE=Config.SESSION_COOKIE_SECURE,
         MAX_CONTENT_LENGTH=64 * 1024,
     )
+    from ui_preferences import init_ui_preferences
+
+    init_ui_preferences(app)
     dispatcher = RestaurantDispatcher(app.wsgi_app, factory, registry)
     app.extensions["restaurant_platform"] = dispatcher
     app.wsgi_app = dispatcher
@@ -717,7 +720,10 @@ def create_platform(factory, root=None):
         site = registry.site(id=id)
         if not site:
             abort(404)
-        return_path = url_for("admins", id=id, saved=1)
+        tab = request.args.get("aba", "dados")
+        if tab not in {"dados", "acesso", "cadastro"}:
+            tab = "dados"
+        return_path = url_for("admins", id=id, saved=1, aba=tab)
         users = []
         with dispatcher.application(site).app_context():
             if request.method == "POST":

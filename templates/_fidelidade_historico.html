@@ -1,0 +1,11 @@
+<div class="loyalty-table-wrap">
+<table>
+<thead><tr><th>Data</th><th>Movimentação</th><th>Pedido</th><th>Pontos</th></tr></thead>
+<tbody id="loyalty-history">
+{% for m in historico %}
+<tr><td>{{ m.criado|data_br }}</td><td>{{ m.descricao }}</td><td>#{{ m.pedido_id }}</td><td>{{ '+' if m.pontos > 0 else '' }}{{ m.pontos }}</td></tr>
+{% else %}<tr><td colspan="4">Nenhuma movimentação de pontos.</td></tr>{% endfor %}
+</tbody>
+</table>
+</div>
+<p class="muted">Últimas 100 movimentações. O saldo considera todo o histórico.</p>

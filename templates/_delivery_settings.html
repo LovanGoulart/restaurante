@@ -1,0 +1,13 @@
+<details class="panel delivery-settings"{% if request.args.get('configuracoes') or request.args.get('salvo') or delivery_settings_error %} open{% endif %}>
+<summary>Configurações da loja e da tele-entrega</summary>
+{% if request.args.get('salvo') %}<p class="success" role="status">Configurações salvas.</p>{% endif %}
+{% if delivery_settings_error %}<p class="error" role="alert">{{ delivery_settings_error }}</p>{% endif %}
+{% if can_edit_delivery %}
+<div class="management"><form method="post" action="{{ url_for('customers.settings') }}"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="data_referencia" value="">
+<label>Nome no cardápio público<input name="nome" maxlength="100" required value="{{ loja.nome }}"></label>
+<label>Taxa fixa de entrega (R$)<input type="number" name="taxa_entrega" step="0.01" min="0" required value="{{ loja.taxa_entrega/100 }}"></label>
+<label class="check"><input type="checkbox" name="pedidos_ativos" {{ 'checked' if loja.pedidos_ativos else '' }}>Receber pedidos online</label>
+<label class="check"><input type="checkbox" name="entrega_ativa" {{ 'checked' if loja.entrega_ativa else '' }}>Disponibilizar tele-entrega</label>
+<button>Salvar configurações de entrega</button></form><div><h2>Link para seus clientes</h2><p><a href="{{ url_for('customers.menu',_external=True) }}">{{ url_for('customers.menu',_external=True) }}</a></p><p>A taxa é exibida antes de confirmar o pedido. Alterações não modificam os pedidos já realizados.</p><p>O cadastro e o pedido não confirmam um pagamento bancário. Confira o recebimento e registre no caixa.</p></div></div>
+{% else %}<p>As configurações continuam protegidas pela senha do administrador.</p><a class="product-row-action" href="{{ url_for('management_access.unlock',destino=request.script_root+'/loja') }}">Desbloquear configurações de entrega →</a>{% endif %}
+</details>

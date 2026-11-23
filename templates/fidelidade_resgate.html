@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/loyalty.css') }}">
+<section class="panel loyalty-checkout"><h1>Confirmar resgate</h1>
+<h2>{{ recompensa.produto.nome }}</h2><p>{{ recompensa.descricao or recompensa.produto.descricao }}</p>
+<p><strong>{{ recompensa.pontos }} pontos</strong> serão descontados somente quando seu pedido for confirmado.</p>
+<p>Produto gratuito por pontos, na apresentação indicada acima. Este resgate não inclui personalizações ou adicionais pagos.</p>
+<form id="loyalty-checkout" data-reward="{{ recompensa.id }}" data-points="{{ recompensa.pontos }}" data-key="{{ chave }}" data-fee="{{ loja.taxa_entrega }}" data-user="{{ user.id }}">
+<label>Como deseja receber?
+<select name="modalidade"><option value="retirada">Retirada no estabelecimento</option>{% if loja.entrega_ativa %}<option value="entrega">Tele-entrega</option>{% endif %}</select></label>
+<div id="loyalty-address" hidden>
+{% for name,label,maxlen in [('telefone','Telefone',25),('endereco','Endereço',160),('numero','Número',20),('bairro','Bairro',100),('referencia','Referência',200)] %}
+<label>{{ label }}<input name="{{ name }}" value="{{ cliente|attr(name) or '' }}" maxlength="{{ maxlen }}" {% if name != 'telefone' %}data-required{% endif %}></label>
+{% endfor %}
+</div>
+<div id="loyalty-payment" hidden><label>Pagamento da taxa de entrega<select name="forma_pagamento"><option value="pix">Pix</option><option value="dinheiro">Dinheiro</option><option value="credito">Cartão de crédito</option><option value="debito">Cartão de débito</option></select></label></div>
+<p>Produto: <strong>R$ 0,00</strong></p><p>Total a pagar: <strong id="loyalty-total">R$ 0,00</strong></p>
+<p id="loyalty-error" role="alert" hidden></p>
+<button type="submit">Confirmar pedido com pontos</button>
+<a href="{{ url_for('loyalty.page') }}" class="button-link secondary">Voltar sem resgatar</a>
+</form></section>
+{% endblock %}
+{% block scripts %}<script defer src="{{ url_for('static',filename='js/loyalty.js') }}"></script>{% endblock %}

@@ -64,7 +64,9 @@ class Accesses(unittest.TestCase):
     def guest(self, name="Pessoa"):
         c = self.app.test_client()
         token = self.csrf_for(c, "/r/loja-um/salao")
-        r = c.post("/r/loja-um/salao", data={"csrf": token, "nome": name, "numero_mesa":"4"})
+        r = c.post(
+            "/r/loja-um/salao", data={"csrf": token, "nome": name, "numero_mesa": "4"}
+        )
         self.assertEqual(r.status_code, 302)
         return c
 
@@ -208,8 +210,8 @@ class Accesses(unittest.TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertEqual(self.client.get("/r/loja-um/clientes").status_code, 200)
         self.assertEqual(self.client.get("/r/loja-um/loja").status_code, 302)
-        self.client.get(path)  # menu pede novamente
-        self.assertEqual(self.client.get("/r/loja-um/clientes").status_code, 302)
+        self.client.get(path)  # a liberação é mantida enquanto estiver na sessão
+        self.assertEqual(self.client.get("/r/loja-um/clientes").status_code, 200)
         self.assertEqual(
             self.client.get(
                 "/r/loja-um/acesso-restrito?destino=https://malicioso.test/clientes"
@@ -520,7 +522,7 @@ class Accesses(unittest.TestCase):
             )
             self.assertEqual(response.status_code, 302)
 
-    def test_area_grant_expires(self):
+    def test_area_grant_does_not_expire(self):
         from unittest.mock import patch
 
         self.create()
@@ -531,10 +533,10 @@ class Accesses(unittest.TestCase):
             data={"csrf": token, "senha": "test-password"},
         )
         self.assertEqual(self.client.get("/r/loja-um/clientes").status_code, 200)
-        with patch("management_access.time.time", return_value=time.time() + 301):
-            self.assertEqual(self.client.get("/r/loja-um/clientes").status_code, 302)
+        with patch("time.time", return_value=time.time() + 301):
+            self.assertEqual(self.client.get("/r/loja-um/clientes").status_code, 200)
             self.assertEqual(
-                self.client.get("/r/loja-um/clientes/exportar.xlsx").status_code, 403
+                self.client.get("/r/loja-um/clientes/exportar.xlsx").status_code, 200
             )
 
 

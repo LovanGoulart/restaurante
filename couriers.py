@@ -14,7 +14,7 @@ from models import (
     Movimento,
     Notificacao,
 )
-from customers import role
+from customers import role, store
 from orders_service import serialize_order
 from notifications import emit_order
 
@@ -213,7 +213,9 @@ def complete(id):
 @bp.get("/acerto-entregadores")
 @role("admin")
 def settlement():
-    return render_template("acerto_entregadores.html")
+    from management_access import has_grant
+    loja = store()
+    return render_template("acerto_entregadores.html", loja=loja, can_edit_delivery=(loja.bloquear_menus is False or has_grant("loja")))
 
 
 @bp.get("/api/acerto-entregadores")
@@ -338,6 +340,9 @@ def settle():
             db.session.add(m)
             db.session.flush()
             e.movimento_id = m.id
+            from fiscal_service import enqueue
+
+            enqueue(p, e.forma_pagamento)
             emit_order(p, "pago")
         e.acertado_em = at
         e.acertado_por_id = g.user.id

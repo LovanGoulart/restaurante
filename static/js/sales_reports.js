@@ -49,7 +49,7 @@
     if (!values.length) {
       const empty = document.createElement("div");
       empty.className = "sales-empty";
-      empty.textContent = "Sem dados para este período.";
+      empty.textContent = uiText("Sem dados para este período.");
       container.replaceChildren(empty);
       return;
     }
@@ -110,7 +110,7 @@
     function update() {
       rows.forEach((row, index) => { row.hidden = index < page * size || index >= (page + 1) * size; });
       previous.disabled = page === 0; next.disabled = (page + 1) * size >= rows.length;
-      controls.querySelector("[data-page-summary]").textContent = rows.length ? `${page * size + 1}–${Math.min((page + 1) * size, rows.length)} de ${rows.length}` : "Nenhum registro";
+      controls.querySelector("[data-page-summary]").textContent = rows.length ? `${page * size + 1}–${Math.min((page + 1) * size, rows.length)} de ${rows.length}` : uiText("Nenhum registro");
     }
     previous.addEventListener("click", () => { if (page > 0) { page--; update(); } });
     next.addEventListener("click", () => { if ((page + 1) * size < rows.length) { page++; update(); } });

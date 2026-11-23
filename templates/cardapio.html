@@ -1,13 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  {% if appearance.cover %}
+  <section class="restaurant-cover {{ 'image-only' if not appearance.title and not appearance.subtitle else 'with-copy' }}" aria-label="Capa de {{ restaurant_name }}">
+    <img class="restaurant-cover-image" src="{{ url_for('appearance.media', name=appearance.cover) }}" alt="Capa de {{ restaurant_name }}" fetchpriority="high">
+    {% if appearance.title or appearance.subtitle %}
+    <div class="restaurant-cover-copy">
+      {% if appearance.title %}<h1>{{ appearance.title }}</h1>{% endif %}
+      {% if appearance.subtitle %}<p>{{ appearance.subtitle }}</p>{% endif %}
+    </div>
+    {% endif %}
+  </section>
+  {% else %}
   <section class="hero">
     <div>
       <div class="eyebrow">{{ restaurant_name }}</div>
 
-      <h1>{{ appearance.title }}</h1>
+      {% if appearance.title %}<h1>{{ appearance.title }}</h1>{% endif %}
 
-      <p>{{ appearance.subtitle }}</p>
+      {% if appearance.subtitle %}<p>{{ appearance.subtitle }}</p>{% endif %}
 
       <span class="badge">
         {{ '● Pedidos online disponíveis'
@@ -16,13 +27,6 @@
       </span>
     </div>
 
-    {% if appearance.cover %}
-      <img
-        class="pdv-cover"
-        src="{{ url_for('appearance.media', name=appearance.cover) }}"
-        alt="Capa de {{ restaurant_name }}"
-      >
-    {% else %}
       <div class="hero-art" aria-hidden="true">
         <span class="hero-food">🍕</span>
 
@@ -32,61 +36,11 @@
           <b>do seu jeito.</b>
         </span>
       </div>
-    {% endif %}
   </section>
+  {% endif %}
   <div class="pdv">
     <section>
-      <div class="section-head catalog-heading">
-        <div>
-          <div class="eyebrow">ESCOLHA O QUE COMBINA COM VOCÊ</div>
-          <h2>Cardápio da casa</h2>
-        </div>
-        <input
-          id="search"
-          type="search"
-          placeholder="O que você quer pedir?"
-          aria-label="Buscar produtos"
-        />
-      </div>
-      <div class="chips">
-        <button class="chip active" data-category="all" aria-pressed="true">
-          Todos
-        </button>
-        {% for c in categorias %}
-          <button class="chip" data-category="{{ c.id }}" aria-pressed="false">
-            {{ c.nome }}
-          </button>
-        {% endfor %}
-      </div>
-      <div class="products">
-        {% for p in produtos %}
-          <article
-            class="product"
-            data-category="{{ p.categoria_id }}"
-            data-name="{{ p.nome|lower }}"
-          >
-            <div class="food">{% set photo = appearance.photos.get(p.id|string) %}{% if photo %}<img src="{{ url_for('appearance.media', name=photo) }}" alt="{{ p.nome }}" loading="lazy">{% else %}{{ p.emoji }}{% endif %}</div>
-            <div class="product-content">
-              <small>{{ p.categoria.nome }}</small>
-              <h3>{{ p.nome }}</h3>
-              <p>{{ p.descricao }}</p>
-              <div class="price">
-                <b>{{ p.preco|brl }}</b>
-                <button
-                  class="add"
-                  data-id="{{ p.id }}"
-                  data-name="{{ p.nome }}"
-                  data-price="{{ p.preco }}"
-                  aria-label="Adicionar {{ p.nome }}"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </article>
-        {% endfor %}
-      </div>
-      <p id="empty-search" hidden>Nenhum produto encontrado.</p>
+      {% include '_catalog_products.html' %}
     </section>
     <aside
       class="panel bag online-bag"
@@ -108,6 +62,7 @@
       </div>
       <div class="online-bag-content">
       <div id="cart"><p class="empty">Escolha os produtos para começar.</p></div>
+      <button type="button" class="secondary pizza-continue" hidden>Continuar comprando</button>
       <div class="checkout-details">
         <label>
           Como deseja receber?
@@ -180,6 +135,7 @@
   </div>
   <button
     id="mobile-cart"
+    hidden
     class="mobile-cart"
     aria-expanded="false"
     aria-controls="bag"
@@ -195,5 +151,6 @@
 {% endblock %}
 
 {% block scripts %}
+  <script defer src="{{ url_for('static', filename='js/product-picker.js') }}"></script>
   <script defer src="{{ request.script_root }}/static/js/cardapio.js"></script>
 {% endblock %}

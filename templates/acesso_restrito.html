@@ -11,7 +11,7 @@
     <label>Senha do administrador<input type="password" name="senha" autocomplete="current-password" required autofocus maxlength="256"></label>
     <button>Liberar esta área</button>
   </form>
-  <p class="muted">A liberação desta área dura 5 minutos. Cada novo acesso pelo menu pede a senha novamente.</p>
+  <p class="muted">A liberação permanece válida durante esta sessão, até você sair da conta ou bloquear as áreas de gestão. Não expira enquanto você edita.</p>
   <a href="{{ url_for('pedidos') }}">Voltar aos pedidos</a>
 </section>
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="panel login"><div class="eyebrow">ADMINISTRAÇÃO</div><h1>Segurança dos menus</h1>
+<p>Escolha se as áreas de gestão exigem confirmação adicional de senha. O login de administrador continua obrigatório.</p>
+{% if request.args.get('saved') %}<p role="status" class="success">Preferência salva.</p>{% endif %}
+{% if error %}<p role="alert" class="error">{{ error }}</p>{% endif %}
+<form method="post"><input type="hidden" name="csrf" value="{{ csrf }}">
+<label class="check"><input type="checkbox" name="bloquear_menus" {{ 'checked' if loja.bloquear_menus else '' }}>Exigir senha adicional nos menus administrativos</label>
+<p class="muted">Com a proteção ativa, basta liberar cada área uma vez por sessão. A edição não tem limite de tempo. Desmarcando esta opção, os menus ficam desbloqueados para os usuários com perfil administrador deste restaurante.</p>
+<label>Confirme sua senha para salvar<input type="password" name="senha" required autocomplete="current-password" maxlength="256"></label>
+<button>Salvar preferência</button></form><p><a href="{{ url_for('pedidos') }}">← Voltar aos pedidos</a></p></section>
+{% endblock %}

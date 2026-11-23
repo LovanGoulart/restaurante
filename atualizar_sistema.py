@@ -15,8 +15,26 @@ def migrate_current():
         raise RuntimeError("Esta atualização requer SQLite.")
     pedido_columns = {x["name"] for x in inspector.get_columns("pedido")}
     item_columns = {x["name"] for x in inspector.get_columns("item")}
+    category_columns = (
+        {x["name"] for x in inspector.get_columns("categoria")}
+        if inspector.has_table("categoria")
+        else set()
+    )
+    product_columns = (
+        {x["name"] for x in inspector.get_columns("produto")}
+        if inspector.has_table("produto")
+        else set()
+    )
+    store_columns = (
+        {x["name"] for x in inspector.get_columns("loja")}
+        if inspector.has_table("loja")
+        else set()
+    )
     needed = (
-        "numero_mesa" not in pedido_columns
+        (bool(category_columns) and "excluido" not in category_columns)
+        or (bool(product_columns) and "excluido" not in product_columns)
+        or (bool(store_columns) and "bloquear_menus" not in store_columns)
+        or "numero_mesa" not in pedido_columns
         or not {"visitante_id", "etapa"}.issubset(item_columns)
         or not inspector.has_table("pedido_qr")
     )
@@ -33,6 +51,15 @@ def migrate_current():
     with sqlite3.connect(path) as src, sqlite3.connect(backup) as dst:
         src.backup(dst)
     with db.engine.begin() as conn:
+        for table, columns, field, default in [
+            ("categoria", category_columns, "excluido", 0),
+            ("produto", product_columns, "excluido", 0),
+            ("loja", store_columns, "bloquear_menus", 1),
+        ]:
+            if columns and field not in columns:
+                conn.exec_driver_sql(
+                    f"ALTER TABLE {table} ADD COLUMN {field} BOOLEAN NOT NULL DEFAULT {default}"
+                )
         if "numero_mesa" not in pedido_columns:
             conn.exec_driver_sql(
                 "ALTER TABLE pedido ADD COLUMN numero_mesa VARCHAR(40) NOT NULL DEFAULT ''"

@@ -14,10 +14,49 @@ const escapeHTML = (s) =>
 let toastTimer;
 function toast(message) {
   const el = document.querySelector("#toast");
-  el.textContent = message;
+  el.textContent = uiText(message);
   el.hidden = false;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => (el.hidden = true), 7000);
+}
+// Aviso flutuante no aplicativo, inclusive quando um diálogo estiver aberto.
+let headsUpTimer;
+function notificationHeadsUp(title, message) {
+  let box = document.getElementById("notification-heads-up");
+  if (!box) {
+    box = document.createElement("section");
+    box.id = "notification-heads-up";
+    box.setAttribute("role", "status");
+    box.setAttribute("aria-live", "polite");
+    box.setAttribute("popover", "manual");
+    const content = document.createElement("div");
+    content.append(document.createElement("strong"), document.createElement("p"));
+    const close = document.createElement("button");
+    close.type = "button";
+    close.textContent = "×";
+    close.setAttribute("aria-label", uiText("Fechar"));
+    close.onclick = () => {
+      clearTimeout(headsUpTimer);
+      if (typeof box.hidePopover === "function" && box.matches(":popover-open")) box.hidePopover();
+      box.hidden = true;
+    };
+    box.append(content, close);
+    document.body.append(box);
+  }
+  box.querySelector("strong").textContent = uiText(title);
+  box.querySelector("p").textContent = uiText(message);
+  box.hidden = false;
+  if (typeof box.showPopover === "function") {
+    try { box.showPopover(); } catch {}
+  } else {
+    box.removeAttribute("popover");
+  }
+  clearTimeout(headsUpTimer);
+  headsUpTimer = setTimeout(() => {
+    if (typeof box.hidePopover === "function" && box.matches(":popover-open"))
+      box.hidePopover();
+    box.hidden = true;
+  }, 10000);
 }
 async function api(url, data) {
   const response = await fetch(restaurantURL(url), {
@@ -31,13 +70,13 @@ async function api(url, data) {
   });
   const result = await response
     .json()
-    .catch(() => ({ error: "Não foi possível ler a resposta do servidor." }));
+    .catch(() => ({ error: uiText("Não foi possível ler a resposta do servidor.") }));
   if (response.status === 401) {
     window.dispatchEvent(new Event("session-expired"));
-    throw Error("Sua sessão terminou. Entre novamente.");
+    throw Error(uiText("Sua sessão terminou. Entre novamente."));
   }
   if (!response.ok) {
-    const error = Error(result.error || "Operação não permitida.");
+    const error = Error(uiText(result.error) || uiText("Operação não permitida."));
     error.status = response.status;
     throw error;
   }
@@ -170,24 +209,54 @@ if (orders) {
   let requestedOrder =
     Number(new URLSearchParams(location.search).get("pedido")) || null;
   const labels = {
+      cancelado: uiText("Cancelado"),
       aberto: ["admin", "garcom"].includes(orders.dataset.role)
-        ? "Enviado à cozinha"
+        ? uiText("Enviado à cozinha")
         : orders.dataset.role === "cozinha"
-          ? "Pendente"
-          : "Aberto",
-      em_preparo: "Em preparo",
+          ? uiText("Pendente")
+          : uiText("Aberto"),
+      em_preparo: uiText("Em preparo"),
       pronto: ["admin", "garcom"].includes(orders.dataset.role)
-        ? "Pedido pronto"
-        : "Pronto",
-      saiu_entrega: "Saiu para entrega",
-      entregue: "Entregue",
+        ? uiText("Pedido pronto")
+        : uiText("Pronto"),
+      saiu_entrega: orders.dataset.role === "cliente" ? uiText("Em trânsito") : uiText("Saiu para entrega"),
+      entregue: uiText("Entregue"),
     },
     paymentLabels = {
+      pontos: uiText("Pontos de fidelidade"),
       pix: "Pix",
-      dinheiro: "Dinheiro",
-      credito: "Cartão de crédito",
-      debito: "Cartão de débito",
+      dinheiro: uiText("Dinheiro"),
+      credito: uiText("Cartão de crédito"),
+      debito: uiText("Cartão de débito"),
     };
+  const adminSummary = [
+    { key: "a_receber", label: uiText("A receber"), css: "entregue" },
+    { key: "pronto", label: uiText("Pronto"), css: "pronto" },
+    { key: "em_preparo", label: uiText("Em preparo"), css: "em_preparo" },
+    { key: "aberto", label: uiText("Enviado à cozinha"), css: "aberto" },
+    { key: "saiu_entrega", label: uiText("Saiu para entrega"), css: "saiu_entrega" },
+    { key: "aguardando_comanda", label: uiText("Aguardando comanda"), css: "awaiting-comanda" },
+  ];
+  if (orders.dataset.role === "admin") {
+    const statusSelect = document.querySelector("#status-filter");
+    for (const key of ["a_receber", "aguardando_comanda"]) {
+      if (!statusSelect.querySelector('option[value="' + key + '"]'))
+        statusSelect.add(new Option(adminSummary.find(s => s.key === key).label, key));
+    }
+  }
+  function matchesStatus(p, filter, role) {
+    if (!filter) return true;
+    if (filter === "a_receber") return p.status === "entregue" && !p.pago;
+    if (filter === "aguardando_comanda") return Boolean(p.aguardando_comanda);
+    if (filter === "nao_pago") return !p.pago;
+    if (role === "admin" && filter === "aberto")
+      return p.status === "aberto" && !p.aguardando_comanda;
+    return p.status === filter;
+  }
+  function matchesChannel(p, channel) {
+    if (channel === "fidelidade") return Boolean(p.fidelidade_resgate);
+    return !channel || p.modalidade === channel;
+  }
   function nextFor(p) {
     return {
       aberto: "em_preparo",
@@ -198,25 +267,23 @@ if (orders) {
   }
   function titleFor(p) {
     return p.canal === "salao"
-      ? (p.aguardando_comanda ? "Aguardando comanda" : "Comanda: " + p.mesa) +
+      ? (p.aguardando_comanda ? uiText("Aguardando comanda") : "Comanda: " + p.mesa) +
           (p.numero_mesa ? " · Mesa " + p.numero_mesa : "")
       : p.modalidade === "entrega"
-        ? "Tele-entrega"
-        : "Retirada no caixa";
+        ? uiText("Tele-entrega")
+        : uiText("Retirada no caixa");
   }
   function addressHTML(p) {
     if (!p.endereco) return "";
     const a = p.endereco;
     return /* HTML */ `
       <div class="delivery-address">
-        <b>Endereço de entrega</b>
+        <b>${uiHtml("Endereço de entrega")}</b>
         <p>
           ${escapeHTML(a.endereco)}, ${escapeHTML(a.numero)}
           <br />
           ${escapeHTML(a.bairro)}
-          <br />
-          Referência:
-          ${escapeHTML(a.referencia)}${a.telefone ? "<br>Contato: " + escapeHTML(a.telefone) : ""}
+          <br />${uiHtml("\n          Referência:\n          ")}${escapeHTML(a.referencia)}${a.telefone ? "<br>Contato: " + escapeHTML(a.telefone) : ""}
         </p>
       </div>
     `;
@@ -225,18 +292,14 @@ if (orders) {
     if (role !== "admin" || p.modalidade !== "entrega") return "";
     let info = p.entregador
       ? /* HTML */ `
-          <p class="muted">
-            Entregador:
-            <b>${escapeHTML(p.entregador.nome)}</b>
+          <p class="muted">${uiHtml("\n            Entregador:\n            ")}<b>${escapeHTML(p.entregador.nome)}</b>
             ${p.entregador.concluida ? " · entrega concluída" : ""}
           </p>
         `
       : "";
     if (p.entregador?.concluida && p.entregador.forma_pagamento)
       info += /* HTML */ `
-        <p class="muted">
-          Recebido pelo entregador:
-          ${paymentLabels[p.entregador.forma_pagamento] || "Pagamento antecipado"}
+        <p class="muted">${uiHtml("\n          Recebido pelo entregador:\n          ")}${paymentLabels[p.entregador.forma_pagamento] || uiText("Pagamento antecipado")}
           · ${money(p.entregador.valor_recebido)} ·
           ${p.entregador.acertado ? "conferido" : "a conferir"}
         </p>
@@ -250,10 +313,8 @@ if (orders) {
           ${
             driverOptions.length
               ? /* HTML */ `
-                  <label>
-                    Entregador
-                    <select id="courier-${p.id}" data-courier-select="${p.id}">
-                      <option value="">Selecione um entregador</option>
+                  <label>${uiHtml("\n                    Entregador\n                    ")}<select id="courier-${p.id}" data-courier-select="${p.id}">
+                      <option value="">${uiHtml("Selecione um entregador")}</option>
                       ${driverOptions
                         .map(
                           (u) => /* HTML */ `
@@ -269,7 +330,7 @@ if (orders) {
                     </select>
                   </label>
                   <button class="secondary" data-assign="${p.id}">
-                    ${p.entregador ? "Reatribuir entrega" : "Enviar com entregador →"}
+                    ${p.entregador ? uiText("Reatribuir entrega") : uiText("Enviar com entregador →")}
                   </button>
                 `
               : '<p>Cadastre um usuário com perfil entregador em <a href="' +
@@ -281,10 +342,11 @@ if (orders) {
     );
   }
   const itemStageLabels = {
-    aberto: "Pendente",
-    em_preparo: "Em preparo",
-    pronto: "Pronto para levar",
-    entregue: "Entregue",
+    saiu_entrega: uiText("Em trânsito"),
+    aberto: uiText("Pendente"),
+    em_preparo: uiText("Em preparo"),
+    pronto: uiText("Pronto para levar"),
+    entregue: uiText("Entregue"),
   };
   function itemChecks(p, i, role) {
     if (!["admin", "garcom", "cozinha"].includes(role)) return "";
@@ -302,18 +364,40 @@ if (orders) {
     if (role === "cozinha" || role === "admin")
       html += checkbox(
         "pronto",
-        "Pronto",
+        uiText("Pronto"),
         ["pronto", "entregue"].includes(stage),
         locked || stage === "entregue",
       );
     if ((role === "garcom" || role === "admin") && p.canal === "salao")
       html += checkbox(
         "entregue",
-        "Entregue na mesa",
+        uiText("Entregue na mesa"),
         stage === "entregue",
         locked || p.aguardando_comanda,
       );
     return html + "</div>";
+  }
+  function itemOptionsHTML(value) {
+    if (!value) return "";
+    const sections = String(value)
+      .split(/\s+\|\s+/)
+      .map((part) => {
+        const colon = part.indexOf(":");
+        const hasLabel = colon > 0 && colon <= 70;
+        const title = hasLabel ? part.slice(0, colon).trim() : uiText("Observação");
+        const text = hasLabel ? part.slice(colon + 1).trim() : part.trim();
+        const isFlavors = /sabor/i.test(title);
+        const values = isFlavors ? text.split(/,\s+/) : [text];
+        return `<div class="order-item-option"><dt>${escapeHTML(title)}</dt><dd>${values.map((v) => `<span class="order-option-value${isFlavors ? " flavor-value" : ""}">${escapeHTML(v)}</span>`).join("")}</dd></div>`;
+      });
+    return `<dl class="order-item-options">${sections.join("")}</dl>`;
+  }
+  function orderItemHTML(p, i, role) {
+    return `<li class="order-item-card"><div class="order-item-content">
+      <div class="order-item-heading"><div class="order-item-name"><span class="item-qty">${i.quantidade}×</span><b>${escapeHTML(i.nome)}</b></div>${i.etapa ? `<span class="item-stage item-stage-${escapeHTML(i.etapa)}">${escapeHTML(itemStageLabels[i.etapa] || i.etapa)}</span>` : ""}</div>
+      ${itemOptionsHTML(i.observacao)}
+      <div class="order-item-footer">${itemChecks(p, i, role)}<div class="order-item-price">${i.quantidade > 1 ? `<span>${money(i.preco)} por unidade</span>` : ""}<strong>${money(i.preco * i.quantidade)}</strong></div></div>
+    </div></li>`;
   }
   function orderHTML(p, role) {
     const online = p.canal === "online",
@@ -335,59 +419,36 @@ if (orders) {
     return /* HTML */ `
       <article
         data-order-id="${p.id}"
-        class="panel order ${p.status} ${p.pago ? "order-paid" : ""} ${online ? "online-order" : ""}"
+        class="panel order ${p.status} ${p.aguardando_comanda ? "awaiting-comanda" : ""} ${p.pago ? "order-paid" : ""} ${online ? "online-order" : ""}"
       >
         <div class="order-head">
           <div class="table-badge">
-            <small>${online ? "PEDIDO ONLINE" : "COMANDA"}</small>
+            <small>${online ? uiText("PEDIDO ONLINE") : uiText("COMANDA")}</small>
             <strong class="${online ? "online-title" : ""}">
-              ${online ? (p.modalidade === "entrega" ? "Tele-entrega" : "Retirada no caixa") : p.aguardando_comanda ? "A definir" : escapeHTML(p.mesa)}
+              ${online ? (p.modalidade === "entrega" ? uiText("Tele-entrega") : uiText("Retirada no caixa")) : p.aguardando_comanda ? uiText("A definir") : escapeHTML(p.mesa)}
             </strong>
-            <div class="order-number">
-              PEDIDO
-              #${p.id}${p.numero_mesa ? " · MESA " + escapeHTML(p.numero_mesa) : ""}
+            <div class="order-number">${uiHtml("\n              PEDIDO\n              #")}${p.id}${p.numero_mesa ? " · MESA " + escapeHTML(p.numero_mesa) : ""}
             </div>
           </div>
           <span class="pill">${labels[p.status]}</span>
         </div>
         <div class="order-body">
-          ${["admin", "garcom"].includes(role) && p.canal === "salao" && !p.pago ? (p.aguardando_comanda ? `<div class="qr-assignment"><label>Comanda<input id="qr-comanda-${p.id}" inputmode="numeric" maxlength="12"></label><label>Mesa<input id="qr-mesa-${p.id}" value="${escapeHTML(p.numero_mesa || "")}" inputmode="numeric" maxlength="12"></label><button data-qr-assign="${p.id}">Definir comanda e mesa</button><p class="muted">Confira a mesa informada pelo cliente e defina a comanda ao atender. Depois, registre a entrega.</p></div>` : `<a class="button-link secondary" href="${restaurantURL("/pdv")}?pedido=${p.id}">+ Adicionar itens à comanda</a>`) : ""}
+          ${["admin", "garcom"].includes(role) && p.canal === "salao" && !p.pago ? (p.aguardando_comanda ? `<div class="qr-assignment"><label>${uiHtml("Comanda")}<input id="qr-comanda-${p.id}" inputmode="numeric" maxlength="12"></label><label>${uiHtml("Mesa")}<input id="qr-mesa-${p.id}" value="${escapeHTML(p.numero_mesa || "")}" inputmode="numeric" maxlength="12"></label><button data-qr-assign="${p.id}">${uiHtml("Definir comanda e mesa")}</button><p class="muted">${uiHtml("Confira a mesa informada pelo cliente e defina a comanda ao atender. Depois, registre a entrega.")}</p></div>` : `<a class="button-link secondary" href="${restaurantURL("/pdv")}?pedido=${p.id}">${uiHtml("+ Adicionar itens à comanda")}</a>`) : ""}
           <div class="order-meta">
             <span>
               ${online ? "👤 " + escapeHTML(p.cliente) : "♙ " + escapeHTML(p.garcom)}
             </span>
             <time>
-              ${new Date(p.criado + "Z").toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
+              ${new Date(p.criado + "Z").toLocaleString(document.documentElement.lang || "pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
             </time>
           </div>
           <ul>
-            ${p.itens
-              .map(
-                (i) => /* HTML */ `
-                  <li>
-                    <span class="item-qty">${i.quantidade}×</span>
-                    <div>
-                      <b>${escapeHTML(i.nome)}</b
-                      >${i.etapa ? `<span class="item-stage item-stage-${escapeHTML(i.etapa)}">${escapeHTML(itemStageLabels[i.etapa] || i.etapa)}</span>` : ""}${itemChecks(p, i, role)}
-                      ${
-                        i.observacao
-                          ? /* HTML */ `
-                              <small>Obs.: ${escapeHTML(i.observacao)}</small>
-                            `
-                          : ""
-                      }
-                    </div>
-                  </li>
-                `,
-              )
-              .join("")}
+            ${p.itens.map((i) => orderItemHTML(p, i, role)).join("")}
           </ul>
           ${addressHTML(p)}${
             p.forma_pagamento
               ? /* HTML */ `
-                  <p class="muted">
-                    Pagamento escolhido:
-                    <b>${paymentLabels[p.forma_pagamento]}</b>
+                  <p class="muted">${uiHtml("\n                    Pagamento escolhido:\n                    ")}<b>${paymentLabels[p.forma_pagamento]}</b>
                     ${p.troco_para !== null && p.troco_para !== undefined ? " · Troco para " + money(p.troco_para) : ""}
                   </p>
                 `
@@ -396,7 +457,7 @@ if (orders) {
             p.taxa_entrega
               ? /* HTML */ `
                   <div class="fee-line">
-                    <span>Inclui taxa de entrega</span>
+                    <span>${uiHtml("Inclui taxa de entrega")}</span>
                     <b>${money(p.taxa_entrega)}</b>
                   </div>
                 `
@@ -405,7 +466,7 @@ if (orders) {
           <div class="total">
             <strong>${money(p.total)}</strong>
             <span class="payment-state ${p.pago ? "paid" : ""}">
-              ${p.pago ? "✓ Pago" : "A receber"}
+              ${p.pago ? uiText("✓ Pago") : uiText("A receber")}
             </span>
           </div>
           ${
@@ -416,23 +477,21 @@ if (orders) {
                     data-status="${next}"
                     data-id="${p.id}"
                   >
-                    ${p.status === "aberto" ? "Iniciar preparo →" : p.status === "em_preparo" ? "✓ Marcar como pronto" : next === "saiu_entrega" ? "Saiu para entrega →" : online && p.modalidade === "retirada" ? "✓ Confirmar retirada" : "✓ Registrar entrega"}
+                    ${p.status === "aberto" ? uiText("Iniciar preparo →") : p.status === "em_preparo" ? uiText("✓ Marcar como pronto") : next === "saiu_entrega" ? "Saiu para entrega →" : online && p.modalidade === "retirada" ? uiText("✓ Confirmar retirada") : uiText("✓ Registrar entrega")}
                   </button>
                 `
               : ""
-          }${assignmentHTML(p, role)}${role === "admin" && !p.pago && p.entregador?.concluida ? '<a class="button-link" href="' + restaurantURL("/acerto-entregadores") + '">Conferir acerto do entregador →</a>' : ""}${
-            role === "admin" && !p.pago && !p.entregador?.concluida
+          }${assignmentHTML(p, role)}${role === "admin" && !p.pago && p.status !== "cancelado" && p.entregador?.concluida ? '<a class="button-link" href="' + restaurantURL("/acerto-entregadores") + '">Conferir acerto do entregador →</a>' : ""}${
+            role === "admin" && !p.pago && p.status !== "cancelado" && !p.entregador?.concluida
               ? /* HTML */ `
-                  <button class="secondary" data-pay="${p.id}">
-                    Registrar pagamento
-                  </button>
+                  <button class="secondary" data-pay="${p.id}">${uiHtml("\n                    Registrar pagamento\n                  ")}</button>
                 `
               : ""
           }${
             role === "cliente" && p.status === "pronto"
               ? /* HTML */ `
                   <p class="ready-note">
-                    ${p.modalidade === "retirada" ? "Seu pedido está pronto! Retire no caixa." : "Seu pedido está pronto e aguarda saída para entrega."}
+                    ${p.modalidade === "retirada" ? uiText("Seu pedido está pronto! Retire no caixa.") : uiText("Seu pedido está pronto e aguarda saída para entrega.")}
                   </p>
                 `
               : ""
@@ -469,13 +528,15 @@ if (orders) {
       "cliente",
       "visitante",
     ].includes(role);
-    document.querySelector("#status-summary").innerHTML = Object.keys(labels)
+    const summary = role === "admin" ? adminSummary : Object.keys(labels)
       .filter((status) => role !== "garcom" || status !== "saiu_entrega")
+      .map(key => ({ key, label: labels[key], css: key }));
+    document.querySelector("#status-summary").innerHTML = summary
       .map(
         (s) => /* HTML */ `
-          <button class="status-card ${s}" data-filter="${s}">
-            <span>${labels[s]}</span>
-            <b>${list.filter((p) => p.status === s).length}</b>
+          <button class="status-card ${s.css}" data-filter="${s.key}">
+            <span>${s.label}</span>
+            <b>${list.filter((p) => matchesStatus(p, s.key, role)).length}</b>
           </button>
         `,
       )
@@ -484,9 +545,8 @@ if (orders) {
       list
         .filter(
           (p) =>
-            (!filter ||
-              (filter === "nao_pago" ? !p.pago : p.status === filter)) &&
-            (!channel || p.modalidade === channel) &&
+            matchesStatus(p, filter, role) &&
+            matchesChannel(p, channel) &&
             correspondeComanda(p),
         )
         .map((p) => orderHTML(p, role))
@@ -497,9 +557,8 @@ if (orders) {
       fullCards.clear();
       const visible = list.filter(
         (p) =>
-          (!filter ||
-            (filter === "nao_pago" ? !p.pago : p.status === filter)) &&
-          (!channel || p.modalidade === channel) &&
+          matchesStatus(p, filter, role) &&
+          matchesChannel(p, channel) &&
           correspondeComanda(p),
       );
       const articles = [...orders.querySelectorAll("article.order")];
@@ -510,6 +569,7 @@ if (orders) {
         card.type = "button";
         card.className =
           "compact-order " + p.status + (p.pago ? " order-paid" : "");
+        card.classList.toggle("awaiting-comanda", Boolean(p.aguardando_comanda));
         card.dataset.detail = p.id;
         const aguardandoEntregador =
           role === "admin" &&
@@ -520,14 +580,14 @@ if (orders) {
         const statusDoCard =
           role === "admin" && p.status === "entregue"
             ? p.pago
-              ? "Finalizado"
-              : "A receber"
+              ? uiText("Finalizado")
+              : uiText("A receber")
             : aguardandoEntregador
               ? p.status === "pronto"
-                ? "Definir entregador"
-                : "Em trânsito"
+                ? uiText("Definir entregador")
+                : uiText("Em trânsito")
               : labels[p.status];
-        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${statusDoCard}</span></span><span>Pedido #${p.id} · ${escapeHTML(p.cliente || p.garcom)}</span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? "Pago" : "Não pago"}</b></span><small>${p.itens.filter((i) => i.etapa === "pronto").length} item(ns) pronto(s) · ${p.itens.filter((i) => i.etapa === "entregue").length}/${p.itens.length} entregue(s) · Ver detalhes →</small>`;
+        card.innerHTML = `<span class="compact-heading"><strong>${escapeHTML(titleFor(p))}</strong><span>${statusDoCard}</span></span><span>${uiHtml("Pedido #")}${p.id} · <span class="compact-person">${escapeHTML(p.cliente || p.garcom)}</span></span><span class="compact-items">${p.itens.map((i) => escapeHTML(i.quantidade + "× " + i.nome)).join(" · ")}</span><span class="compact-heading"><b>${money(p.total)}</b><b>${p.pago ? uiText("Pago") : uiText("Não pago")}</b></span><small>${p.itens.filter((i) => i.etapa === "pronto").length} item(ns) pronto(s) · ${p.itens.filter((i) => i.etapa === "entregue").length}/${p.itens.length} entregue(s) · Ver detalhes →</small>`;
         article.replaceWith(card);
       });
       if (detail.open && selectedOrder !== null) {
@@ -634,7 +694,7 @@ if (orders) {
           comanda: document.querySelector("#qr-comanda-" + id).value,
           numero_mesa: document.querySelector("#qr-mesa-" + id).value,
         });
-        toast("Comanda vinculada.");
+        toast(uiText("Comanda vinculada."));
         await refresh();
       } catch (err) {
         toast(err.message);
@@ -649,7 +709,7 @@ if (orders) {
       const id = Number(b.dataset.assign),
         driver = Number(document.querySelector("#courier-" + id).value);
       if (!driver) {
-        toast("Selecione um entregador.");
+        toast(uiText("Selecione um entregador."));
         return;
       }
       busy = true;
@@ -659,7 +719,7 @@ if (orders) {
           entregador_id: driver,
         });
         choices.delete(id);
-        toast("Entrega atribuída com sucesso.");
+        toast(uiText("Entrega atribuída com sucesso."));
       } catch (err) {
         toast(err.message);
       } finally {
@@ -684,7 +744,7 @@ if (orders) {
       await api(`/api/pedidos/${b.dataset.id}/status`, {
         status: b.dataset.status,
       });
-      toast("Pedido atualizado com sucesso.");
+      toast(uiText("Pedido atualizado com sucesso."));
     } catch (err) {
       toast(err.message);
     } finally {
@@ -714,9 +774,9 @@ if (orders) {
       toast(
         checked
           ? input.dataset.itemCheck === "pronto"
-            ? "Item marcado como pronto."
-            : "Item marcado como entregue."
-          : "Marcação desfeita.",
+            ? uiText("Item marcado como pronto.")
+            : uiText("Item marcado como entregue.")
+          : uiText("Marcação desfeita."),
       );
     } catch (err) {
       input.checked = !checked;
@@ -745,7 +805,7 @@ if (orders) {
         forma: document.querySelector("#payment-method").value,
       });
       document.querySelector("#payment-dialog").close();
-      toast("Pagamento registrado.");
+      toast(uiText("Pagamento registrado."));
       paymentId = null;
     } catch (err) {
       toast(err.message);
@@ -803,7 +863,7 @@ if (orders) {
       if (pedido) {
         showDetail(pedido.id);
       } else {
-        alert("Nenhum pedido encontrado para essa comanda.");
+        alert(uiText("Nenhum pedido encontrado para essa comanda."));
         comandaSearch.select();
       }
     });
@@ -835,16 +895,17 @@ if (document.body.dataset.user) {
           (n) => /* HTML */ `
             <a
               class="notification-item ${n.lida ? "" : "unread"}"
+              data-notification-id="${n.id}"
               href="${escapeHTML(n.url || "/pedidos")}"
             >
-              <b>${escapeHTML(n.titulo)}</b>
-              <p>${escapeHTML(n.mensagem)}</p>
-              <time>${new Date(n.criado).toLocaleString("pt-BR")}</time>
+              <b>${escapeHTML(uiText(n.titulo))}</b>
+              <p>${escapeHTML(uiText(n.mensagem))}</p>
+              <time>${new Date(n.criado).toLocaleString(document.documentElement.lang || "pt-BR")}</time>
             </a>
           `,
         )
         .join("") ||
-      "<p>Você está em dia. Os próximos avisos aparecerão aqui.</p>";
+      ("<p>" + uiHtml("Você está em dia. Os próximos avisos aparecerão aqui.") + "</p>");
   }
   async function loadInbox() {
     try {
@@ -853,10 +914,28 @@ if (document.body.dataset.user) {
       document.querySelector("#notifications-list").textContent = e.message;
     }
   }
-  document.querySelector("#notifications-open").onclick = () => {
+  document.querySelector("#notifications-open")?.addEventListener("click", () => {
     document.querySelector("#notifications-dialog").showModal();
     loadInbox();
-  };
+  });
+  document.querySelector("#notifications-list").addEventListener("click", async (event) => {
+    const link = event.target.closest("a[data-notification-id]");
+    if (!link) return;
+    const normal = !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey;
+    if (normal) event.preventDefault();
+    if (link.dataset.reading) return;
+    link.dataset.reading = "yes";
+    try {
+      await api("/api/notificacoes/lidas", { id: Number(link.dataset.notificationId) });
+      link.classList.remove("unread");
+      if (normal) window.location.assign(link.href);
+      else loadInbox();
+    } catch (e) {
+      toast(e.message);
+    } finally {
+      delete link.dataset.reading;
+    }
+  });
   document.querySelector("#notifications-read").onclick = async () => {
     try {
       await api("/api/notificacoes/lidas", { ate: unreadCursor });
@@ -874,7 +953,7 @@ if (document.body.dataset.user) {
     window.dispatchEvent(new Event("orders-updated"));
     loadInbox();
     if (n.alerta) {
-      toast(n.titulo + "\n" + n.mensagem);
+      notificationHeadsUp(n.titulo, n.mensagem);
       window.RestaurantSound?.notify();
     }
   }
@@ -890,16 +969,16 @@ if (document.body.dataset.user) {
     clearTimeout(reconnectTimer);
     if (stream) stream.close();
     if (!navigator.onLine) {
-      live("Sem conexão", "reconnecting");
+      live(uiText("Sem conexão"), "reconnecting");
       return;
     }
     if (!window.EventSource) {
-      live("Atualização periódica", "reconnecting");
+      live(uiText("Atualização periódica"), "reconnecting");
       return;
     }
     stream = new EventSource(restaurantURL("/api/eventos?after=" + latest));
     stream.addEventListener("connected", () => {
-      live("Ao vivo", "connected");
+      live(uiText("Ao vivo"), "connected");
       window.dispatchEvent(new Event("orders-updated"));
       loadInbox();
     });
@@ -909,15 +988,15 @@ if (document.body.dataset.user) {
       } catch {}
     });
     stream.onerror = () =>
-      live(navigator.onLine ? "Reconectando" : "Sem conexão", "reconnecting");
+      live(navigator.onLine ? uiText("Reconectando") : uiText("Sem conexão"), "reconnecting");
   }
   window.addEventListener("session-expired", () => {
     stream?.close();
-    live("Entre novamente", "reconnecting");
+    live(uiText("Entre novamente"), "reconnecting");
   });
   window.addEventListener("offline", () => {
     stream?.close();
-    live("Sem conexão", "reconnecting");
+    live(uiText("Sem conexão"), "reconnecting");
   });
   window.addEventListener("online", connect);
   document.addEventListener("visibilitychange", () => {
@@ -945,4 +1024,30 @@ if (document.body.dataset.user) {
   setInterval(() => {
     if (document.visibilityState === "visible") loadInbox();
   }, 45000);
+}
+
+// A visita QR é encerrada pelo servidor quando a comanda é paga.
+if (document.body.dataset.qrGuest === "1") {
+  let checkingVisit = false;
+  async function checkVisit() {
+    if (checkingVisit || !navigator.onLine) return;
+    checkingVisit = true;
+    try {
+      const response = await fetch(restaurantURL("/api/salao/sessao"), {cache: "no-store"});
+      if (!response.ok) return;
+      const state = await response.json();
+      if (!state.ativa) {
+        window.location.replace(restaurantURL("/salao"));
+        return;
+      }
+      document.querySelectorAll("[data-qr-table]").forEach(el => { el.textContent = state.mesa || ""; });
+    } catch {} finally { checkingVisit = false; }
+  }
+  checkVisit();
+  setInterval(checkVisit, 5000);
+  window.addEventListener("orders-updated", checkVisit);
+  window.addEventListener("online", checkVisit);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") checkVisit();
+  });
 }

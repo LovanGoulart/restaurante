@@ -21,20 +21,20 @@
     const running = context?.state === "running";
     toggle.setAttribute("aria-pressed", String(enabled));
     toggle.textContent = enabled
-      ? "♪ Som ativado · toque para silenciar"
-      : "♪ Ativar som dos avisos";
+      ? uiText("♪ Som ativado · toque para silenciar")
+      : uiText("♪ Ativar som dos avisos");
     status.textContent = !supported
-      ? "Este navegador não oferece áudio para os alertas."
+      ? uiText("Este navegador não oferece áudio para os alertas.")
       : !enabled
-        ? "Som desativado. Ative para ouvir novos avisos."
+        ? uiText("Som desativado. Ative para ouvir novos avisos.")
         : running
-          ? "Som liberado para os avisos desta sessão."
-          : "Som ativado. A liberação do áudio será tentada ao interagir com a página.";
+          ? uiText("Som liberado para os avisos desta sessão.")
+          : uiText("Som ativado. A liberação do áudio será tentada ao interagir com a página.");
     panel.hidden = !supported || enabled;
     panelMessage.textContent = enabled
-      ? "O navegador precisa de um toque para liberar o áudio nesta tela."
-      : "Ative para ouvir avisos de pedidos novos ou prontos, conforme seu perfil.";
-    enable.textContent = enabled ? "Liberar som ♪" : "Ativar som ♪";
+      ? uiText("O navegador precisa de um toque para liberar o áudio nesta tela.")
+      : uiText("Ative para ouvir avisos de pedidos novos ou prontos, conforme seu perfil.");
+    enable.textContent = enabled ? uiText("Liberar som ♪") : uiText("Ativar som ♪");
     test.disabled = !supported;
     toggle.disabled = !supported;
     enable.disabled = !supported;
@@ -66,28 +66,28 @@
       return false;
     }
     try {
-      [0, 0.25, 0.5].forEach((delay, index) => {
+      [0, 0.3, 0.6, 1.05, 1.35, 1.65].forEach((delay, index) => {
         const oscillator = context.createOscillator(),
           gain = context.createGain(),
           at = context.currentTime + delay;
-        oscillator.type = "sine";
-        oscillator.frequency.value = index === 1 ? 880 : 660;
+        oscillator.type = "triangle";
+        oscillator.frequency.value = index % 2 ? 1046 : 784;
         oscillator.connect(gain);
         gain.connect(context.destination);
         gain.gain.setValueAtTime(0.0001, at);
-        gain.gain.exponentialRampToValueAtTime(0.17, at + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.2);
+        gain.gain.exponentialRampToValueAtTime(0.45, at + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.24);
         oscillator.onended = () => {
           oscillator.disconnect();
           gain.disconnect();
         };
         oscillator.start(at);
-        oscillator.stop(at + 0.22);
+        oscillator.stop(at + 0.26);
       });
       return true;
     } catch {
       status.textContent =
-        "Não foi possível tocar o som. Confira as permissões de áudio do navegador.";
+        uiText("Não foi possível tocar o som. Confira as permissões de áudio do navegador.");
       return false;
     }
   }
@@ -99,7 +99,7 @@
     if (ok) play();
     else
       status.textContent =
-        "O navegador não liberou o áudio. Confira o volume e a permissão de som.";
+        uiText("O navegador não liberou o áudio. Confira o volume e a permissão de som.");
   }
   toggle.onclick = async () => {
     if (enabled) {
@@ -113,11 +113,11 @@
     const ok = await unlock();
     if (ok && play())
       status.textContent = enabled
-        ? "Som de teste reproduzido. Alertas ativados."
-        : "Som de teste reproduzido. Ative os avisos para ouvir os próximos pedidos.";
+        ? uiText("Som de teste reproduzido. Alertas ativados.")
+        : uiText("Som de teste reproduzido. Ative os avisos para ouvir os próximos pedidos.");
     else
       status.textContent =
-        "Não foi possível reproduzir o teste. Confira as permissões e o volume.";
+        uiText("Não foi possível reproduzir o teste. Confira as permissões e o volume.");
   };
   // A preferência sobrevive à navegação; a liberação do navegador pode precisar de novo toque.
   function gesture() {
@@ -132,6 +132,12 @@
   document.addEventListener("visibilitychange", update);
   window.RestaurantSound = {
     notify() {
+      // Não há API web para detectar o modo silencioso; a vibração é solicitada
+      // também quando o som está desativado, respeitando o sistema operacional.
+      try {
+        if (document.visibilityState === "visible" && navigator.vibrate)
+          navigator.vibrate([250, 100, 250, 100, 450]);
+      } catch {}
       if (!enabled) return false;
       return play();
     },
@@ -142,5 +148,13 @@
       return context?.state || "locked";
     },
   };
+  window.addEventListener("storage", (event) => {
+    if (event.key === key) {
+      enabled = event.newValue === "on";
+      update();
+      if (enabled) gesture();
+    }
+  });
   update();
+  if (enabled) gesture();
 })();

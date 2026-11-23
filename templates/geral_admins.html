@@ -1,9 +1,30 @@
 {% extends 'geral_base.html' %}{% block content %}<a href="{{ url_for('owner_panel') }}">← Restaurantes</a>
+{% set aba = request.args.get('aba', 'dados') %}
+{% if aba not in ['dados', 'cadastro'] %}{% set aba = 'dados' %}{% endif %}
 <h1>Administradores</h1>
 <p>{{ site.name }} · Plano até {{ site.expires|plan_date }}. A conta só acessa quando o plano do restaurante e o usuário estão ativos.</p>
-<div class="site-grid">{% for user in users %}<section class="panel">
+<nav class="platform-tabs" aria-label="Seções dos administradores">
+{% for key, label in [('cadastro', 'Adicionar administrador'), ('dados', 'Dados dos administradores')] %}
+<a href="{{ url_for('admins', id=site.id, aba=key) }}"{% if aba == key %} aria-current="page"{% endif %}>{{ label }}</a>
+{% endfor %}
+</nav>
+{% if aba != 'cadastro' %}
+{% for user in users %}
+<article class="admin-group" aria-label="Administrador: {{ user.nome }}">
+<section class="panel">
 <h2>{{ user.nome }}</h2>
 <p>Acesso por e-mail: <b>{{ user.email or 'Pendente' }}</b> · {{ 'Conta ativa' if user.ativo else 'Conta desativada' }}</p>
+<form method="post">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<input type="hidden" name="id" value="{{ user.id }}">
+<input type="hidden" name="acao" value="perfil">
+<div class="form-grid">{% set person=user %}{% include '_admin_profile.html' %}</div>
+<button>Salvar dados do administrador</button>
+</form>
+</section>
+<section class="panel">
+<h2>Senhas e acesso</h2>
+<p>{{ user.nome }} · {{ 'Conta ativa' if user.ativo else 'Conta desativada' }}</p>
 <form method="post">
 <input type="hidden" name="csrf" value="{{ csrf }}">
 <input type="hidden" name="id" value="{{ user.id }}">
@@ -13,19 +34,15 @@
 <form method="post">
 <input type="hidden" name="csrf" value="{{ csrf }}">
 <input type="hidden" name="id" value="{{ user.id }}">
-<input type="hidden" name="acao" value="perfil">
-<div class="form-grid">{% set person=user %}{% include '_admin_profile.html' %}</div>
-<button>Salvar dados do administrador</button>
-</form>
-<form method="post">
-<input type="hidden" name="csrf" value="{{ csrf }}">
-<input type="hidden" name="id" value="{{ user.id }}">
 <input type="hidden" name="acao" value="senha">
 <label>Nova senha<input name="senha" type="password" minlength="10" maxlength="256" autocomplete="new-password" required>
 </label>
 <button>Redefinir senha</button>
 </form>
-</section>{% endfor %}</div>
+</section>
+</article>
+{% else %}<section class="panel"><p>Nenhum administrador cadastrado. Use a aba Adicionar administrador.</p></section>{% endfor %}
+{% else %}
 <section class="panel">
 <h2>Adicionar administrador neste restaurante</h2>
 <form method="post" class="form-grid">
@@ -38,4 +55,5 @@
 <button>Cadastrar administrador</button>
 </div>
 </form>
-</section>{% endblock %}
+</section>
+{% endif %}{% endblock %}
